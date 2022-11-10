@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ArrayList.h"
+#include "Ride.h"
 
 typedef struct driver
 {
@@ -14,14 +15,24 @@ typedef struct driver
     char *city;
     Date account_creation;
     gboolean account_status;
+    int age;
+    double avgScore;
 } Driver;
+
+static ArrayList *list = NULL;
 
 int getElementSizeDriver()
 {
     return sizeof(Driver *);
 }
 
-Driver *loadDriver(char *sp)
+void initListDriver(int size)
+{
+    if (!list)
+        list = createAL(size, sizeof(Driver *));
+}
+
+void loadDriver(char *sp)
 {
     Driver *driver = (Driver *)malloc(sizeof(Driver));
     driver->id = strsep(&sp, ";");
@@ -33,12 +44,14 @@ Driver *loadDriver(char *sp)
     driver->city = strsep(&sp, ";");
     driver->account_creation = sToDate(strsep(&sp, ";"));
     driver->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
-    return driver;
+    driver->age = calculateAge(driver->birth_day);
+    driver->avgScore = -1;
+    addAL(list, driver);
 }
 
-Driver* findDriverArrayID(Driver **array, int arrSize, char *id)
+Driver *findDriverByID(char *id)
 {
-    return array[atoi(id) - 1];
+    return (Driver *)getByIndex(list, atoi(id) - 1);
 }
 
 char *getCarClass(Driver *driver)
@@ -46,26 +59,43 @@ char *getCarClass(Driver *driver)
     return driver->car_class;
 }
 
-gboolean isDriverActive(Driver* driver){
-    return driver->account_status;
+gboolean isDriverActive(char *id)
+{
+    return findDriverByID(id)->account_status;
 }
 
-char* getDriverID(Driver* driver){
-    return driver->id;
+char *getDriverBasicInfo(char *id)
+{
+    Driver *driver = findDriverByID(id);
+    char aux[100];
+    char *r = driver->name;
+    strcat(r, ";");
+    strncat(r, &driver->gender, 1);
+    strcat(r, ";");
+    sprintf(aux, "%d", driver->age);
+    strcat(r, aux);
+    strcat(r, ";");
+    return r;
 }
 
-char* getDriverName(Driver* driver){
-    return driver->name;
+double getDriverAvgScore(char *id)
+{
+    Driver *driver = findDriverByID(id);
+    if (driver->avgScore == -1)
+    {
+        driver->avgScore = calculateDriverAvgScore(id);
+    }
+    return driver->avgScore;
 }
 
-char getDriverGender(Driver* driver){
-    return driver->gender;
-}
+double *getDriverAvgScoreAndPay(char *id)
+{
+    Driver *driver = findDriverByID(id);
+    if (driver->avgScore == -1)
+       return calculateDriverAvgScoreAndPay(id);
 
-Date getDriverBirth(Driver* driver){
-    return driver->birth_day;
-}
-
-char *findDriverCarClass(Driver **array, int arrSize, char *id){
-    return array[atoi(id) - 1]->car_class;
+    double *values = (double *) malloc (sizeof(double) * 2);
+    values[0] = driver->avgScore;
+    values[1] = calculateTotalPay(id);
+    return values;
 }

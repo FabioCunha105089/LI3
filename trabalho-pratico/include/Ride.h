@@ -14,5 +14,11 @@ char *getDriver(Ride *);
 double getDistance(Ride *);
 int getScoreDriver(Ride *);
 double getTip(Ride *);
+double avgPayInCity(char *);
+gboolean doesDriverHaveRides(char *);
+int getNumberOfRidesDriver(char *);
+double calculateTotalPay(char *);
+double calculateDriverAvgScore(char *);
+double* calculateDriverAvgScoreAndPay(char *);
 
 #endif

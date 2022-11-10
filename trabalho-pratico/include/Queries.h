@@ -4,6 +4,6 @@
 #include <glib.h>
 #include "ArrayList.h"
 void query2(Driver *, int);
-double query4(GHashTable *, ArrayList *, char *);
-char *query1(char *, GHashTable *, GHashTable *, ArrayList *, ArrayList *);
+double query4(char *);
+char *query1(char *);
 #endif

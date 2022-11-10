@@ -6,15 +6,19 @@
 #include <glib.h>
 
 typedef struct driver Driver;
-Driver *loadDriver(char *);
+void loadDriver(char *);
 int getElementSizeDriver();
-Driver* findDriverArrayID(Driver **, int, char *);
+Driver* findDriverByID(char *);
 char *getCarClass(Driver *);
-gboolean isDriverActive(Driver *);
+gboolean isDriverActive(char *);
 char *getDriverID(Driver *);
 char *getDriverName(Driver *);
 char getDriverGender(Driver *);
 Date getDriverBirth(Driver *);
 char *findDriverCarClass(Driver **, int, char *);
+void initListDriver(int);
+char *getDriverBasicInfo(char *);
+double getDriverAvgScore(char *);
+double *getDriverAvgScoreAndPay(char *);
 
 #endif
