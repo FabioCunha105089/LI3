@@ -6,6 +6,9 @@
     #include <stdio.h>
 
     typedef struct driver* Driver;
-    ArrayList* loadDrivers(FILE*, int);
+    Driver* loadDriver(char*);
+    int getElementSizeDriver();
+    Driver findDriverArrayID(Driver* array, int arrSize, char* id);
+    char* getCarClass(Driver* driver);
 
 #endif
