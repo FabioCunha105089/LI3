@@ -2,18 +2,10 @@
 #define _DRIVER_H_
 
     #include "Date.h"
-    typedef enum { FALSE, TRUE } bool;
+    #include "boolean.h"
+    #include <stdio.h>
 
-    typedef struct Driver{
-        char* id;
-        char* name;
-        Date birth_day;
-        char gender;
-        char* car_class;
-        char* license_plate;
-        char* city;
-        Date account_creation;
-        bool account_status;
-    }Driver;
+    typedef struct driver* Driver;
+    ArrayList* loadDrivers(FILE*, int);
 
 #endif
