@@ -1,29 +1,29 @@
 #include "Driver.h"
-#include <stdio.h>
-#include "Date.h"
 #include <string.h>
-#include "boolean.h"
 #include <stdlib.h>
 #include "ArrayList.h"
 
-typedef struct Driver{
-        char* id;
-        char* name;
-        Date birth_day;
-        char gender;
-        char* car_class;
-        char* license_plate;
-        char* city;
-        Date account_creation;
-        boolean account_status;
-    }Driver;
+typedef struct driver
+{
+    char *id;
+    char *name;
+    Date birth_day;
+    char gender;
+    char *car_class;
+    char *license_plate;
+    char *city;
+    Date account_creation;
+    gboolean account_status;
+} Driver;
 
-int getElementSizeDriver(){
-    return sizeof(Driver*);
+int getElementSizeDriver()
+{
+    return sizeof(Driver *);
 }
 
-Driver* loadDriver(char* sp){
-    Driver* driver = (Driver*)malloc(sizeof(Driver));
+Driver *loadDriver(char *sp)
+{
+    Driver *driver = (Driver *)malloc(sizeof(Driver));
     driver->id = strsep(&sp, ";");
     driver->name = strsep(&sp, ";");
     driver->birth_day = sToDate(strsep(&sp, ";"));
@@ -36,10 +36,36 @@ Driver* loadDriver(char* sp){
     return driver;
 }
 
-Driver findDriverArrayID(Driver* array, int arrSize, char* id){
+Driver* findDriverArrayID(Driver **array, int arrSize, char *id)
+{
     return array[atoi(id) - 1];
 }
 
-char* getCarClass(Driver* driver){
+char *getCarClass(Driver *driver)
+{
     return driver->car_class;
+}
+
+gboolean isDriverActive(Driver* driver){
+    return driver->account_status;
+}
+
+char* getDriverID(Driver* driver){
+    return driver->id;
+}
+
+char* getDriverName(Driver* driver){
+    return driver->name;
+}
+
+char getDriverGender(Driver* driver){
+    return driver->gender;
+}
+
+Date getDriverBirth(Driver* driver){
+    return driver->birth_day;
+}
+
+char *findDriverCarClass(Driver **array, int arrSize, char *id){
+    return array[atoi(id) - 1]->car_class;
 }

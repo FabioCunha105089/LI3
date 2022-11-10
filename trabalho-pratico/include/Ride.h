@@ -1,15 +1,18 @@
-#ifndef _RIDE_H_
-#define _RIDE_H_
+#ifndef RIDE_H_
+#define RIDE_H_
 
-    #include "Date.h"
-    #include <stdio.h>
-    #include <glib.h>
+#include "Date.h"
+#include <stdio.h>
+#include <glib.h>
+#include "LinkedList.h"
 
-    typedef struct ride* Ride;
-    Ride* loadRide(char*);
-    int getElementSizeRide();
-    GHashTable* getCityHash(Ride**, int);
-    char* getDriver(Ride* ride);
-    float getDistance(Ride* ride);
-    
+typedef struct ride Ride;
+void *loadRide(char *);
+int getElementSizeRide();
+LinkedList *getRideHashTables(void **, int);
+char *getDriver(Ride *);
+double getDistance(Ride *);
+int getScoreDriver(Ride *);
+double getTip(Ride *);
+
 #endif
