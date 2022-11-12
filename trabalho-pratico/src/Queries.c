@@ -6,6 +6,47 @@
 #include <string.h>
 #include "LinkedList.h"
 
+typedef struct query{
+    char id;
+    char **args;
+}Query;
+
+static ArrayList *list;
+
+void initListQuery(int size)
+{
+    if(!list)
+        list = createAL(size, sizeof(Query *));
+}
+
+int getNArgs(char id)
+{
+    switch (id)
+    {
+        case '1':
+        case '4':
+            return 1;
+            break;
+
+        case '6':
+            return 3;
+            break; 
+    }
+}
+
+void loadQuery(char *sp)
+{
+    Query *query = (Query *) malloc(sizeof(Query));
+    query->id = strsep(&sp, " ");
+    int nArgs = getNArgs(query->id);
+    query->args = (char **) malloc(sizeof(char*) * nArgs);
+    for(int i = 0; i < nArgs; i++)
+    {
+        query->args[i] = strsep(&sp, " ");
+    }
+    addLL(list, query);
+}
+
 double query4(char *city)
 {
     return avgPayInCity(city);
@@ -110,4 +151,27 @@ char *query1(char *id)
 {
     //return atoi(id) != 0 ? query1_drivers(id) : query1_users(id, usersHash, userList, driversList);
     return atoi(id) != 0 ? query1_drivers(id) : "f";
+}
+
+void executeQueries()
+{
+    int nQueries = getALSize(list);
+    for(int i = 0; i < nQueries; i++)
+    {
+        Query *query = (Query *) getByIndex(list, i);
+        switch(query->id)
+        {
+            case '1':
+                query1(query->args[0]);
+                break;
+
+            case '4':
+                query4(query->args[0]);
+                break;
+
+            case '6':
+                //query6(query->args[0], sToDate(query->args[1]), sToDate(query->args[2]));
+                break;
+        }
+    }
 }

@@ -54,11 +54,6 @@ Driver *findDriverByID(char *id)
     return (Driver *)getByIndex(list, atoi(id) - 1);
 }
 
-char *getCarClass(Driver *driver)
-{
-    return driver->car_class;
-}
-
 gboolean isDriverActive(char *id)
 {
     return findDriverByID(id)->account_status;

@@ -30,7 +30,7 @@ int getElementSizeRide()
     return sizeof(Ride *);
 }
 
-void *loadRide(char *sp)
+void loadRide(char *sp)
 {
     Ride *ride = (Ride *)malloc(sizeof(Ride));
     ride->id = strsep(&sp, ";");
@@ -43,7 +43,7 @@ void *loadRide(char *sp)
     ride->score_driver = atoi(strsep(&sp, ";"));
     ride->tip = atof(strsep(&sp, ";"));
     ride->comment = strsep(&sp, "\n");
-    return ride;
+    addLL(list, ride);
 }
 
 void initHashTables()
@@ -96,34 +96,11 @@ void initHashTables()
     }
 }
 
-void *initListRide(int size){
+void initRide(int size){
     if(!list)
         list = createAL(size, sizeof(Ride *));
-}
-
-char *getDriver(Ride *ride)
-{
-    return ride->driver;
-}
-
-double getDistance(Ride *ride)
-{
-    return ride->distance;
-}
-
-int getScoreDriver(Ride *ride)
-{
-    return ride->score_driver;
-}
-
-double getTip(Ride *ride)
-{
-    return ride->tip;
-}
-
-int getScoreUser(Ride *ride)
-{
-    return ride->score_user;
+    if(!hashCity || !hashDriver || !hashUsers)
+        initHashTables();
 }
 
 gboolean doesCityHaveRides(char *city)
