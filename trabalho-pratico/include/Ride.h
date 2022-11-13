@@ -17,5 +17,6 @@ double calculateTotalPay(char *);
 double calculateDriverAvgScore(char *);
 double* calculateDriverAvgScoreAndPay(char *);
 void initRide(int);
+void initHashTables();
 
 #endif

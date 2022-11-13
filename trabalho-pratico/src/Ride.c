@@ -99,8 +99,6 @@ void initHashTables()
 void initRide(int size){
     if(!list)
         list = createAL(size, sizeof(Ride *));
-    if(!hashCity || !hashDriver || !hashUsers)
-        initHashTables();
 }
 
 gboolean doesCityHaveRides(char *city)
