@@ -44,3 +44,7 @@ LinkedList *getLLFromAL(ArrayList *al, LinkedList *(*llFunc)(void **, int))
 int getALSize(ArrayList* list){
     return list->size;
 }
+
+void* getByIndex(ArrayList* list, int index){
+    return list->array[index];
+}

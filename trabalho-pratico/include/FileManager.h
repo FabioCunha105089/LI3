@@ -1,10 +1,9 @@
-#ifndef _FILEMANAGER_H_
-#define _FILEMANAGER_H_
+#ifndef FILEMANAGER_H_
+#define FILEMANAGER_H_
 
-    #include "ArrayList.h"
-    #include <stdio.h>
-    
-    ArrayList* load(char*, int (*getElementSizeFunc)(), void* (*loadFunc)(char*));
-    int getLines(FILE* file);
+#include <stdio.h>
+
+void load(char *, void *(*loadFunc)(char *), void (*initFunc)(int));
+int getLines(FILE *);
 
 #endif

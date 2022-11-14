@@ -11,4 +11,5 @@ void *find(ArrayList *, void *, void *(*findFunc)(void **, int, void *));
 GHashTable *arrayListToHashMap(ArrayList *, GHashTable *(*hashTableFunc)(void **, int));
 LinkedList *getLLFromAL(ArrayList *, LinkedList *(*llFunc)(void **, int));
 int getALSize(ArrayList*);
+void *getByIndex(ArrayList*, int);
 #endif
