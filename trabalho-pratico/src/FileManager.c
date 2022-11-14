@@ -1,14 +1,9 @@
-#include "FileManager.h"
+#include "../include/FileManager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
-
-#include "Ride.h" //apagar depois
-#include "Driver.h"
-#include "Queries.h"
-#include "User.h"
 
 int getLines(FILE *file)
 {
@@ -48,14 +43,3 @@ void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int))
     free(line);
     fclose(file);
 }
-
-// int main(int argc, char const *argv[])
-// {
-//     ArrayList *rides = load("rides.csv", getElementSizeRide, loadRide);
-//     LinkedList *hashs = getLLFromAL(rides, getRideHashTables);
-//     ArrayList *drivers = load("drivers.csv", getElementSizeDriver, loadDriver);
-//     ArrayList *users = load("users.csv", getElementSizeUser, loadUser);
-//     char* r = query1("MMarques130",(GHashTable*) findByIndex(hashs, 1), (GHashTable*) findByIndex(hashs, 2), drivers, users);
-//     printf(r);
-//     return 0;
-// }

@@ -1,10 +1,10 @@
-#include "Queries.h"
-#include "Driver.h"
-#include "Ride.h"
-#include "User.h"
+#include "../include/Queries.h"
+#include "../include/Driver.h"
+#include "../include/Ride.h"
+#include "../include/User.h"
 #include <stdlib.h>
 #include <string.h>
-#include "LinkedList.h"
+#include "../include/LinkedList.h"
 
 typedef struct query{
     char id;

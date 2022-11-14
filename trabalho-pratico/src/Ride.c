@@ -1,10 +1,10 @@
-#include "Ride.h"
+#include "../include/Ride.h"
 #include "stdio.h"
-#include "Date.h"
+#include "../include/Date.h"
 #include <string.h>
-#include "LinkedList.h"
-#include "ArrayList.h"
-#include "Driver.h"
+#include "../include/LinkedList.h"
+#include "../include/ArrayList.h"
+#include "../include/Driver.h"
 
 typedef struct ride
 {
