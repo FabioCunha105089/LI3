@@ -4,33 +4,31 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct User{
-        char* username;
-        char* name;
-        char gender;
-        Date birthdate;
-        Date account_creation;
-        char* pay_method;
-        boolean account_status;
-    }User;
+typedef struct User
+{
+    char *username;
+    char *name;
+    char gender;
+    Date birthdate;
+    Date account_creation;
+    char *pay_method;
+    boolean account_status;
+} User;
 
-User* loadUsers(FILE* file, int size){
-    char* line = (char*)malloc(256);
-    char* sp;
-    User* users = (User*)malloc(sizeof(User) * size);
-    fgets(line, 256, file);
+int getElementSizeUser()
+{
+    return sizeof(User *);
+}
 
-    for(int i = 0; i < size; i++){
-        fgets(line, 256, file);
-        sp = strdup(line);
-        users[i].username = strsep(&sp, ";");
-        users[i].name = strsep(&sp, ";");
-        users[i].gender = strsep(&sp, ";")[0];        
-        users[i].birthdate = sToDate(strsep(&sp, ";"));
-        users[i].account_creation = sToDate(strsep(&sp, ";"));
-        users[i].pay_method = strsep(&sp, ";");
-        users[i].account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
-    }
-    fclose(file);
-    return users;
+User *loadUser(char * sp)
+{
+    User *user = (User *)malloc(sizeof(User));
+    user->username = strsep(&sp, ";");
+    user->name = strsep(&sp, ";");
+    user->gender = strsep(&sp, ";")[0];
+    user->birthdate = sToDate(strsep(&sp, ";"));
+    user->account_creation = sToDate(strsep(&sp, ";"));
+    user->pay_method = strsep(&sp, ";");
+    user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
+    return user;
 }

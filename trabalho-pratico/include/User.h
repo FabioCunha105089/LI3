@@ -3,15 +3,10 @@
 
     #include <stdbool.h>
     #include "Date.h"
+    #include <stdio.h>
+    #include "ArrayList.h"
 
-    typedef struct User{
-        char* username;
-        char* name;
-        char gender;
-        Date birthdate;
-        Date account_creation;
-        char* pay_method;
-        bool account_status;
-    }User;
-
+    typedef struct user* User;
+    User* loadUser(char*);
+    int getElementSizeUser();
 #endif
