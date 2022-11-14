@@ -1,5 +1,5 @@
-#include "LinkedList.h"
-#include "boolean.h"
+#include "../include/LinkedList.h"
+#include "glib.h"
 #include <stdlib.h>
 
 typedef struct n{
@@ -28,7 +28,7 @@ Node* createNode(void* data){
     return node;
 }
 
-boolean isEmpty(LinkedList* list){
+gboolean isEmpty(LinkedList* list){
     return list->size == 0 ? TRUE : FALSE;
 }
 
