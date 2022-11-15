@@ -7,12 +7,12 @@
 #include "ArrayList.h"
 
 typedef struct user User;
-User *loadUser(char *);
+void loadUser(char *);
 int getElementSizeUser();
-User *findUserArrayID(User **, int, char *);
+User *findUserByUsername(char *);
 gboolean isUserActive(User *);
-char *getUserName(User *);
-char *getUserUsername(User *);
-char getUserGender(User *);
-Date getUserBirth(User *);
+void initListUser(int);
+char *getUserBasicInfo(char *);
+double getUserAvgScore(char *);
+double *getUserAvgScoreAndPay(char *);
 #endif

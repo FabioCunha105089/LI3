@@ -3,24 +3,32 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct user
-{
+typedef struct user {
+
     char *username;
     char *name;
     char gender;
-    Date birthdate;
-    Date account_creation;
+    Date *birthdate;
+    Date *account_creation;
     char *pay_method;
     gboolean account_status;
 } User;
 
-int getElementSizeUser()
-{
+static ArrayList *list = NULL;
+
+int getElementSizeUser() {
+
     return sizeof(User *);
 }
 
-User *loadUser(char *sp)
-{
+void initListUser(int size) {
+    
+    if (!list)
+        list = createAL(size, sizeof(User *));
+}
+
+void loadUser(char *sp) {
+
     User *user = (User *)malloc(sizeof(User));
     user->username = strsep(&sp, ";");
     user->name = strsep(&sp, ";");
@@ -29,40 +37,68 @@ User *loadUser(char *sp)
     user->account_creation = sToDate(strsep(&sp, ";"));
     user->pay_method = strsep(&sp, ";");
     user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
-    return user;
+    user->age = calculateAge(user->birth_day);
+    user->avgScore = -1;
+    addAL(list, user);
 }
 
-User *findUserArrayID(User **array, int arrSize, char *username)
-{
-    for (int i = 0; i < arrSize; i++)
-    {
-        if (array[i]->username = username)
-        {
-            return array[i];
+User *findUserByUsername(char *username) {
+
+    User * user;
+    for (int i = 0; i < arrSize; i++) {
+        
+        user = (User *)getByIndex(list,i);
+        
+        if (strcmp(user->username, username) == 0) {
+            return user;
         }
     }
 }
 
-gboolean isUserActive(User *user)
-{
+
+gboolean isUserActive(User *user) {
+
     return user->account_status;
 }
 
-char getUserGender(User *user)
-{
-    return user->gender;
+char *getUserBasicInfo(char *id) {
+
+    User *user = findUserByUsername(id);
+    char aux[100];
+    char *r = user->name;
+    strcat(r, ";");
+    strncat(r, &user->gender, 1);
+    strcat(r, ";");
+    sprintf(aux, "%d", user->age);
+    strcat(r, aux);
+    strcat(r, ";");
+    return r;
 }
 
-Date getUserBirth(User *user)
-{
-    return user->birthdate;
+
+double getUserAvgScoreAndPay(char *id) {
+
+    User *user = findUserByUsername(id);
+    
+    if (user->avgScore == -1) {
+        user->avgScore = calculateUserAvgScore(id);
+    }
+
+    return user->avgScore;
+
 }
 
-char *getUserUsername(User *user)
-{
-    return user->username;
-}
+double getUserAvgScoreAndPay(char *id) {
 
-char *getUserName(User *user){
-    return user->name;
+    User *user = findUserByUsername(id);
+    
+    if (user->avgScore == -1) {
+        return calculateUserAvgScoreAndPay(id);
+    }
+
+    double *values = (double *) malloc (sizeof(double)*2);
+    values[0] = user->avgScore;
+    values[1] = calculateTotalPayUser(id);
+    return values;
+
 }

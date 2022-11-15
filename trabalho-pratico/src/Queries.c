@@ -37,14 +37,14 @@ int getNArgs(char id)
 void loadQuery(char *sp)
 {
     Query *query = (Query *) malloc(sizeof(Query));
-    query->id = strsep(&sp, " ");
+    query->id = strsep(&sp, " ")[0];
     int nArgs = getNArgs(query->id);
     query->args = (char **) malloc(sizeof(char*) * nArgs);
     for(int i = 0; i < nArgs; i++)
     {
         query->args[i] = strsep(&sp, " ");
     }
-    addLL(list, query);
+    addAL(list, query);
 }
 
 double query4(char *city)
@@ -109,39 +109,27 @@ char *query1_drivers(char *id)
 
 }
 
-char *query1_users(char *username, GHashTable *ridesHash, ArrayList *users, ArrayList* drivers)
-{
-    User *user = (User *)find(users, username, findUserArrayID);
-    if (isUserActive(user) == FALSE)
+char *query1_users(char *id) {
+    
+    if(isUserActive(id) = FALSE)
         return "";
-    char aux[100];
-    char *r = getUserName(user);
-    strcat(r, ";");
-    char gender = getUserGender(user);
-    strncat(r, &gender, 1);
-    strcat(r, ";");
-    sprintf(aux, "%d", calculateAge(getUserBirth(user)));
-    strcat(r, aux);
-    strcat(r, ";");
 
-    if (g_hash_table_contains(ridesHash, getUserUsername(user)) == FALSE)
-    {
-        strcat(r, "0.000;0;0.000");
+    char *r = getUserBasicInfo(id);
+
+    if(doesUserHaveRides(id) = FALSE){
+        strcat(r, "0,000;0;0.000");
         return r;
     }
 
-    LinkedList *rides = (LinkedList *)g_hash_table_lookup(ridesHash, username);
-    int nRides = getLLSize(rides);
-    double *values = calculateAvgScoreAndTotalPay(rides, drivers, nRides, "", 'u');
-    double score = values[0];
-    double pay = values[1];
-    sprintf(aux, "%.3f", score);
+    double * values = getUserAvgScoreAndPay(id);
+    char aux[100];
+    sprintf(aux, "%.3f", values[0]);
     strcat(r, aux);
     strcat(r, ";");
-    sprintf(aux, "%d", nRides);
+    sprintf(aux, "%d", getNumberOfRidesUser(id));
     strcat(r, aux);
     strcat(r, ";");
-    sprintf(aux, "%.3f", pay);
+    sprintf(aux, "%.3f", values[1]);
     strcat(r, aux);
     free(values);
     return r;
@@ -149,8 +137,7 @@ char *query1_users(char *username, GHashTable *ridesHash, ArrayList *users, Arra
 
 char *query1(char *id)
 {
-    //return atoi(id) != 0 ? query1_drivers(id) : query1_users(id, usersHash, userList, driversList);
-    return atoi(id) != 0 ? query1_drivers(id) : "f";
+    return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
 void executeQueries()
