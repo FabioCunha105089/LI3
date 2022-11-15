@@ -137,13 +137,18 @@ gboolean doesDriverHaveRides(char *id){
     return g_hash_table_contains(hashDriver, id);
 }
 
+gboolean doesUserHaveRides(char *username)
+{
+    return g_hash_table_contains(hashUsers, username);
+}
+
 double calculateDriverAvgScore(char *id){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashDriver, id);
     double score = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(rides, i);
+        ride = (Ride *) findByIndex(rides, i);
         score += ride->score_driver;
     }
     return score / nRides;
@@ -155,7 +160,7 @@ double* calculateDriverAvgScoreAndPay(char *id){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(rides, i);
+        ride = (Ride *) findByIndex(rides, i);
         score += ride->score_driver;
         pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
     }
@@ -165,14 +170,54 @@ double* calculateDriverAvgScoreAndPay(char *id){
     return values;
 }
 
-double calculateTotalPay(char *id){
+double calculateTotalPayDriver(char *id){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashDriver, id);
     double pay = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(rides, i);
+        ride = (Ride *) findByIndex(rides, i);
         pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
+    }
+    return pay;
+}
+
+double calculateUserAvgScore(char *username){
+    LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashUsers, username);
+    double score = 0;
+    int nRides = getLLSize(rides);
+    Ride *ride;
+    for(int i = 0; i < nRides; i++){
+        ride = (Ride *) findByIndex(rides, i);
+        score += ride->score_user;
+    }
+    return score / nRides;
+}
+
+double* calculateUserAvgScoreAndPay(char *username){
+    LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashUsers, username);
+    double score = 0, pay = 0;
+    int nRides = getLLSize(rides);
+    Ride *ride;
+    for(int i = 0; i < nRides; i++){
+        ride = (Ride *) findByIndex(rides, i);
+        score += ride->score_user;
+        pay += getPrice(getCarClass(ride->driver), ride->distance)+ ride->tip;
+    }
+    double *values = (double *) malloc (sizeof(double) * 2);
+    values[0] = score / nRides;
+    values[1] = pay;
+    return values;
+}
+
+double calculateTotalPay(char *username){
+    LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashUsers, username);
+    double pay = 0;
+    int nRides = getLLSize(rides);
+    Ride *ride;
+    for(int i = 0; i < nRides; i++){
+        ride = (Ride *) findByIndex(rides, i);
+        pay += getPrice(getCarClass(ride->driver), ride->distance)+ ride->tip;
     }
     return pay;
 }
@@ -180,4 +225,9 @@ double calculateTotalPay(char *id){
 int getNumberOfRidesDriver(char *id)
 {
     return getLLSize((LinkedList *) g_hash_table_lookup(hashDriver, id));
+}
+
+int getNumberOfRidesUser(char *username)
+{
+    return getLLSize((LinkedList *) g_hash_table_lookup(hashUsers, username));
 }
