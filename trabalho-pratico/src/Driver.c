@@ -8,12 +8,12 @@ typedef struct driver
 {
     char *id;
     char *name;
-    Date birth_day;
+    Date *birth_day;
     char gender;
     char *car_class;
     char *license_plate;
     char *city;
-    Date account_creation;
+    Date *account_creation;
     gboolean account_status;
     int age;
     double avgScore;
@@ -93,4 +93,9 @@ double *getDriverAvgScoreAndPay(char *id)
     values[0] = driver->avgScore;
     values[1] = calculateTotalPay(id);
     return values;
+}
+
+char *getCarClass(char *id)
+{
+    return findDriverByID(id)->car_class;
 }

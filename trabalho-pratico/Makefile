@@ -1,4 +1,5 @@
-OBJS	 = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o
+OBJS	 = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o Main.o
+HEADERS  = ArrayList.h Date.h Driver.h FileManager.h LinkedList.h Queries.h Ride.h User.h
 OUT	 = programa-principal
 SRC      = ./src/
 CC	 = gcc
@@ -30,7 +31,10 @@ Ride.o: $(SRC)Ride.c
 	$(CC) $(FLAGS) $(SRC)Ride.c 
 
 User.o: $(SRC)User.c
-	$(CC) $(FLAGS) $(SRC)User.c 
+	$(CC) $(FLAGS) $(SRC)User.c
+	
+Main.o: $(SRC)Main.c
+	$(CC) $(FLAGS) $(SRC)Main.c
 
 clean:
 	rm -f $(OBJS) $(OUT)

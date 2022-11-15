@@ -9,7 +9,7 @@
 typedef struct ride
 {
     char *id;
-    Date date;
+    Date *date;
     char *driver;
     char *user;
     char *city;
@@ -43,7 +43,7 @@ void loadRide(char *sp)
     ride->score_driver = atoi(strsep(&sp, ";"));
     ride->tip = atof(strsep(&sp, ";"));
     ride->comment = strsep(&sp, "\n");
-    addLL(list, ride);
+    addAL(list, ride);
 }
 
 void initHashTables()
@@ -52,7 +52,6 @@ void initHashTables()
     hashCity = g_hash_table_new(g_str_hash, g_str_equal);
     hashDriver = g_hash_table_new(g_str_hash, g_str_equal);
     hashUsers = g_hash_table_new(g_str_hash, g_str_equal);
-    LinkedList *listHash = createLL();
     Ride *ride = NULL;
 
     for (int i = 0; i < size; i++)
@@ -61,9 +60,9 @@ void initHashTables()
         // Cidades
         if (g_hash_table_contains(hashCity, ride->city) == FALSE)
         {
-            LinkedList *list = createLL();
-            addLL(list, ride);
-            g_hash_table_insert(hashCity, ride->city, list);
+            LinkedList *rideList = createLL();
+            addLL(rideList, ride);
+            g_hash_table_insert(hashCity, ride->city, rideList);
         }
         else
         {
@@ -73,9 +72,9 @@ void initHashTables()
         // Drivers
         if (g_hash_table_contains(hashDriver, ride->driver) == FALSE)
         {
-            LinkedList *list = createLL();
-            addLL(list, ride);
-            g_hash_table_insert(hashDriver, ride->driver, list);
+            LinkedList *rideList = createLL();
+            addLL(rideList, ride);
+            g_hash_table_insert(hashDriver, ride->driver, rideList);
         }
         else
         {
@@ -85,9 +84,9 @@ void initHashTables()
         // Users
         if (g_hash_table_contains(hashUsers, ride->user) == FALSE)
         {
-            LinkedList *list = createLL();
-            addLL(list, ride);
-            g_hash_table_insert(hashUsers, ride->user, list);
+            LinkedList *rideList = createLL();
+            addLL(rideList, ride);
+            g_hash_table_insert(hashUsers, ride->user, rideList);
         }
         else
         {
@@ -96,7 +95,7 @@ void initHashTables()
     }
 }
 
-void initRide(int size){
+void initListRide(int size){
     if(!list)
         list = createAL(size, sizeof(Ride *));
 }
@@ -123,13 +122,13 @@ double avgPayInCity(char* city){
     if (g_hash_table_contains(hashCity, city) == FALSE)
         return 0;
     double tPrice = 0;
-    int nRides, getLLSize(list);
     Ride *ride;
-    LinkedList *list = (LinkedList *)g_hash_table_lookup(hashCity, city);
+    LinkedList *rideList = (LinkedList *)g_hash_table_lookup(hashCity, city);
+    int nRides = getLLSize(rideList);
     for (int i = 0; i < nRides; i++)
     {
-        ride = (Ride *)findByIndex(list, i);
-        tPrice += getPrice(getCarClass(findDriverByID(ride->driver)), ride->distance);
+        ride = (Ride *)findByIndex(rideList, i);
+        tPrice += getPrice(getCarClass(ride->driver), ride->distance);
     }
     return tPrice / nRides;
 }
@@ -141,10 +140,10 @@ gboolean doesDriverHaveRides(char *id){
 double calculateDriverAvgScore(char *id){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashDriver, id);
     double score = 0;
-    int nRides = getLLSize(list);
+    int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(list, i);
+        ride = findByIndex(rides, i);
         score += ride->score_driver;
     }
     return score / nRides;
@@ -153,12 +152,12 @@ double calculateDriverAvgScore(char *id){
 double* calculateDriverAvgScoreAndPay(char *id){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashDriver, id);
     double score = 0, pay = 0;
-    int nRides = getLLSize(list);
+    int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(list, i);
+        ride = findByIndex(rides, i);
         score += ride->score_driver;
-        pay += getPrice(findDriverByID(id), ride->distance)+ ride->tip;
+        pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
     }
     double *values = (double *) malloc (sizeof(double) * 2);
     values[0] = score / nRides;
@@ -169,11 +168,11 @@ double* calculateDriverAvgScoreAndPay(char *id){
 double calculateTotalPay(char *id){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashDriver, id);
     double pay = 0;
-    int nRides = getLLSize(list);
+    int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = findByIndex(list, i);
-        pay += getPrice(findDriverByID(id), ride->distance)+ ride->tip;
+        ride = findByIndex(rides, i);
+        pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
     }
     return pay;
 }

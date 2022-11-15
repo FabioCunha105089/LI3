@@ -2,7 +2,7 @@
 #include "glib.h"
 #include <stdlib.h>
 
-typedef struct n{
+typedef struct node{
     void* data;
     struct Node* next;
 }Node;

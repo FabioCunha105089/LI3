@@ -16,7 +16,7 @@ int getNumberOfRidesDriver(char *);
 double calculateTotalPay(char *);
 double calculateDriverAvgScore(char *);
 double* calculateDriverAvgScoreAndPay(char *);
-void initRide(int);
+void initListRide(int);
 void initHashTables();
 
 #endif
