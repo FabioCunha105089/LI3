@@ -57,16 +57,16 @@ int getLLSize(LinkedList* list){
     return list->size;
 }
 
-GDestoyNotify *freeLinkedList(gpointer *data)
+GDestroyNotify freeLinkedList(gpointer data)
 {
     LinkedList* list = (LinkedList *) data;
-    Node *node = list->head;
+    Node* node;
+
     for(int i = 0; i < list->size; i++)
     {
-        free(node->data);
-        Node *aux = node->next;
+        node = list->head;
+        list->head = node->next;
         free(node);
-        node = aux;
     }
     free(list);
 }

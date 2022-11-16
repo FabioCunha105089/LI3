@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-void load(char *, void *(*loadFunc)(char *), void (*initFunc)(int));
+void load(char *, void *(*loadFunc)(char *), void (*initFunc)(int), int);
 int getLines(FILE *);
-void output(char *);
+void output(char *, int);
 
 #endif

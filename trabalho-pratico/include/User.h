@@ -10,7 +10,7 @@ typedef struct user User;
 void loadUser(char *);
 int getElementSizeUser();
 User *findUserByUsername(char *);
-gboolean isUserActive(User *);
+gboolean isUserActive(char *);
 void initListUser(int);
 char *getUserBasicInfo(char *);
 double getUserAvgScore(char *);

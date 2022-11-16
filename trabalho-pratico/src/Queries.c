@@ -12,7 +12,7 @@ typedef struct query{
     char **args;
 }Query;
 
-static ArrayList *list;
+static ArrayList *list = NULL;
 
 void initListQuery(int size)
 {
@@ -40,9 +40,15 @@ void loadQuery(char *sp)
     Query *query = (Query *) malloc(sizeof(Query));
     query->id = strsep(&sp, " ")[0];
     int nArgs = getNArgs(query->id);
-    query->args = (char **) malloc(sizeof(char*) * nArgs);
+    query->args = malloc(sizeof(char *) * nArgs);
     for(int i = 0; i < nArgs; i++)
     {
+        query->args[i] = (char *) malloc (256);
+        if(i == nArgs -1)
+        {
+            query->args[i] = strsep(&sp, "\n");
+            break;
+        }
         query->args[i] = strsep(&sp, " ");
     }
     addAL(list, query);
@@ -107,13 +113,14 @@ char *query1_users(char *id) {
 }
 
 char *query1(char *id)
-{
+{       
     return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
 void executeQueries()
 {
     int nQueries = getALSize(list);
+    char aux[100];
     for(int i = 0; i < nQueries; i++)
     {
         Query *query = (Query *) getByIndex(list, i);
@@ -123,8 +130,9 @@ void executeQueries()
                 output(query1(query->args[0]), i);
                 break;
 
-            case '4':
-                output(query4(query->args[0]), i);
+            case '4':  
+                sprintf(aux, "%.3f", query4(query->args[0]));
+                output(aux, i);
                 break;
 
             case '6':
@@ -133,4 +141,9 @@ void executeQueries()
             default: break;
         }
     }
+}
+
+void freeQuery()
+{
+    freeArrayList(list);
 }

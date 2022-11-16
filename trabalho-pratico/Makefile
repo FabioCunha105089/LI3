@@ -32,8 +32,10 @@ Ride.o: $(SRC)Ride.c
 User.o: $(SRC)User.c
 	$(CC) $(FLAGS) $(SRC)User.c
 	
-Main.o: $(SRC)Main.c
+Main.o: $(SRC)Main.c | Resultados
 	$(CC) $(FLAGS) $(SRC)Main.c
 
+Resultados: 
+	mkdir Resultados
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -f -r $(OBJS) $(OUT) Resultados

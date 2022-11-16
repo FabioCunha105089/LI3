@@ -18,10 +18,10 @@ int getLines(FILE *file)
         c = fgetc(file);
     }
     fseek(file, 0, SEEK_SET);
-    return size - 1;
+    return size;
 }
 
-void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int))
+void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int linesToSkip)
 {
     FILE *file = fopen(path, "r");
     if (!file)
@@ -33,7 +33,11 @@ void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int))
     initFunc(size);
     char *line = (char *)malloc(256);
     char *sp;
-    fgets(line, 256, file);
+    for(int i = 0; i < linesToSkip; i++)
+    {
+        fgets(line, 256, file);
+    }
+        
     for (int i = 0; i < size; i++)
     {
         fgets(line, 256, file);
@@ -41,22 +45,19 @@ void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int))
         loadFunc(sp);
     }
     free(line);
+    free(sp);
     fclose(file);
 }
 
 void output(char *r, int i) {
     
-    char aux1[100];
-    sprintf(aux1, "%d", i);
-    aux1 = strcat("../Resultados/command", aux1);
-    char *filename = strcat(aux2, "_output.txt");
+    char filename[100] = "./Resultados/command";
+    char aux[100];
+    sprintf(aux, "%d", i + 1);
+    strcat(filename, aux);
+    strcat(filename, "_output.txt");
 
-    FILE *file = fopen(filename, "w");
-    
-    if (!file) {
-        printf("Ficheiro nao encontrado");
-        exit(-1);
-    }
+    FILE *file = fopen(filename, "w+");
 
     fprintf(file, r);
     fclose(file);

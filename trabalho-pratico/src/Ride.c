@@ -6,6 +6,7 @@
 #include "ArrayList.h"
 #include "Driver.h"
 #include <glib.h>
+#include <stdlib.h>
 
 typedef struct ride
 {
@@ -25,11 +26,6 @@ static ArrayList *list = NULL;
 static GHashTable *hashCity = NULL;
 static GHashTable *hashDriver = NULL;
 static GHashTable *hashUsers = NULL;
-
-int getElementSizeRide()
-{
-    return sizeof(Ride *);
-}
 
 void loadRide(char *sp)
 {
@@ -98,7 +94,7 @@ void initHashTables()
 
 void initListRide(int size){
     if(!list)
-        list = createAL(size, sizeof(Ride *));
+        list = createAL(size - 1, sizeof(Ride *));
 }
 
 gboolean doesCityHaveRides(char *city)
@@ -121,7 +117,11 @@ double getPrice(char *car_class, double distance)
 
 double avgPayInCity(char* city){
     if (g_hash_table_contains(hashCity, city) == FALSE)
+    {
+        printf("Nao contem %s", city);
         return 0;
+    }
+    
     double tPrice = 0;
     Ride *ride;
     LinkedList *rideList = (LinkedList *)g_hash_table_lookup(hashCity, city);

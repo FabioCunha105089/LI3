@@ -7,21 +7,25 @@
 
 int batchMode(char const *argv[])
 {
-    char *csvPath = argv[0];
-    load(strcat(strdup(csvPath), "/drivers.csv"), loadDriver, initListDriver);
-    load(strcat(strdup(csvPath), "/users.csv"), loadUser, initListUser);
-    load(strcat(strdup(csvPath), "/rides.csv"), loadRide, initListRide);
+    char *csvPath = argv[1];
+    char *aux = strdup(csvPath);
+    load(strcat(aux, "/drivers.csv"), loadDriver, initListDriver, 1);
+    aux = strdup(csvPath);
+    load(strcat(aux, "/users.csv"), loadUser, initListUser, 1);
+    aux = strdup(csvPath);
+    load(strcat(aux, "/rides.csv"), loadRide, initListRide, 1);
     initHashTables();
-    load(argv[1], loadQuery, initListQuery);
+    load(argv[2], loadQuery, initListQuery, 0);
     executeQueries();
     freeDriver();
     freeUser();
     freeQuery();
     freeRide();
+    free(aux);
     return 0;
 }
 
 int main(int argc, char const *argv[])
 {
-    return argc == 2 ? batchMode(argv) : 0;
+    return argc == 3 ? batchMode(argv) : 0;
 }

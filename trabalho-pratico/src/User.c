@@ -1,5 +1,6 @@
 #include "User.h"
 #include "Date.h"
+#include "Ride.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -18,15 +19,10 @@ typedef struct user {
 
 static ArrayList *list = NULL;
 
-int getElementSizeUser() {
-
-    return sizeof(User *);
-}
-
 void initListUser(int size) {
     
     if (!list)
-        list = createAL(size, sizeof(User *));
+        list = createAL(size - 1, sizeof(User *));
 }
 
 void loadUser(char *sp) {
@@ -56,12 +52,13 @@ User *findUserByUsername(char *username) {
             return user;
         }
     }
+    return NULL;
 }
 
 
-gboolean isUserActive(User *user) {
+gboolean isUserActive(char *username) {
 
-    return user->account_status;
+    return findUserByUsername(username)->account_status;
 }
 
 char *getUserBasicInfo(char *id) {

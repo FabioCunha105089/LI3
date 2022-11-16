@@ -21,15 +21,10 @@ typedef struct driver
 
 static ArrayList *list = NULL;
 
-int getElementSizeDriver()
-{
-    return sizeof(Driver *);
-}
-
 void initListDriver(int size)
 {
     if (!list)
-        list = createAL(size, sizeof(Driver *));
+        list = createAL(size - 1, sizeof(Driver *));
 }
 
 void loadDriver(char *sp)
