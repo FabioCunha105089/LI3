@@ -7,7 +7,7 @@
     LinkedList* createLL();
     gboolean isEmpty(LinkedList*);
     void addLL(LinkedList*, void*);
-    void* findByIndex(LinkedList*, int);
+    void* iterateLL(LinkedList*);
     int getLLSize(LinkedList*);
     GDestroyNotify freeLinkedList(gpointer);
 

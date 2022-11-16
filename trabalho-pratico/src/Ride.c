@@ -128,7 +128,7 @@ double avgPayInCity(char* city){
     int nRides = getLLSize(rideList);
     for (int i = 0; i < nRides; i++)
     {
-        ride = (Ride *)findByIndex(rideList, i);
+        ride = (Ride *)iterateLL(rideList);
         tPrice += getPrice(getCarClass(ride->driver), ride->distance);
     }
     return tPrice / nRides;
@@ -149,7 +149,7 @@ double calculateDriverAvgScore(char *id){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         score += ride->score_driver;
     }
     return score / nRides;
@@ -161,7 +161,7 @@ double* calculateDriverAvgScoreAndPay(char *id){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         score += ride->score_driver;
         pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
     }
@@ -177,7 +177,7 @@ double calculateTotalPayDriver(char *id){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         pay += getPrice(getCarClass(id), ride->distance)+ ride->tip;
     }
     return pay;
@@ -189,7 +189,7 @@ double calculateUserAvgScore(char *username){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         score += ride->score_user;
     }
     return score / nRides;
@@ -201,7 +201,7 @@ double* calculateUserAvgScoreAndPay(char *username){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         score += ride->score_user;
         pay += getPrice(getCarClass(ride->driver), ride->distance)+ ride->tip;
     }
@@ -217,7 +217,7 @@ double calculateTotalPayUser(char *username){
     int nRides = getLLSize(rides);
     Ride *ride;
     for(int i = 0; i < nRides; i++){
-        ride = (Ride *) findByIndex(rides, i);
+        ride = (Ride *) iterateLL(rides);
         pay += getPrice(getCarClass(ride->driver), ride->distance)+ ride->tip;
     }
     return pay;

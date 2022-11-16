@@ -11,6 +11,7 @@ typedef struct ll{
     Node* head;
     Node* tail;
     int size;
+    Node *pointer;
 }LinkedList;
 
 LinkedList* createLL(){
@@ -18,6 +19,7 @@ LinkedList* createLL(){
     list->size = 0;
     list->head = NULL;
     list->tail = NULL;
+    list->pointer = NULL;
     return list;
 }
 
@@ -44,13 +46,16 @@ void addLL(LinkedList* list, void* data){
     list->size++;
 }
 
-void* findByIndex(LinkedList* list, int index){
-    Node* node = list->head;
-    while(index > 0){
-        node = node->next;
-        index--;
+void* iterateLL(LinkedList* list){
+    if(!list->pointer){
+        list->pointer = list->head;
+        return list->pointer->data;
+    } else if(list->pointer == list->tail){
+        list->pointer = list->head;
+        return list->tail->data;
     }
-    return node->data;
+    list->pointer = list->pointer->next;
+    return list->pointer->data;
 }
 
 int getLLSize(LinkedList* list){
