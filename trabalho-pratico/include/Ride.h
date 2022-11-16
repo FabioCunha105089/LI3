@@ -23,5 +23,6 @@ double calculateUserAvgScore(char *);
 double* calculateUserAvgScoreAndPay(char *);
 void initListRide(int);
 void initHashTables();
+void freeRide();
 
 #endif

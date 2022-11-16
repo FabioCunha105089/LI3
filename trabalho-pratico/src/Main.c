@@ -14,6 +14,10 @@ int batchMode(char const *argv[])
     initHashTables();
     load(argv[1], loadQuery, initListQuery);
     executeQueries();
+    freeDriver();
+    freeUser();
+    freeQuery();
+    freeRide();
     return 0;
 }
 

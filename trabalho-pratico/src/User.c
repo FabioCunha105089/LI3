@@ -105,3 +105,8 @@ double *getUserAvgScoreAndPay(char *id) {
     return values;
 
 }
+
+void freeUser()
+{
+    freeArrayList(list);
+}

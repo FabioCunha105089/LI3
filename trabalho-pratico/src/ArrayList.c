@@ -48,3 +48,12 @@ int getALSize(ArrayList* list){
 void* getByIndex(ArrayList* list, int index){
     return list->array[index];
 }
+
+void freeArrayList(ArrayList * list)
+{
+    for(int i = 0; i < list->size; i++)
+    {
+        free(list->array[i]);
+    }
+    free(list);
+}

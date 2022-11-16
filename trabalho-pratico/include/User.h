@@ -15,4 +15,5 @@ void initListUser(int);
 char *getUserBasicInfo(char *);
 double getUserAvgScore(char *);
 double *getUserAvgScoreAndPay(char *);
+void freeUser();
 #endif

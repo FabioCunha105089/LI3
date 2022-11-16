@@ -5,6 +5,7 @@
 #include "LinkedList.h"
 #include "ArrayList.h"
 #include "Driver.h"
+#include <glib.h>
 
 typedef struct ride
 {
@@ -49,9 +50,9 @@ void loadRide(char *sp)
 void initHashTables()
 {
     int size = getALSize(list);
-    hashCity = g_hash_table_new(g_str_hash, g_str_equal);
-    hashDriver = g_hash_table_new(g_str_hash, g_str_equal);
-    hashUsers = g_hash_table_new(g_str_hash, g_str_equal);
+    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
+    hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
+    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     Ride *ride = NULL;
 
     for (int i = 0; i < size; i++)
@@ -230,4 +231,12 @@ int getNumberOfRidesDriver(char *id)
 int getNumberOfRidesUser(char *username)
 {
     return getLLSize((LinkedList *) g_hash_table_lookup(hashUsers, username));
+}
+
+void freeRide()
+{
+    freeArrayList(list);
+    g_hash_table_destroy(hashCity);
+    g_hash_table_destroy(hashDriver);
+    g_hash_table_destroy(hashUsers);
 }

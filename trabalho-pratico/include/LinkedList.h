@@ -9,5 +9,6 @@
     void addLL(LinkedList*, void*);
     void* findByIndex(LinkedList*, int);
     int getLLSize(LinkedList*);
+    void freeLinkedList(LinkedList* );
 
 #endif
