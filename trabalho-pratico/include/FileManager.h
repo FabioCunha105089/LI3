@@ -5,5 +5,6 @@
 
 void load(char *, void *(*loadFunc)(char *), void (*initFunc)(int));
 int getLines(FILE *);
+void output(char *);
 
 #endif

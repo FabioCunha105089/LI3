@@ -43,3 +43,22 @@ void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int))
     free(line);
     fclose(file);
 }
+
+void output(char *r, int i) {
+    
+    char aux1[100];
+    sprintf(aux1, "%d", i);
+    aux1 = strcat("../Resultados/command", aux1);
+    char *filename = strcat(aux2, "_output.txt");
+
+    FILE *file = fopen(filename, "w");
+    
+    if (!file) {
+        printf("Ficheiro nao encontrado");
+        exit(-1);
+    }
+
+    fprintf(file, r);
+    fclose(file);
+
+}

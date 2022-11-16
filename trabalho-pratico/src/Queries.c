@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "LinkedList.h"
+#include "FileManager.h"
 
 typedef struct query{
     char id;
@@ -119,16 +120,17 @@ void executeQueries()
         switch(query->id)
         {
             case '1':
-                query1(query->args[0]);
+                output(query1(query->args[0]), i);
                 break;
 
             case '4':
-                query4(query->args[0]);
+                output(query4(query->args[0]), i);
                 break;
 
             case '6':
                 //query6(query->args[0], sToDate(query->args[1]), sToDate(query->args[2]));
                 break;
+            default: break;
         }
     }
 }
