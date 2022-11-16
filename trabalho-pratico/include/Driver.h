@@ -17,5 +17,6 @@ char *getDriverBasicInfo(char *);
 double getDriverAvgScore(char *);
 double *getDriverAvgScoreAndPay(char *);
 void initListDriver(int);
+void freeDriver();
 
 #endif

@@ -56,3 +56,17 @@ void* findByIndex(LinkedList* list, int index){
 int getLLSize(LinkedList* list){
     return list->size;
 }
+
+GDestoyNotify *freeLinkedList(gpointer *data)
+{
+    LinkedList* list = (LinkedList *) data;
+    Node *node = list->head;
+    for(int i = 0; i < list->size; i++)
+    {
+        free(node->data);
+        Node *aux = node->next;
+        free(node);
+        node = aux;
+    }
+    free(list);
+}

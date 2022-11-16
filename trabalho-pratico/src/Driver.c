@@ -99,3 +99,7 @@ char *getCarClass(char *id)
 {
     return findDriverByID(id)->car_class;
 }
+
+void freeDriver(){ 
+    freeArrayList(list);
+}

@@ -12,4 +12,5 @@ GHashTable *arrayListToHashMap(ArrayList *, GHashTable *(*hashTableFunc)(void **
 LinkedList *getLLFromAL(ArrayList *, LinkedList *(*llFunc)(void **, int));
 int getALSize(ArrayList*);
 void *getByIndex(ArrayList*, int);
+void freeArrayList(ArrayList*);
 #endif
