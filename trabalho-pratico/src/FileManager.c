@@ -1,4 +1,4 @@
-#include "../include/FileManager.h"
+#include "FileManager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

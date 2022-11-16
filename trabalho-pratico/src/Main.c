@@ -1,8 +1,8 @@
-#include "../include/FileManager.h"
-#include "../include/Driver.h"
-#include "../include/User.h"
-#include "../include/Ride.h"
-#include "../include/Queries.h"
+#include "FileManager.h"
+#include "Driver.h"
+#include "User.h"
+#include "Ride.h"
+#include "Queries.h"
 #include <string.h>
 
 int batchMode(char const *argv[])

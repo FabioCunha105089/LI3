@@ -1,8 +1,8 @@
-#include "../include/Driver.h"
+#include "Driver.h"
 #include <string.h>
 #include <stdlib.h>
-#include "../include/ArrayList.h"
-#include "../include/Ride.h"
+#include "ArrayList.h"
+#include "Ride.h"
 
 typedef struct driver
 {

@@ -1,5 +1,5 @@
-#include "../include/User.h"
-#include "../include/Date.h"
+#include "User.h"
+#include "Date.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -12,6 +12,8 @@ typedef struct user {
     Date *account_creation;
     char *pay_method;
     gboolean account_status;
+    int age;
+    double avgScore;
 } User;
 
 static ArrayList *list = NULL;
