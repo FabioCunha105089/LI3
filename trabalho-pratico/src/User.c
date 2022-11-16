@@ -39,7 +39,7 @@ void loadUser(char *sp) {
     user->account_creation = sToDate(strsep(&sp, ";"));
     user->pay_method = strsep(&sp, ";");
     user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
-    user->age = calculateAge(user->birth_day);
+    user->age = calculateAge(user->birthdate);
     user->avgScore = -1;
     addAL(list, user);
 }
@@ -47,6 +47,7 @@ void loadUser(char *sp) {
 User *findUserByUsername(char *username) {
 
     User * user;
+    int arrSize = getALSize(list);
     for (int i = 0; i < arrSize; i++) {
         
         user = (User *)getByIndex(list,i);
@@ -78,7 +79,7 @@ char *getUserBasicInfo(char *id) {
 }
 
 
-double getUserAvgScoreAndPay(char *id) {
+double getUserAvgScore(char *id) {
 
     User *user = findUserByUsername(id);
     
@@ -90,7 +91,7 @@ double getUserAvgScoreAndPay(char *id) {
 
 }
 
-double getUserAvgScoreAndPay(char *id) {
+double *getUserAvgScoreAndPay(char *id) {
 
     User *user = findUserByUsername(id);
     

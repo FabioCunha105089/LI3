@@ -210,7 +210,7 @@ double* calculateUserAvgScoreAndPay(char *username){
     return values;
 }
 
-double calculateTotalPay(char *username){
+double calculateTotalPayUser(char *username){
     LinkedList *rides = (LinkedList *) g_hash_table_lookup(hashUsers, username);
     double pay = 0;
     int nRides = getLLSize(rides);

@@ -1,10 +1,10 @@
-#include "../include/Queries.h"
-#include "../include/Driver.h"
-#include "../include/Ride.h"
-#include "../include/User.h"
+#include "Queries.h"
+#include "Driver.h"
+#include "Ride.h"
+#include "User.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../include/LinkedList.h"
+#include "LinkedList.h"
 
 typedef struct query{
     char id;
@@ -52,36 +52,6 @@ double query4(char *city)
     return avgPayInCity(city);
 }
 
-// double *calculateAvgScoreAndTotalPay(LinkedList *list, ArrayList *drivers, int size, char *carClass, char driverOrUser)
-// {
-//     double *res = (int *)malloc(sizeof(int) * 2);
-//     double score = 0, pay = 0;
-//     Ride *ride;
-//     if (driverOrUser == 'd')
-//     {
-//         for (int i = 0; i < size; i++)
-//         {
-//             ride = (Ride *)findByIndex(list, i);
-//             score += getScoreDriver(ride);
-//             pay += getPrice(carClass, getDistance(ride)) + getTip(ride);
-//         }
-//     }
-//     else
-//     {
-//         for (int i = 0; i < size; i++)
-//         {
-//             ride = (Ride *)findByIndex(list, i);
-//             score += getScoreUser(ride);
-//             carClass = (char *) find(drivers, getDriver(ride), findDriverCarClass);
-//             pay += getPrice(carClass, getDistance(ride)) + getTip(ride);
-//         }
-//     }
-
-//     res[0] = score / size;
-//     res[1] = pay;
-//     return res;
-// }
-
 char *query1_drivers(char *id)
 {
     if(isDriverActive(id) == FALSE)
@@ -111,12 +81,12 @@ char *query1_drivers(char *id)
 
 char *query1_users(char *id) {
     
-    if(isUserActive(id) = FALSE)
+    if(isUserActive(id) == FALSE)
         return "";
 
     char *r = getUserBasicInfo(id);
 
-    if(doesUserHaveRides(id) = FALSE){
+    if(doesUserHaveRides(id) == FALSE){
         strcat(r, "0,000;0;0.000");
         return r;
     }

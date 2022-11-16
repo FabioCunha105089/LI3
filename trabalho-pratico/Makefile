@@ -1,13 +1,12 @@
 OBJS	 = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o Main.o
-HEADERS  = ArrayList.h Date.h Driver.h FileManager.h LinkedList.h Queries.h Ride.h User.h
-OUT	 = programa-principal
+OUT	 	 = programa-principal
 SRC      = ./src/
-CC	 = gcc
-FLAGS	 = -g -c -Wall `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs`
-LFLAGS	 = `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs`
+CC	 	 = gcc
+FLAGS	 = -g -c -Wall -Iinclude `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs`
+LFLAGS	 = `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs` -lm
 
 all: $(OBJS)
-	$(CC) `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs` -g $(OBJS) -o $(OUT) $(LFLAGS) 
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 	
 ArrayList.o: $(SRC)ArrayList.c
 	$(CC) $(FLAGS) $(SRC)ArrayList.c

@@ -91,7 +91,7 @@ double *getDriverAvgScoreAndPay(char *id)
 
     double *values = (double *) malloc (sizeof(double) * 2);
     values[0] = driver->avgScore;
-    values[1] = calculateTotalPay(id);
+    values[1] = calculateTotalPayDriver(id);
     return values;
 }
 
