@@ -57,9 +57,11 @@ void output(char *r, int i) {
     strcat(filename, aux);
     strcat(filename, "_output.txt");
 
-    FILE *file = fopen(filename, "w+");
+    FILE *file = fopen(filename, "w+");   
 
-    fprintf(file, r);
+    fputs(r, file)
+    if(strcmp(r, "") != 0)
+        fputs("\n", file);
     fclose(file);
 
 }
