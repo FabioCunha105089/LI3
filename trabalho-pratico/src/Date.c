@@ -14,7 +14,7 @@ Date *sToDate(char* string){
 int calculateAge(Date *date){
     int age = 0;
     age = BASEYEAR - date->year;
-    if(date->month < BASEMONTH || (date->month == BASEMONTH && date->day < BASEDAY)){
+    if(date->month > BASEMONTH || (date->month == BASEMONTH && date->day > BASEDAY)){
         age--;
     }
     return age;
