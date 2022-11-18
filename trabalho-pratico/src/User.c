@@ -3,6 +3,8 @@
 #include "Ride.h"
 #include <stdio.h>
 #include <string.h>
+#include "ArrayList.h"
+#include <glib.h>
 
 typedef struct user {
 
@@ -14,19 +16,23 @@ typedef struct user {
     char *pay_method;
     gboolean account_status;
     int age;
+    int account_age;
     double avgScore;
 } User;
 
 static ArrayList *list = NULL;
+static GHashTable *positions = NULL;
 
-void initListUser(int size) {
-    
+void initListUser(int size) {    
     if (!list)
         list = createAL(size - 1, sizeof(User *));
 }
 
 void loadUser(char *sp) {
 
+    if(!positions)
+        positions = g_hash_table_new(g_str_hash, g_str_equal);
+    
     User *user = (User *)malloc(sizeof(User));
     user->username = strsep(&sp, ";");
     user->name = strsep(&sp, ";");
@@ -36,23 +42,14 @@ void loadUser(char *sp) {
     user->pay_method = strsep(&sp, ";");
     user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
     user->age = calculateAge(user->birthdate);
+    user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;
+    g_hash_table_insert(positions, user->username, user);
     addAL(list, user);
 }
 
 User *findUserByUsername(char *username) {
-
-    User * user;
-    int arrSize = getALSize(list);
-    for (int i = 0; i < arrSize; i++) {
-        
-        user = (User *)getByIndex(list,i);
-        
-        if (strcmp(user->username, username) == 0) {
-            return user;
-        }
-    }
-    return NULL;
+    return (User *) g_hash_table_lookup(positions, username);
 }
 
 
@@ -106,4 +103,19 @@ double *getUserAvgScoreAndPay(char *id) {
 void freeUser()
 {
     freeArrayList(list);
+}
+
+LinkedList *getUserGenderAccAgeName(char *username)
+{
+    User *user = findUserByUsername(username);
+    LinkedList *r = createLL();
+    addLL(r, &user->gender);
+    addLL(r, &user->account_age);
+    addLL(r, user->name);
+    return r;
+}
+
+int getUserAccAge(char *username)
+{
+    return findUserByUsername(username)->account_age;
 }

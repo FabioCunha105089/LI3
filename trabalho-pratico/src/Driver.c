@@ -16,6 +16,7 @@ typedef struct driver
     Date *account_creation;
     gboolean account_status;
     int age;
+    int account_age;
     double avgScore;
 } Driver;
 
@@ -40,6 +41,7 @@ void loadDriver(char *sp)
     driver->account_creation = sToDate(strsep(&sp, ";"));
     driver->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
     driver->age = calculateAge(driver->birth_day);
+    driver->account_age = calculateAge(driver->account_creation);
     driver->avgScore = -1;
     addAL(list, driver);
 }
@@ -97,4 +99,19 @@ char *getCarClass(char *id)
 
 void freeDriver(){ 
     freeArrayList(list);
+}
+
+int getDriverAccAge(char *id)
+{
+    return findDriverByID(id)->account_age;
+}
+
+char *getDriverName(char *id)
+{
+    return findDriverByID(id)->name;
+}
+
+char getDriverGender(char *id)
+{
+    return findDriverByID(id)->gender;
 }

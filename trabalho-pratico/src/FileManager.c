@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
+#include "LinkedList.h"
 
 int getLines(FILE *file)
 {
@@ -64,4 +65,33 @@ void output(char *r, int i) {
         fputs("\n", file);
     fclose(file);
 
+}
+
+void outputMult(LinkedList *r, int i)
+{
+    char **arr = (char **) iterateLL(r);
+    int *size = (int *) iterateLL(r);
+
+    char filename[100] = "./Resultados/command";
+    char aux[100];
+    sprintf(aux, "%d", i + 1);
+    strcat(filename, aux);
+    strcat(filename, "_output.txt");
+
+    FILE *file = fopen(filename, "w+");
+
+    if(size[0] == 0)
+    {
+        fputs("", file);
+    } else {
+        for(int i = 0; i < size[0]; i++)
+        {
+            if(!arr[i])
+                break;
+            fputs(arr[i], file);
+            fputs("\n", file);
+        }
+    }
+    free(size);
+    free(r);
 }

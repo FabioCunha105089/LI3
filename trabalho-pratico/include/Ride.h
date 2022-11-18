@@ -24,5 +24,6 @@ double* calculateUserAvgScoreAndPay(char *);
 void initListRide(int);
 void initHashTables();
 void freeRide();
+LinkedList *ridesByGenderAndAge(char, int);
 
 #endif

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "Date.h"
 #include <stdio.h>
-#include "ArrayList.h"
+#include "LinkedList.h"
 
 typedef struct user User;
 void loadUser(char *);
@@ -16,4 +16,7 @@ char *getUserBasicInfo(char *);
 double getUserAvgScore(char *);
 double *getUserAvgScoreAndPay(char *);
 void freeUser();
+char *userGenderAndAccountAge(char *, char, int);
+int getUserAccAge(char *);
+LinkedList *getUserGenderAccAgeName(char *);
 #endif
