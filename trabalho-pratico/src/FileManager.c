@@ -59,7 +59,7 @@ void output(char *r, int i) {
 
     FILE *file = fopen(filename, "w+");   
 
-    fputs(r, file)
+    fputs(r, file);
     if(strcmp(r, "") != 0)
         fputs("\n", file);
     fclose(file);
