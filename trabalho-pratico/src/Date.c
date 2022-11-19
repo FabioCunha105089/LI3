@@ -19,3 +19,17 @@ int calculateAge(Date *date){
     }
     return age;
 }
+
+
+int isDateBigger (Date *dateA, Date *dateB) {
+
+    int date1 = dateA->day + dateA->month * 100 + dateA->year * 2000;
+    int date2 = dateB->day + dateB->month * 100 + dateB->year * 2000;
+
+    if (date1 > date2) {
+
+        return 1;
+
+    } else return 0;
+
+}

@@ -332,3 +332,32 @@ LinkedList *ridesByGenderAndAge(char gender, int years)
     addLL(res, s);
     return res;
 }
+
+double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
+
+    if (g_hash_table_contains(hashCity, city) == FALSE) {
+
+        printf("Nao contem %s", city);
+        return 0;
+    }
+
+    Date *dateA = sToDate(date1);
+    Date *dateB = sToDate(date2);
+    double tDistance = 0;
+    Ride *ride;
+    LinkedList *rideList = (LinkedList *)g_hash_table_lookup(hashCity, city);
+    int nRides = getLLSize(rideList);
+
+    for (int i = 0; i < nRides; i++) {
+
+        ride = (Ride *)iterateLL(rideList);
+
+        if (isDateBigger(ride->date, dateA) && isDateBigger(ride->date,dateB)) {
+            
+            tDistance += ride->distance;
+        }
+    }
+
+    return tDistance/nRides;
+
+}

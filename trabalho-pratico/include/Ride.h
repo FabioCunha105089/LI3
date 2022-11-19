@@ -25,5 +25,6 @@ void initListRide(int);
 void initHashTables();
 void freeRide();
 LinkedList *ridesByGenderAndAge(char, int);
+double avgDistanceInCityByDate(char *, char*, char*);
 
 #endif

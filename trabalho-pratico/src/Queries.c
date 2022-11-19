@@ -63,6 +63,11 @@ double query4(char *city)
     return avgPayInCity(city);
 }
 
+double query6(char *city, char *dataA, char *dataB) {
+
+    return avgDistanceInCityByDate(city, dataA, dataB);
+}
+
 char *query1_drivers(char *id)
 {
     if (isDriverActive(id) == FALSE)
@@ -234,7 +239,9 @@ void executeQueries()
             sprintf(aux, "%.3f", query4(query->args[0]));
             output(aux, i);
             break;
-
+        case '6':
+            sprintf(aux, "%.3f", query6(query->args[0][0][0]));
+            output(aux, i);
         case '8':
             outputMult(query8(query->args[0][0], atoi(query->args[1])), i);
             break;

@@ -14,5 +14,5 @@ typedef struct date
 
 Date *sToDate(char *);
 int calculateAge(Date *);
-
+int isDateBigger(Date*, Date *);
 #endif
