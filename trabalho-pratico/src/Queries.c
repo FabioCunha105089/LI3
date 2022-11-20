@@ -240,7 +240,7 @@ void executeQueries()
             output(aux, i);
             break;
         case '6':
-            sprintf(aux, "%.3f", query6(query->args[0][0][0]));
+            sprintf(aux, "%.3f", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
         case '8':
             outputMult(query8(query->args[0][0], atoi(query->args[1])), i);

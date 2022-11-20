@@ -352,7 +352,7 @@ double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
 
         ride = (Ride *)iterateLL(rideList);
 
-        if (isDateBigger(ride->date, dateA) && isDateBigger(ride->date,dateB)) {
+        if (isDateBigger(ride->date, dateA)==1 && isDateBigger(dateB, ride->date)==1) {
             
             tDistance += ride->distance;
         }
