@@ -60,6 +60,8 @@ void output(char *r, int i) {
 
     FILE *file = fopen(filename, "w+");   
 
+    printf("%s\n", r);
+    
     fputs(r, file);
     if(strcmp(r, "") != 0)
         fputs("\n", file);

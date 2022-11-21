@@ -346,15 +346,17 @@ double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
     double tDistance = 0;
     Ride *ride;
     LinkedList *rideList = (LinkedList *)g_hash_table_lookup(hashCity, city);
-    int nRides = getLLSize(rideList);
+    int tRides = getLLSize(rideList);
+    int nRides = 0;
 
-    for (int i = 0; i < nRides; i++) {
+    for (int i = 0; i < tRides; i++) {
 
         ride = (Ride *)iterateLL(rideList);
 
         if (isDateBigger(ride->date, dateA)==1 && isDateBigger(dateB, ride->date)==1) {
             
             tDistance += ride->distance;
+            nRides++;
         }
     }
 
