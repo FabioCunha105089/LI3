@@ -144,7 +144,7 @@ void executeQueries()
             break;
 
         case '4':
-            sprintf(aux, "%.3f", query4(query->args[0]));
+            sprintf(aux, "%.3lf", query4(query->args[0]));
             output(aux, i);
             break;
         case '6':
