@@ -130,100 +130,6 @@ char *query1(char *id)
     return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
-void swap(char *a, char *b)
-{
-    char *temp = a;
-    a = b;
-    b = temp;
-}
-
-char *_q8getDriverID(char *s)
-{
-    char *sp = strdup(s);
-    return strsep(&sp, ";");
-}
-
-char *_q8getUsername(char *s)
-{
-    char *sp = strdup(s);
-    strsep(&sp, ";");
-    strsep(&sp, ";");
-    return strsep(&sp, ";");
-}
-
-char *_q8getRideID(char *s)
-{
-    char *sp = strdup(s);
-    strsep(&sp, "?");
-    return strsep(&sp, "\n");
-}
-
-int _q8CheckPivot(char *j, int pivot, char *high, int jay)
-{
-    return (getDriverAccAge(j) < pivot || getUserAccAge(_q8getUsername(j)) < getUserAccAge(_q8getUsername(high)) || atoi(_q8getRideID(j)) < atoi(_q8getRideID(high))) ? 0 : 1;
-}
-
-int partition(char **array, int low, int high)
-{
-    char *id = _q8getDriverID(array[high]);
-    int pivot = getDriverAccAge(id);
-
-    int i = low - 1;
-
-    for (int j = low; j < high; j++)
-    {
-        if (_q8CheckPivot(array[j], pivot, array[high], j) == 0)
-        {
-            i++;
-            swap(array[i], array[j]);
-        }
-    }
-    swap(array[i + 1], array[high]);
-
-    return (i + 1);
-}
-
-void quickSort(char **array, int low, int high)
-{
-    if (low < high)
-    {
-        int pi = partition(array, low, high);
-
-        quickSort(array, low, pi - 1);
-
-        quickSort(array, pi + 1, high);
-    }
-}
-
-char *_q8removeRideID(char *s)
-{
-    char *sp = strdup(s);
-    return strsep(&sp, "?");
-}
-
-LinkedList *query8(char gender, int years)
-{
-    LinkedList *l = ridesByGenderAndAge(gender, years);
-    int *size = (int *)malloc(sizeof(int));
-    size = (int *)iterateLL(l);
-    char **arr = malloc(sizeof(char *) * size[0]);
-    arr = (char **)iterateLL(l);
-    if(arr)
-    {
-        quickSort(arr, 0, size[0] - 1);
-        for (int i = 0; i < size[0]; i++)
-        {
-            arr[i] = _q8removeRideID(arr[i]);
-        }
-    }
-
-    free(l);
-    LinkedList *r = createLL();
-    addLL(r, arr);
-    addLL(r, size);
-    return r;
-}
-
 void executeQueries()
 {
     int nQueries = getALSize(list);
@@ -238,16 +144,12 @@ void executeQueries()
             break;
 
         case '4':
-            //printf("%f\n", query4(query->args[0]));
             sprintf(aux, "%.3f", query4(query->args[0]));
             output(aux, i);
             break;
         case '6':
             sprintf(aux, "%.3f", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
-            break;
-        case '8':
-            outputMult(query8(query->args[0][0], atoi(query->args[1])), i);
             break;
         default:
             break;

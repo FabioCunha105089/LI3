@@ -8,8 +8,6 @@
 
 typedef struct ride Ride;
 void loadRide(char *);
-int getElementSizeRide();
-LinkedList *getRideHashTables(void **, int);
 double avgPayInCity(char *);
 gboolean doesDriverHaveRides(char *);
 int getNumberOfRidesDriver(char *);
@@ -24,7 +22,6 @@ double* calculateUserAvgScoreAndPay(char *);
 void initListRide(int);
 void initHashTables();
 void freeRide();
-LinkedList *ridesByGenderAndAge(char, int);
 double avgDistanceInCityByDate(char *, char*, char*);
 
 #endif

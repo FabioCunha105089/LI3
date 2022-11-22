@@ -16,7 +16,5 @@ char *getUserBasicInfo(char *);
 double getUserAvgScore(char *);
 double *getUserAvgScoreAndPay(char *);
 void freeUser();
-char *userGenderAndAccountAge(char *, char, int);
 int getUserAccAge(char *);
-LinkedList *getUserGenderAccAgeName(char *);
 #endif

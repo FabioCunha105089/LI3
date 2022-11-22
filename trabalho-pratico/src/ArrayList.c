@@ -26,16 +26,6 @@ void addAL(ArrayList *list, void *input)
     list->pointer++;
 }
 
-void *find(ArrayList *list, void *input, void *(*findFunc)(void **, int, void *))
-{
-    return findFunc(list->array, list->size, input);
-}
-
-GHashTable *arrayListToHashMap(ArrayList *list, GHashTable *(*hashTableFunc)(void **, int))
-{
-    return hashTableFunc(list->array, list->size);
-}
-
 LinkedList *getLLFromAL(ArrayList *al, LinkedList *(*llFunc)(void **, int))
 {
     return llFunc(al->array, al->size);
