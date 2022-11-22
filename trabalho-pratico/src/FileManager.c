@@ -92,6 +92,5 @@ void outputMult(LinkedList *r, int i)
             fputs("\n", file);
         }
     }
-    free(size);
     free(r);
 }

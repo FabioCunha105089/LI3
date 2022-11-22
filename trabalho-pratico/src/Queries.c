@@ -32,7 +32,7 @@ int getNArgs(char id)
     case '4':
         return 1;
 
-    case '8':
+    case '7':
         return 2;
 
     case '6':
@@ -59,6 +59,7 @@ void loadQuery(char *sp)
     }
     addAL(list, query);
 }
+
 
 double query4(char *city)
 {
@@ -130,6 +131,43 @@ char *query1(char *id)
     return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
+LinkedList *query7(int n, char *city){
+    ArrayList *rideList = getRidesInCityByDriverScore(city);
+    char **r = malloc(sizeof(char *) * n);
+    char *id, *name;
+    char aux[10];
+    double score;
+    int skip = 0, size = getALSize(rideList) -1 , pos, counter = n;
+    for(int i = size; counter > 0; counter--)
+    {
+        pos = (counter - n) * -1;
+        id = getDriverIDFromRide((Ride *) getByIndex(rideList, i));
+        name = getDriverNameFromRide((Ride *) getByIndex(rideList, i));
+        score = getDriverAvgScoreInCityFromRide((Ride *) getByIndex(rideList, i));
+        sprintf(aux, "%.3f", score);
+        r[pos] = (char *) malloc(strlen(id) + strlen(name) + 15);
+        strcpy(r[pos], id);
+        strcat(r[pos], ";");
+        strcat(r[pos], name);
+        strcat(r[pos], ";");
+        strcat(r[pos], aux);
+        for(int j = 0; j < pos; j++)
+        {
+            if(strcmp(r[j], r[pos]) == 0)
+            {
+                free(r[pos]);
+                counter++;
+                break;
+            }
+        }
+        i--;
+    }
+    LinkedList *l = createLL();
+    addLL(l, r);
+    addLL(l, &n);
+    return l;
+}
+
 void executeQueries()
 {
     int nQueries = getALSize(list);
@@ -151,6 +189,8 @@ void executeQueries()
             sprintf(aux, "%.3f", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
             break;
+        case '7':
+            outputMult(query7(atoi(query->args[0]), query->args[1]), i);
         default:
             break;
         }

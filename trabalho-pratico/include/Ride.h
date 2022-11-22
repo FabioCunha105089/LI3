@@ -23,5 +23,9 @@ void initListRide(int);
 void initHashTables();
 void freeRide();
 double avgDistanceInCityByDate(char *, char*, char*);
+ArrayList *getRidesInCityByDriverScore(char *city);
+char *getDriverIDFromRide(Ride *);
+char *getDriverNameFromRide(Ride *);
+double getDriverAvgScoreInCityFromRide(Ride *);
 
 #endif

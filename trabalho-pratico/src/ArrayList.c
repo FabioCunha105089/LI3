@@ -26,11 +26,6 @@ void addAL(ArrayList *list, void *input)
     list->pointer++;
 }
 
-LinkedList *getLLFromAL(ArrayList *al, LinkedList *(*llFunc)(void **, int))
-{
-    return llFunc(al->array, al->size);
-}
-
 int getALSize(ArrayList* list){
     return list->size;
 }
@@ -46,4 +41,9 @@ void freeArrayList(ArrayList * list)
         free(list->array[i]);
     }
     free(list);
+}
+
+void quickSortArrayList(ArrayList *list, int elementSize, int (*cmpFunc)(const void *, const void *))
+{
+    qsort(list->array, list->size, elementSize, cmpFunc);
 }

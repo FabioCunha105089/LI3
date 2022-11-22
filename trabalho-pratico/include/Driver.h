@@ -16,5 +16,6 @@ double getDriverAvgScore(char *);
 double *getDriverAvgScoreAndPay(char *);
 void freeDriver();
 int getDriverAccAge(char *);
+char *getDriverName(char *);
 
 #endif

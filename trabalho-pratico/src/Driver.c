@@ -105,3 +105,8 @@ int getDriverAccAge(char *id)
 {
     return findDriverByID(id)->account_age;
 }
+
+char *getDriverName(char * id)
+{
+    return findDriverByID(id)->name;
+}

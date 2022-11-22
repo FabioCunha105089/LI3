@@ -8,6 +8,7 @@
 #include "User.h"
 #include <glib.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct ride
 {
@@ -28,6 +29,7 @@ static GHashTable *hashCity = NULL;
 static GHashTable *hashDriver = NULL;
 static GHashTable *hashUsers = NULL;
 static GHashTable *hashAccAges = NULL;
+static GHashTable *hashDriverCityScores = NULL;
 
 void loadRide(char *sp)
 {
@@ -45,6 +47,19 @@ void loadRide(char *sp)
     addAL(list, ride);
 }
 
+double getPrice(char *car_class, double distance)
+{
+    if (strcmp(car_class, "green") == 0)
+    {
+        return 4 + distance * 0.79;
+    }
+    if (strcmp(car_class, "premium") == 0)
+    {
+        return 5.2 + distance * 0.94;
+    }
+    return 3.25 + distance * 0.62;
+}
+
 void initHashTables()
 {
     int size = getALSize(list);
@@ -52,6 +67,7 @@ void initHashTables()
     hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashAccAges = g_hash_table_new_full(g_direct_equal, g_direct_equal, NULL, freeLinkedList);
+    hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
 
     for (int i = 0; i < size; i++)
@@ -92,6 +108,25 @@ void initHashTables()
         {
             addLL((LinkedList *)g_hash_table_lookup(hashUsers, ride->user), ride);
         }
+
+        //Driver score by city
+        char *driverScore = (char *) malloc(20);
+        strcpy(driverScore, ride->driver);
+        strcat(driverScore, ride->city);
+        double *score_Nrides = (double *) malloc(sizeof(double) * 2);
+        score_Nrides[0] = ride->score_driver;
+        if (g_hash_table_contains(hashDriverCityScores, driverScore) == FALSE)
+        {
+            score_Nrides[1] = 1;
+            g_hash_table_insert(hashDriverCityScores, driverScore, score_Nrides);
+        }
+        else
+        {
+            double *temp = (double *) g_hash_table_lookup(hashDriverCityScores, driverScore);
+            score_Nrides[0] += temp[0];
+            score_Nrides[1] = temp[1] + 1;
+            g_hash_table_replace(hashDriverCityScores, driverScore, score_Nrides);
+        }
     }
 }
 
@@ -104,19 +139,6 @@ void initListRide(int size)
 gboolean doesCityHaveRides(char *city)
 {
     return g_hash_table_contains(hashCity, city);
-}
-
-double getPrice(char *car_class, double distance)
-{
-    if (strcmp(car_class, "green") == 0)
-    {
-        return 4 + distance * 0.79;
-    }
-    if (strcmp(car_class, "premium") == 0)
-    {
-        return 5.2 + distance * 0.94;
-    }
-    return 3.25 + distance * 0.62;
 }
 
 double avgPayInCity(char *city)
@@ -288,4 +310,49 @@ double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
 
     return tDistance/nRides;
 
+}
+
+int compareRidesByDriverScore(const void *A, const void *B)
+{
+    Ride *a = *(Ride **) A;
+    Ride *b = *(Ride **) B;
+    char drivA[20];
+    char drivB[20];
+    strcpy(drivA, a->driver);
+    strcat(drivA, a->city);
+    strcpy(drivB, b->driver);
+    strcat(drivB, b->city);
+    double *score_nRidesA = (double *) g_hash_table_lookup(hashDriverCityScores, drivA);
+    double *score_nRidesB = (double *) g_hash_table_lookup(hashDriverCityScores, drivB);
+    double scoreA = score_nRidesA[0] / score_nRidesA[1];
+    double scoreB = score_nRidesB[0] / score_nRidesB[1];
+    if(scoreA < scoreB || (scoreA == scoreB && atoi(a->driver) < atoi(b->driver)))
+        return -1;
+    return 1;
+}
+
+ArrayList *getRidesInCityByDriverScore(char *city)
+{
+    ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
+    quickSortArrayList(rideList, sizeof(Ride *), compareRidesByDriverScore);
+    return rideList;
+}
+
+char *getDriverIDFromRide(Ride *ride)
+{
+    return ride->driver;
+}
+
+char *getDriverNameFromRide(Ride *ride)
+{
+    return getDriverName(ride->driver);
+}
+
+double getDriverAvgScoreInCityFromRide(Ride *ride)
+{
+    char driver[20];
+    strcpy(driver, ride->driver);
+    strcat(driver, ride->city);
+    double *score = (double *) g_hash_table_lookup(hashDriverCityScores, driver);
+    return score[0] / score[1];
 }

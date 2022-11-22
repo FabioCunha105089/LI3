@@ -1,6 +1,7 @@
 #include "LinkedList.h"
 #include "glib.h"
 #include <stdlib.h>
+#include "ArrayList.h"
 
 typedef struct node{
     void* data;
@@ -74,4 +75,17 @@ GDestroyNotify freeLinkedList(gpointer data)
         free(node);
     }
     free(list);
+}
+
+ArrayList *LLtoAL(LinkedList *ll, int elementSize)
+{
+    if(!ll)
+        printf("asdasd\n");
+    int size = getLLSize(ll);
+    ArrayList *al = createAL(size, elementSize);
+    for(int i = 0; i < size; i++)
+    {
+        addAL(al, iterateLL(ll));
+    }
+    return al;
 }
