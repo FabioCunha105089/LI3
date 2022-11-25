@@ -301,7 +301,7 @@ double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
 
         ride = (Ride *)iterateLL(rideList);
 
-        if (isDateBigger(ride->date, dateA)==1 && isDateBigger(dateB, ride->date)==1) {
+        if (isDateBigger(ride->date, dateA) >=0 && isDateBigger(dateB, ride->date) >= 0) {
             
             tDistance += ride->distance;
             nRides++;
@@ -355,4 +355,35 @@ double getDriverAvgScoreInCityFromRide(Ride *ride)
     strcat(driver, ride->city);
     double *score = (double *) g_hash_table_lookup(hashDriverCityScores, driver);
     return score[0] / score[1];
+}
+
+int mostRecentRide(char *a, char *b)
+{
+    LinkedList *aRides = (LinkedList *) g_hash_table_lookup(hashDriver, a);
+    LinkedList *bRides = (LinkedList *) g_hash_table_lookup(hashDriver, b);
+    int aNrides = getLLSize(aRides), bNrides = getLLSize(bRides);
+    Date aRecent;
+    aRecent.day = BASEDAY;
+    aRecent.month = BASEMONTH;
+    aRecent.year = BASEYEAR;
+    Date bRecent = aRecent;
+    Ride *ride;
+    for(int i = 0; i < aNrides; i++)
+    {
+        ride = (Ride *) iterateLL(aRides);
+        if(isDateBigger(&aRecent, ride->date) == 0)
+            aRecent = *ride->date;
+    }
+
+    for(int i = 0; i < bNrides; i++)
+    {
+        ride = (Ride *) iterateLL(bRides);
+        if(isDateBigger(&bRecent, ride->date) == 0)
+            bRecent = *ride->date;
+    }
+
+    int aux = isDateBigger(&aRecent, &bRecent);
+    if(aux == 0)
+        return atoi(a) > atoi(b) ? -1 : 1;
+    return aux;
 }

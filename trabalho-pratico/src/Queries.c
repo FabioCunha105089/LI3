@@ -30,6 +30,7 @@ int getNArgs(char id)
     {
     case '1':
     case '4':
+    case '2':
         return 1;
 
     case '7':
@@ -137,7 +138,7 @@ LinkedList *query7(int n, char *city){
     char *id, *name;
     char aux[10];
     double score;
-    int skip = 0, size = getALSize(rideList) -1 , pos, counter = n;
+    int size = getALSize(rideList) -1 , pos, counter = n;
     for(int i = size; counter > 0; counter--)
     {
         pos = (counter - n) * -1;
@@ -168,6 +169,15 @@ LinkedList *query7(int n, char *city){
     return l;
 }
 
+LinkedList *query2(int n)
+{
+    char **r = topNdrivers(n);
+    LinkedList *l = createLL();
+    addLL(l, r);
+    addLL(l, &n);
+    return l;
+}
+
 void executeQueries()
 {
     int nQueries = getALSize(list);
@@ -180,7 +190,9 @@ void executeQueries()
         case '1':
             output(query1(query->args[0]), i);
             break;
-
+        case '2':
+            outputMult(query2(atoi(query->args[0])), i);
+            break;
         case '4':
             sprintf(aux, "%.3lf", query4(query->args[0]));
             output(aux, i);

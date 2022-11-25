@@ -110,3 +110,40 @@ char *getDriverName(char * id)
 {
     return findDriverByID(id)->name;
 }
+
+int compareDriversByScore(const void *A, const void *B)
+{
+    Driver *a = *(Driver **) A;
+    Driver *b = *(Driver **) B;
+    
+    if(a->avgScore == -1)
+        a->avgScore = calculateDriverAvgScore(a->id);
+    if(b->avgScore == -1)
+        b->avgScore = calculateDriverAvgScore(b->id);
+
+    if(a->avgScore < b->avgScore)
+        return 1;
+    if(a->avgScore == b->avgScore)
+        return mostRecentRide(a->id, b->id);
+    return -1;
+}
+
+char **topNdrivers(int n)
+{   
+    quickSortArrayList(list, sizeof(Driver *), compareDriversByScore);
+    char **r = malloc(sizeof(char *) * n);
+    char aux[10];
+    Driver *driver;
+    for(int i = 0; i < n; i++)
+    {
+        driver = (Driver *) getByIndex(list, i);
+        r[i] = (char *) malloc(strlen(driver->id) + strlen(driver->name) + 15);
+        sprintf(aux, "%.3lf", driver->avgScore);
+        strcpy(r[i], driver->id);
+        strcat(r[i], ";");
+        strcat(r[i], driver->name);
+        strcat(r[i], ";");
+        strcat(r[i], aux);
+    }
+    return r;
+}

@@ -27,5 +27,7 @@ ArrayList *getRidesInCityByDriverScore(char *city);
 char *getDriverIDFromRide(Ride *);
 char *getDriverNameFromRide(Ride *);
 double getDriverAvgScoreInCityFromRide(Ride *);
+int mostRecentRide(char *, char *);
+
 
 #endif
