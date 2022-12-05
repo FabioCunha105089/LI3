@@ -4,11 +4,9 @@
 #include "User.h"
 #include <stdlib.h>
 #include <string.h>
-#include "LinkedList.h"
 #include "FileManager.h"
 #include "ArrayList.h"
 #include <math.h>
-
 
 typedef struct query
 {
@@ -53,28 +51,28 @@ void loadQuery(char *sp)
         query->args[i] = (char *)malloc(256);
         if (i == nArgs - 1)
         {
-            query->args[i] = strsep(&sp, "\n");
+            query->args[i] = strdup(strsep(&sp, "\n"));
             break;
         }
-        query->args[i] = strsep(&sp, " ");
+        query->args[i] = strdup(strsep(&sp, " "));
     }
     addAL(list, query);
 }
-
 
 double query4(char *city)
 {
     return avgPayInCity(city);
 }
 
-double query6(char *city, char *dataA, char *dataB) {
+double query6(char *city, char *dataA, char *dataB)
+{
 
     return avgDistanceInCityByDate(city, dataA, dataB);
 }
 
 char *query1_drivers(char *id)
 {
-    if (isDriverActive(id) == FALSE)
+    if (isDriverActive(id) == false)
         return "";
 
     char *r = getDriverBasicInfo(id);
@@ -132,40 +130,14 @@ char *query1(char *id)
     return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
-LinkedList *query7(int n, char *city){
-    ArrayList *rideList = getRidesInCityByDriverScore(city);
-    char **r = malloc(sizeof(char *) * n);
-    char *id, *name;
-    char aux[10];
-    double score;
-    int size = getALSize(rideList) -1 , pos, counter = n;
-    for(int i = size; counter > 0; counter--)
-    {
-        pos = (counter - n) * -1;
-        id = getDriverIDFromRide((Ride *) getByIndex(rideList, i));
-        name = getDriverNameFromRide((Ride *) getByIndex(rideList, i));
-        score = getDriverAvgScoreInCityFromRide((Ride *) getByIndex(rideList, i));
-        sprintf(aux, "%.3f", score);
-        r[pos] = (char *) malloc(strlen(id) + strlen(name) + 15);
-        strcpy(r[pos], id);
-        strcat(r[pos], ";");
-        strcat(r[pos], name);
-        strcat(r[pos], ";");
-        strcat(r[pos], aux);
-        for(int j = 0; j < pos; j++)
-        {
-            if(strcmp(r[j], r[pos]) == 0)
-            {
-                free(r[pos]);
-                counter++;
-                break;
-            }
-        }
-        i--;
-    }
+LinkedList *query7(int n, char *city)
+{
+    char **r = driversByScoreInCity(city, n);
     LinkedList *l = createLL();
     addLL(l, r);
-    addLL(l, &n);
+    int *s = (int *)malloc(sizeof(int));
+    *s = n;
+    addLL(l, s);
     return l;
 }
 
@@ -174,7 +146,9 @@ LinkedList *query2(int n)
     char **r = topNdrivers(n);
     LinkedList *l = createLL();
     addLL(l, r);
-    addLL(l, &n);
+    int *s = (int *)malloc(sizeof(int));
+    *s = n;
+    addLL(l, s);
     return l;
 }
 
@@ -189,27 +163,74 @@ void executeQueries()
         {
         case '1':
             output(query1(query->args[0]), i);
+            free(query->args[0]);
             break;
         case '2':
             outputMult(query2(atoi(query->args[0])), i);
+            free(query->args[0]);
             break;
         case '4':
             sprintf(aux, "%.3lf", query4(query->args[0]));
             output(aux, i);
+            free(query->args[0]);
             break;
         case '6':
             sprintf(aux, "%.3f", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
+            free(query->args[0]);
+            free(query->args[1]);
+            free(query->args[2]);
             break;
         case '7':
             outputMult(query7(atoi(query->args[0]), query->args[1]), i);
+            free(query->args[0]);
+            free(query->args[1]);
         default:
             break;
         }
+        free(query->args);
+        free(query);
     }
 }
 
 void freeQuery()
 {
-    freeArrayList(list);
+    free(list);
+}
+
+void printQueries(LinkedList *l)
+{
+    char **r = (char **)iterateLL(l);
+    int *s = (int *)iterateLL(l);
+    for (int i = 0; i < *s; i++)
+    {
+        printf("%s\n", r[i]);
+    }
+    free(r);
+    free(s);
+    freeLinkedList(l);
+}
+
+void executeQuery(char id, char **args)
+{
+    system("clear");
+    switch (id)
+    {
+    case '1':
+        printf("%s\n", query1(args[0]));
+        break;
+    case '2':
+        printQueries(query2(atoi(args[0])));
+        break;
+    case '4':
+        printf("%.3lf\n", query4(args[0]));
+        break;
+    case '6':
+        printf("%.3lf\n", query6(args[0], args[1], args[2]));
+        break;
+    case '7':
+        printQueries(query7(atoi(args[0]), args[1]));
+    default:
+        break;
+    }
 }

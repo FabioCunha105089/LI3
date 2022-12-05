@@ -32,7 +32,7 @@ Ride.o: $(SRC)Ride.c
 User.o: $(SRC)User.c
 	$(CC) $(FLAGS) $(SRC)User.c
 	
-Main.o: $(SRC)Main.c | Resultados
+Main.o: $(SRC)Main.c Resultados
 	$(CC) $(FLAGS) $(SRC)Main.c
 
 Resultados: 

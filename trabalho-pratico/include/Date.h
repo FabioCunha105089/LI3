@@ -1,12 +1,7 @@
 #ifndef DATE_H_
 #define DATE_H_
 
-typedef struct date
-{
-    int day;
-    int month;
-    int year;
-} Date;
+typedef struct date Date;
 
 #define BASEDAY 19
 #define BASEMONTH 10
@@ -15,4 +10,6 @@ typedef struct date
 Date *sToDate(char *);
 int calculateAge(Date *);
 int isDateBigger(Date*, Date *);
+Date *setDefaultDate();
+Date *dateCopy(Date *);
 #endif

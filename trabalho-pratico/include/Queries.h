@@ -9,4 +9,6 @@ void executeQueries();
 void loadQuery(char *);
 void initListQuery(int);
 void freeQuery();
+int getNArgs(char);
+void executeQuery(char, char **);
 #endif

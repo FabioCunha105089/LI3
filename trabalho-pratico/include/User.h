@@ -1,7 +1,6 @@
 #ifndef USER_H_
 #define USER_H_
 
-#include <stdbool.h>
 #include "Date.h"
 #include <stdio.h>
 #include "LinkedList.h"

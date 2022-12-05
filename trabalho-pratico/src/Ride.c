@@ -1,12 +1,9 @@
 #include "Ride.h"
-#include "stdio.h"
-#include "Date.h"
 #include <string.h>
 #include "LinkedList.h"
 #include "ArrayList.h"
 #include "Driver.h"
 #include "User.h"
-#include <glib.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -34,16 +31,16 @@ static GHashTable *hashDriverCityScores = NULL;
 void loadRide(char *sp)
 {
     Ride *ride = (Ride *)malloc(sizeof(Ride));
-    ride->id = strsep(&sp, ";");
+    ride->id = strdup(strsep(&sp, ";"));
     ride->date = sToDate(strsep(&sp, ";"));
-    ride->driver = strsep(&sp, ";");
-    ride->user = strsep(&sp, ";");
-    ride->city = strsep(&sp, ";");
+    ride->driver = strdup(strsep(&sp, ";"));
+    ride->user = strdup(strsep(&sp, ";"));
+    ride->city = strdup(strsep(&sp, ";"));
     ride->distance = atof(strsep(&sp, ";"));
     ride->score_user = atoi(strsep(&sp, ";"));
     ride->score_driver = atoi(strsep(&sp, ";"));
     ride->tip = atof(strsep(&sp, ";"));
-    ride->comment = strsep(&sp, "\n");
+    ride->comment = strdup(strsep(&sp, "\n"));
     addAL(list, ride);
 }
 
@@ -110,7 +107,7 @@ void initHashTables()
         }
 
         //Driver score by city
-        char *driverScore = (char *) malloc(20);
+        char *driverScore = (char *) malloc(256);
         strcpy(driverScore, ride->driver);
         strcat(driverScore, ride->city);
         double *score_Nrides = (double *) malloc(sizeof(double) * 2);
@@ -273,12 +270,26 @@ int getNumberOfRidesUser(char *username)
     return getLLSize((LinkedList *)g_hash_table_lookup(hashUsers, username));
 }
 
+void _freeRide(void * r)
+{
+    Ride *ride = (Ride *) r;
+    free(ride->date);
+    free(ride->id);
+    free(ride->user);
+    free(ride->driver);
+    free(ride->city);
+    free(ride->comment);
+    free(ride);
+}
+
 void freeRide()
 {
-    freeArrayList(list);
+    freeArrayList(list, _freeRide);
     g_hash_table_destroy(hashCity);
     g_hash_table_destroy(hashDriver);
     g_hash_table_destroy(hashUsers);
+    g_hash_table_destroy(hashDriverCityScores);
+    g_hash_table_destroy(hashAccAges);
 }
 
 double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
@@ -331,11 +342,41 @@ int compareRidesByDriverScore(const void *A, const void *B)
     return 1;
 }
 
-ArrayList *getRidesInCityByDriverScore(char *city)
+char **driversByScoreInCity(char *city, int n)
 {
     ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
     quickSortArrayList(rideList, sizeof(Ride *), compareRidesByDriverScore);
-    return rideList;
+    char **r = malloc(sizeof(char *) * n);
+    char *id, *name;
+    char aux[10];
+    double score;
+    int size = getALSize(rideList) -1 , pos, counter = n;
+    for(int i = size; counter > 0; counter--)
+    {
+        pos = (counter - n) * -1;
+        id = getDriverIDFromRide((Ride *) getByIndex(rideList, i));
+        name = getDriverNameFromRide((Ride *) getByIndex(rideList, i));
+        score = getDriverAvgScoreInCityFromRide((Ride *) getByIndex(rideList, i));
+        sprintf(aux, "%.3f", score);
+        r[pos] = (char *) malloc(strlen(id) + strlen(name) + 15);
+        strcpy(r[pos], id);
+        strcat(r[pos], ";");
+        strcat(r[pos], name);
+        strcat(r[pos], ";");
+        strcat(r[pos], aux);
+        for(int j = 0; j < pos; j++)
+        {
+            if(strcmp(r[j], r[pos]) == 0)
+            {
+                free(r[pos]);
+                counter++;
+                break;
+            }
+        }
+        i--;
+    }
+    freeArrayListSimple(rideList);
+    return r;
 }
 
 char *getDriverIDFromRide(Ride *ride)
@@ -362,27 +403,26 @@ int mostRecentRide(char *a, char *b)
     LinkedList *aRides = (LinkedList *) g_hash_table_lookup(hashDriver, a);
     LinkedList *bRides = (LinkedList *) g_hash_table_lookup(hashDriver, b);
     int aNrides = getLLSize(aRides), bNrides = getLLSize(bRides);
-    Date aRecent;
-    aRecent.day = BASEDAY;
-    aRecent.month = BASEMONTH;
-    aRecent.year = BASEYEAR;
-    Date bRecent = aRecent;
+    Date *defaultDate = setDefaultDate();
+    Date *aRecent = defaultDate;
+    Date *bRecent = aRecent;
     Ride *ride;
     for(int i = 0; i < aNrides; i++)
     {
         ride = (Ride *) iterateLL(aRides);
-        if(isDateBigger(&aRecent, ride->date) == 0)
-            aRecent = *ride->date;
+        if(isDateBigger(aRecent, ride->date) == 0)
+            aRecent = ride->date;
     }
 
     for(int i = 0; i < bNrides; i++)
     {
         ride = (Ride *) iterateLL(bRides);
-        if(isDateBigger(&bRecent, ride->date) == 0)
-            bRecent = *ride->date;
+        if(isDateBigger(bRecent, ride->date) == 0)
+            bRecent = ride->date;
     }
 
-    int aux = isDateBigger(&aRecent, &bRecent);
+    int aux = isDateBigger(aRecent, bRecent);
+    free(defaultDate);
     if(aux == 0)
         return atoi(a) > atoi(b) ? -1 : 1;
     return aux;

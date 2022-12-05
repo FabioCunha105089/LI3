@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct date
+{
+    int day;
+    int month;
+    int year;
+} Date;
+
 Date *sToDate(char* string){
     Date *date = (Date *) malloc(sizeof(Date));
     date->day = atoi(strsep(&string, "/"));
@@ -32,4 +39,22 @@ int isDateBigger (Date *dateA, Date *dateB) {
         return 0;
     return -1;
 
+}
+
+Date *setDefaultDate()
+{
+    Date *date = (Date *) malloc(sizeof(Date));
+    date->day = BASEDAY;
+    date->month = BASEMONTH;
+    date->year = BASEYEAR;
+    return date;
+}
+
+Date *dateCopy(Date *date)
+{
+    Date *r = (Date *) malloc(sizeof(Date));
+    r->day = date->day;
+    r->month = date->month;
+    r->year = date->year;
+    return r;
 }

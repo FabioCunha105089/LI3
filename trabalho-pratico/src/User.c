@@ -1,12 +1,12 @@
 #include "User.h"
 #include "Date.h"
 #include "Ride.h"
-#include <stdio.h>
 #include <string.h>
 #include "ArrayList.h"
 #include <glib.h>
 
-typedef struct user {
+typedef struct user
+{
 
     char *username;
     char *name;
@@ -23,23 +23,25 @@ typedef struct user {
 static ArrayList *list = NULL;
 static GHashTable *positions = NULL;
 
-void initListUser(int size) {    
+void initListUser(int size)
+{
     if (!list)
         list = createAL(size - 1, sizeof(User *));
 }
 
-void loadUser(char *sp) {
+void loadUser(char *sp)
+{
 
-    if(!positions)
+    if (!positions)
         positions = g_hash_table_new(g_str_hash, g_str_equal);
-    
+
     User *user = (User *)malloc(sizeof(User));
-    user->username = strsep(&sp, ";");
-    user->name = strsep(&sp, ";");
+    user->username = strdup(strsep(&sp, ";"));
+    user->name = strdup(strsep(&sp, ";"));
     user->gender = strsep(&sp, ";")[0];
     user->birthdate = sToDate(strsep(&sp, ";"));
     user->account_creation = sToDate(strsep(&sp, ";"));
-    user->pay_method = strsep(&sp, ";");
+    user->pay_method = strdup(strsep(&sp, ";"));
     user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
     user->age = calculateAge(user->birthdate);
     user->account_age = calculateAge(user->account_creation);
@@ -48,17 +50,19 @@ void loadUser(char *sp) {
     addAL(list, user);
 }
 
-User *findUserByUsername(char *username) {
-    return (User *) g_hash_table_lookup(positions, username);
+User *findUserByUsername(char *username)
+{
+    return (User *)g_hash_table_lookup(positions, username);
 }
 
-
-gboolean isUserActive(char *username) {
+gboolean isUserActive(char *username)
+{
 
     return findUserByUsername(username)->account_status;
 }
 
-char *getUserBasicInfo(char *id) {
+char *getUserBasicInfo(char *id)
+{
 
     User *user = findUserByUsername(id);
     char aux[100];
@@ -72,37 +76,50 @@ char *getUserBasicInfo(char *id) {
     return r;
 }
 
-
-double getUserAvgScore(char *id) {
+double getUserAvgScore(char *id)
+{
 
     User *user = findUserByUsername(id);
-    
-    if (user->avgScore == -1) {
+
+    if (user->avgScore == -1)
+    {
         user->avgScore = calculateUserAvgScore(id);
     }
 
     return user->avgScore;
-
 }
 
-double *getUserAvgScoreAndPay(char *id) {
+double *getUserAvgScoreAndPay(char *id)
+{
 
     User *user = findUserByUsername(id);
-    
-    if (user->avgScore == -1) {
+
+    if (user->avgScore == -1)
+    {
         return calculateUserAvgScoreAndPay(id);
     }
 
-    double *values = (double *) malloc (sizeof(double)*2);
+    double *values = (double *)malloc(sizeof(double) * 2);
     values[0] = user->avgScore;
     values[1] = calculateTotalPayUser(id);
     return values;
+}
 
+void _freeUser(void *u)
+{
+    User *user = (User *) u;
+    free(user->account_creation);
+    free(user->birthdate);
+    free(user->name);
+    free(user->username);
+    free(user->pay_method);
+    free(user);
 }
 
 void freeUser()
 {
-    freeArrayList(list);
+    freeArrayList(list, _freeUser);
+    g_hash_table_destroy(positions);
 }
 
 LinkedList *getUserGenderAccAgeName(char *username)

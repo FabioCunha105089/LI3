@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "ArrayList.h"
+#include <string.h>
 
 typedef struct arraylist
 {
@@ -34,16 +35,33 @@ void* getByIndex(ArrayList* list, int index){
     return list->array[index];
 }
 
-void freeArrayList(ArrayList * list)
+void freeArrayList(ArrayList * list, void (*freeFunc)(void *))
 {
     for(int i = 0; i < list->size; i++)
     {
-        free(list->array[i]);
+        freeFunc(list->array[i]);
     }
+    free(list->array);
+    free(list);
+}
+
+void freeArrayListSimple(ArrayList* list)
+{
+    free(list->array);
     free(list);
 }
 
 void quickSortArrayList(ArrayList *list, int elementSize, int (*cmpFunc)(const void *, const void *))
 {
     qsort(list->array, list->size, elementSize, cmpFunc);
+}
+
+ArrayList *copyAL(ArrayList *a, int elementSize)
+{
+    ArrayList *b = createAL(a->size, elementSize);
+    for(int i = 0; i < a->size; i++)
+    {
+        memcpy(&b->array[i], &a->array[i], elementSize);
+    }
+    return b;
 }

@@ -1,10 +1,8 @@
 #include "FileManager.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
-#include "LinkedList.h"
 
 int getLines(FILE *file)
 {
@@ -22,13 +20,13 @@ int getLines(FILE *file)
     return size;
 }
 
-void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int linesToSkip)
+int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int linesToSkip)
 {
     FILE *file = fopen(path, "r");
     if (!file)
     {
-        printf("Ficheiro nao encontrado.");
-        exit(-1);
+        printf("Ficheiro %s nao encontrado.\n", path);
+        return -1;
     }
     int size = getLines(file);
     initFunc(size);
@@ -44,10 +42,11 @@ void load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int line
         fgets(line, 256, file);
         sp = strdup(line);
         loadFunc(sp);
+        free(sp);
     }
     free(line);
-    free(sp);
     fclose(file);
+    return 0;
 }
 
 void output(char *r, int i) {
@@ -80,18 +79,20 @@ void outputMult(LinkedList *r, int i)
 
     FILE *file = fopen(filename, "w+");
 
-    if(size[0] == 0)
+    if(*size == 0)
     {
         fputs("", file);
     } else {
-        for(int i = 0; i < size[0]; i++)
+        for(int i = 0; i < *size; i++)
         {
             if(!arr[i])
                 break;
             fputs(arr[i], file);
             fputs("\n", file);
+            free(arr[i]);
         }
     }
+    free(size);
     free(arr);
-    free(r);
+    freeLinkedList(r);
 }
