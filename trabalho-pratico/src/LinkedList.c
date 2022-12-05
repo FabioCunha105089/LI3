@@ -75,18 +75,6 @@ GDestroyNotify freeLinkedList(gpointer data)
     free(list);
 }
 
-// void myFreeLinkedList(LinkedList *list)
-// {
-//     Node* node;
-//     for(int i = 0; i < list->size; i++)
-//     {
-//         node = list->head;
-//         list->head = node->next;
-//         free(node);
-//     }
-//     free(list);
-// }
-
 ArrayList *LLtoAL(LinkedList *ll, int elementSize)
 {
     int size = getLLSize(ll);

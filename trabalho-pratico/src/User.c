@@ -52,12 +52,15 @@ void loadUser(char *sp)
 
 User *findUserByUsername(char *username)
 {
+    if(g_hash_table_contains(positions, username) == FALSE)
+        return NULL;
     return (User *)g_hash_table_lookup(positions, username);
 }
 
 gboolean isUserActive(char *username)
 {
-
+    if(g_hash_table_contains(positions, username) == FALSE)
+        return FALSE;
     return findUserByUsername(username)->account_status;
 }
 
@@ -66,7 +69,8 @@ char *getUserBasicInfo(char *id)
 
     User *user = findUserByUsername(id);
     char aux[100];
-    char *r = user->name;
+    char *r = (char *) malloc (256);
+    strcat(r,user->name);
     strcat(r, ";");
     strncat(r, &user->gender, 1);
     strcat(r, ";");
