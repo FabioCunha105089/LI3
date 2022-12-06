@@ -59,15 +59,16 @@ bool isDriverActive(char *id)
 char *getDriverBasicInfo(char *id)
 {
     Driver *driver = findDriverByID(id);
-    char aux[100];
+    char aux[10];
     char *r = (char *) malloc(256);
-    strcat(r,driver->name);
+    strcpy(r, driver->name);
     strcat(r, ";");
     strncat(r, &driver->gender, 1);
     strcat(r, ";");
     sprintf(aux, "%d", driver->age);
     strcat(r, aux);
     strcat(r, ";");
+    printf("%s\n", r);
     return r;
 }
 

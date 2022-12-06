@@ -64,9 +64,9 @@ char *getUserBasicInfo(char *id)
 {
 
     User *user = findUserByUsername(id);
-    char aux[100];
+    char aux[10];
     char *r = (char *) malloc (256);
-    strcat(r,user->name);
+    strcpy(r,user->name);
     strcat(r, ";");
     strncat(r, &user->gender, 1);
     strcat(r, ";");
