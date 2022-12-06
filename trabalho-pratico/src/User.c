@@ -52,15 +52,11 @@ void loadUser(char *sp)
 
 User *findUserByUsername(char *username)
 {
-    if(g_hash_table_contains(positions, username) == FALSE)
-        return NULL;
     return (User *)g_hash_table_lookup(positions, username);
 }
 
 gboolean isUserActive(char *username)
 {
-    if(g_hash_table_contains(positions, username) == FALSE)
-        return FALSE;
     return findUserByUsername(username)->account_status;
 }
 

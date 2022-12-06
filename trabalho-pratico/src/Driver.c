@@ -60,7 +60,8 @@ char *getDriverBasicInfo(char *id)
 {
     Driver *driver = findDriverByID(id);
     char aux[100];
-    char *r = driver->name;
+    char *r = (char *) malloc(256);
+    strcat(r,driver->name);
     strcat(r, ";");
     strncat(r, &driver->gender, 1);
     strcat(r, ";");
