@@ -4,6 +4,8 @@
 #include <string.h>
 #include "ArrayList.h"
 #include <glib.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 typedef struct user
 {
@@ -14,7 +16,7 @@ typedef struct user
     Date *birthdate;
     Date *account_creation;
     char *pay_method;
-    gboolean account_status;
+    bool account_status;
     int age;
     int account_age;
     double avgScore;
@@ -27,27 +29,83 @@ void initListUser(int size)
 {
     if (!list)
         list = createAL(size - 1, sizeof(User *));
+    if (!positions)
+        positions = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
 void loadUser(char *sp)
 {
-
-    if (!positions)
-        positions = g_hash_table_new(g_str_hash, g_str_equal);
-
     User *user = (User *)malloc(sizeof(User));
+    char *aux;
     user->username = strdup(strsep(&sp, ";"));
+    if(strlen(user->username) == 0)
+    {
+        free(user->username);
+        free(user);
+        return;
+    }
     user->name = strdup(strsep(&sp, ";"));
+    if(strlen(user->name) == 0)
+    {
+        free(user->username);
+        free(user->name);
+        free(user);
+        return;
+    }
     user->gender = strsep(&sp, ";")[0];
-    user->birthdate = sToDate(strsep(&sp, ";"));
-    user->account_creation = sToDate(strsep(&sp, ";"));
+    if(user->gender == '\0')
+    {
+        free(user->username);
+        free(user->name);
+        free(user);
+        return;
+    }
+    aux = strdup(strsep(&sp, ";"));
+    user->birthdate = sToDate(aux, strlen(aux));
+    if(!user->birthdate)
+    {
+        free(user->username);
+        free(user->name);
+        free(user);
+        free(aux);
+        return;
+    }
+    free(aux);
+    aux = strdup(strsep(&sp, ";"));
+    user->account_creation = sToDate(aux, strlen(aux));
+    if(!user->account_creation)
+    {
+        free(user->username);
+        free(user->name);
+        free(user->birthdate);
+        free(user);
+        free(aux);
+        return;   
+    }
+    free(aux);
     user->pay_method = strdup(strsep(&sp, ";"));
-    user->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? TRUE : FALSE;
+    if(strlen(user->pay_method) == 0)
+    {
+        free(user->username);
+        free(user->name);
+        free(user->birthdate);
+        free(user->account_creation);
+        free(user->pay_method);
+        free(user);
+        return;   
+    }
+    aux = strdup(strsep(&sp, "\n"));
+    for(int i = 0; i < strlen(aux); i++)
+    {
+        aux[i] = tolower(aux[i]);
+    }
+    user->account_status = strcmp(aux, "active") == 0 ? true : false;
     user->age = calculateAge(user->birthdate);
     user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;
     g_hash_table_insert(positions, user->username, user);
     addAL(list, user);
+    free(aux);
 }
 
 User *findUserByUsername(char *username)

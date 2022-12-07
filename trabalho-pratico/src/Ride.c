@@ -6,6 +6,7 @@
 #include "User.h"
 #include <stdlib.h>
 #include <math.h>
+#include <ctype.h>
 
 typedef struct ride
 {
@@ -15,8 +16,8 @@ typedef struct ride
     char *user;
     char *city;
     double distance;
-    int score_user;
-    int score_driver;
+    double score_user;
+    double score_driver;
     double tip;
     char *comment;
 } Ride;
@@ -28,17 +29,96 @@ static GHashTable *hashUsers = NULL;
 static GHashTable *hashAccAges = NULL;
 static GHashTable *hashDriverCityScores = NULL;
 
+bool validateScore(char * s, int l)
+{
+    for(int i = 0; i < l; i++)
+    {
+        if(isdigit(s[i]) == 0 && s[i] != '.')
+            return false;
+    }
+    return true;
+}
+
 void loadRide(char *sp)
 {
     Ride *ride = (Ride *)malloc(sizeof(Ride));
     ride->id = strdup(strsep(&sp, ";"));
-    ride->date = sToDate(strsep(&sp, ";"));
+    char *aux1, *aux2;
+    if(strlen(ride->id) == 0)
+    {
+        free(ride->id);
+        free(ride);
+        return;
+    }
+    aux1 = strdup(strsep(&sp, ";"));
+    ride->date = sToDate(aux1, strlen(aux1));
+    if(!ride->date)
+    {
+        free(ride->id);
+        free(ride);
+        free(aux1);
+        return;
+    }
+    free(aux1);
     ride->driver = strdup(strsep(&sp, ";"));
+    if(strlen(ride->driver) == 0)
+    {
+        free(ride->id);
+        free(ride->date);
+        free(ride->driver);
+        free(ride);
+        return;
+    }
     ride->user = strdup(strsep(&sp, ";"));
+    if(strlen(ride->user) == 0)
+    {
+        free(ride->id);
+        free(ride->date);
+        free(ride->driver);
+        free(ride->user);
+        free(ride);
+        return;
+    }
     ride->city = strdup(strsep(&sp, ";"));
+    if(strlen(ride->city) == 0)
+    {
+        free(ride->id);
+        free(ride->date);
+        free(ride->driver);
+        free(ride->user);
+        free(ride->city);
+        free(ride);
+        return;
+    }
     ride->distance = atof(strsep(&sp, ";"));
-    ride->score_user = atoi(strsep(&sp, ";"));
-    ride->score_driver = atoi(strsep(&sp, ";"));
+    if(ride->distance < 0)
+    {
+        free(ride->id);
+        free(ride->date);
+        free(ride->driver);
+        free(ride->user);
+        free(ride->city);
+        free(ride);
+        return;
+    }
+    aux1 = strdup(strsep(&sp, ";"));
+    aux2 = strdup(strsep(&sp, ";"));
+    if(validateScore(aux1, strlen(aux1)) == false || validateScore(aux2, strlen(aux2)) == false)
+    {
+        free(aux1);
+        free(aux2);
+        free(ride->id);
+        free(ride->date);
+        free(ride->driver);
+        free(ride->user);
+        free(ride->city);
+        free(ride);
+        return;
+    }
+    ride->score_user = atof(aux1);
+    ride->score_driver = atof(aux2);
+    free(aux1);
+    free(aux2);
     ride->tip = atof(strsep(&sp, ";"));
     ride->comment = strdup(strsep(&sp, "\n"));
     addAL(list, ride);
@@ -300,8 +380,8 @@ double avgDistanceInCityByDate (char *city, char *date1, char *date2) {
         return 0;
     }
 
-    Date *dateA = sToDate(date1);
-    Date *dateB = sToDate(date2);
+    Date *dateA = sToDateSimple(date1);
+    Date *dateB = sToDateSimple(date2);
     double tDistance = 0;
     Ride *ride;
     LinkedList *rideList = (LinkedList *)g_hash_table_lookup(hashCity, city);

@@ -1,6 +1,7 @@
 #include "Date.h"
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct date
 {
@@ -9,7 +10,23 @@ typedef struct date
     int year;
 } Date;
 
-Date *sToDate(char* string){
+Date *sToDate(char* string, int size){
+    if(size != 10)
+        return NULL;
+    if(isdigit(string[0]) == 0 || isdigit(string[1]) == 0 || string[2] != '/' 
+        || isdigit(string[3]) == 0 || isdigit(string[4]) == 0 || string[5] != '/' 
+        || isdigit(string[6]) == 0 || isdigit(string[7]) == 0 || isdigit(string[8]) == 0 
+        || isdigit(string[9]) == 0)
+        return NULL;
+    Date *date = (Date *) malloc(sizeof(Date));
+    date->day = atoi(strsep(&string, "/"));
+    date->month = atoi(strsep(&string, "/"));
+    date->year = atoi(strsep(&string, "\0"));
+
+    return date;
+}
+
+Date *sToDateSimple(char* string){
     Date *date = (Date *) malloc(sizeof(Date));
     date->day = atoi(strsep(&string, "/"));
     date->month = atoi(strsep(&string, "/"));

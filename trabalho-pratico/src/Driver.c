@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "ArrayList.h"
 #include "Ride.h"
+#include <ctype.h>
 
 typedef struct driver
 {
@@ -31,18 +32,103 @@ void initListDriver(int size)
 void loadDriver(char *sp)
 {
     Driver *driver = (Driver *)malloc(sizeof(Driver));
+    char *aux;
     driver->id = strdup(strsep(&sp, ";"));
+    if(strlen(driver->id) == 0)
+    {
+        free(driver->id);
+        free(driver);
+        addAL(list, NULL);
+        return;
+    }
     driver->name = strdup(strsep(&sp, ";"));
-    driver->birth_day = sToDate(strsep(&sp, ";"));
+    if(strlen(driver->name) == 0)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver);
+        addAL(list, NULL);
+        return;
+    }
+    aux = strdup(strsep(&sp, ";"));
+    driver->birth_day = sToDate(aux, strlen(aux));
+    if(!driver->birth_day)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver);
+        free(aux);
+        addAL(list, NULL);
+        return;
+    }
+    free(aux);
     driver->gender = strsep(&sp, ";")[0];
+    if(driver->gender == '\0')
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver);
+        addAL(list, NULL);
+        return;
+    }
     driver->car_class = strdup(strsep(&sp, ";"));
+    for(int i = 0; i < strlen(driver->car_class); i++)
+    {
+        driver->car_class[i] = tolower(driver->car_class[i]);   
+    }
     driver->license_plate = strdup(strsep(&sp, ";"));
+    if(strlen(driver->license_plate) == 0)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver->car_class);
+        free(driver->license_plate);
+        free(driver);
+        addAL(list, NULL);
+        return;
+    }
     driver->city = strdup(strsep(&sp, ";"));
-    driver->account_creation = sToDate(strsep(&sp, ";"));
-    driver->account_status = strcmp(strsep(&sp, "\n"), "active") == 0 ? true : false;
+    if(strlen(driver->city) == 0)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver->car_class);
+        free(driver->license_plate);
+        free(driver->city);
+        free(driver);
+        addAL(list, NULL);
+        return;
+    }
+    aux = strdup(strsep(&sp, ";"));
+    driver->account_creation = sToDate(aux, strlen(aux));
+    if(!driver->account_creation)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver->car_class);
+        free(driver->license_plate);
+        free(driver->city);
+        free(driver->account_creation);
+        free(driver);
+        free(aux);
+        addAL(list, NULL);
+        return;
+    }
+    free(aux);
+    aux = strdup(strsep(&sp, "\n"));
+    for(int i = 0; i < strlen(aux); i++)
+    {
+        aux[i] = tolower(aux[i]);   
+    }
+    driver->account_status = strcmp(aux, "active") == 0 ? true : false;
     driver->age = calculateAge(driver->birth_day);
     driver->account_age = calculateAge(driver->account_creation);
     driver->avgScore = -1;
+    free(aux);
     addAL(list, driver);
 }
 

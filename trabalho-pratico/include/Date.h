@@ -7,7 +7,8 @@ typedef struct date Date;
 #define BASEMONTH 10
 #define BASEYEAR 2022
 
-Date *sToDate(char *);
+Date *sToDate(char *, int);
+Date *sToDateSimple(char *);
 int calculateAge(Date *);
 int isDateBigger(Date*, Date *);
 Date *setDefaultDate();

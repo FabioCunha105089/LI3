@@ -100,7 +100,7 @@ char *query1_drivers(char *id)
 char *query1_users(char *id)
 {
 
-    if (isUserActive(id) == FALSE)
+    if (isUserActive(id) == false)
         return "";
 
     char *r = getUserBasicInfo(id);
