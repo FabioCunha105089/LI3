@@ -20,6 +20,7 @@ typedef struct user
     int age;
     int account_age;
     double avgScore;
+    int totalDist;
 } User;
 
 static ArrayList *list = NULL;
@@ -103,6 +104,7 @@ void loadUser(char *sp)
     user->age = calculateAge(user->birthdate);
     user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;
+    user->totalDist = 0;
     g_hash_table_insert(positions, user->username, user);
     addAL(list, user);
     free(aux);
@@ -193,4 +195,43 @@ LinkedList *getUserGenderAccAgeName(char *username)
 int getUserAccAge(char *username)
 {
     return findUserByUsername(username)->account_age;
+}
+
+int compareUsersByDistance(const void *A, const void *B)
+{
+    User *a = *(User **) A;
+    User *b = *(User **) B;
+
+    if(a->totalDist == 0 && isUserActive(a->username) == true)
+        a->totalDist = calculateUserTotalDist(a->username);
+
+    if(b->totalDist == 0 && isUserActive(b->username) == true)
+        b->totalDist = calculateUserTotalDist(b->username);
+    if (a->totalDist <= b->totalDist)
+        return 1;
+    if (a->totalDist == b->totalDist)
+        return mostRecentRide(a->username, b->username);
+    return -1;
+}
+
+char **mostDistUsers(int n)
+{
+    ArrayList* temp = copyAL(list, sizeof(User *));
+    quickSortArrayList(temp, sizeof(User *), compareUsersByDistance);
+    char **r = malloc(sizeof(char *) * n);
+    char aux[10];
+    User *user;
+    for (int i = 0; i < n; i++)
+    {
+        user = (User *)getByIndex(temp, i);
+        r[i] = (char *)malloc(strlen(user->username) + strlen(user->name) + 15);
+        sprintf(aux, "%d", user->totalDist);
+        strcpy(r[i], user->username);
+        strcat(r[i], ";");
+        strcat(r[i], user->name);
+        strcat(r[i], ";");
+        strcat(r[i], aux);
+    }
+    freeArrayListSimple(temp);
+    return r;
 }

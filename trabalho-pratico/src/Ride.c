@@ -15,7 +15,7 @@ typedef struct ride
     char *driver;
     char *user;
     char *city;
-    double distance;
+    int distance;
     double score_user;
     double score_driver;
     double tip;
@@ -90,7 +90,7 @@ void loadRide(char *sp)
         free(ride);
         return;
     }
-    ride->distance = atof(strsep(&sp, ";"));
+    ride->distance = atoi(strsep(&sp, ";"));
     if(ride->distance < 0)
     {
         free(ride->id);
@@ -480,8 +480,18 @@ double getDriverAvgScoreInCityFromRide(Ride *ride)
 
 int mostRecentRide(char *a, char *b)
 {
-    LinkedList *aRides = (LinkedList *) g_hash_table_lookup(hashDriver, a);
-    LinkedList *bRides = (LinkedList *) g_hash_table_lookup(hashDriver, b);
+    LinkedList *aRides, *bRides;
+    if(atoi(a) != 0)
+    {
+        aRides = (LinkedList *) g_hash_table_lookup(hashDriver, a);
+        bRides = (LinkedList *) g_hash_table_lookup(hashDriver, b);
+    }
+    else
+    {
+        aRides = (LinkedList *) g_hash_table_lookup(hashUsers, a);
+        bRides = (LinkedList *) g_hash_table_lookup(hashUsers, b);
+    }
+    
     int aNrides = getLLSize(aRides), bNrides = getLLSize(bRides);
     Date *defaultDate = setDefaultDate();
     Date *aRecent = defaultDate;
@@ -504,6 +514,27 @@ int mostRecentRide(char *a, char *b)
     int aux = isDateBigger(aRecent, bRecent);
     free(defaultDate);
     if(aux == 0)
-        return atoi(a) > atoi(b) ? -1 : 1;
+    {
+        if(atoi(a) != 0)
+            return atoi(a) > atoi(b) ? -1 : 1;
+        return strcmp(a, b);
+    }
+        
     return aux;
+}
+
+int calculateUserTotalDist(char *username)
+{
+    if(g_hash_table_contains(hashUsers, username) == FALSE)
+        return 0;
+    LinkedList *rideList = (LinkedList *) g_hash_table_lookup(hashUsers, username);
+    Ride *ride;
+    int size = getLLSize(rideList);
+    int tDist = 0;
+    for(int i = 0; i < size; i++)
+    {
+        ride = (Ride *) iterateLL(rideList);
+        tDist += ride->distance;
+    }
+    return tDist;
 }

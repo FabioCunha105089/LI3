@@ -28,6 +28,6 @@ char *getDriverIDFromRide(Ride *);
 char *getDriverNameFromRide(Ride *);
 double getDriverAvgScoreInCityFromRide(Ride *);
 int mostRecentRide(char *, char *);
-
+int calculateUserTotalDist(char *);
 
 #endif

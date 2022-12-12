@@ -16,4 +16,5 @@ double getUserAvgScore(char *);
 double *getUserAvgScoreAndPay(char *);
 void freeUser();
 int getUserAccAge(char *);
+char **mostDistUsers(int);
 #endif

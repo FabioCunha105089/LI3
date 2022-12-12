@@ -29,6 +29,7 @@ int getNArgs(char id)
     case '1':
     case '4':
     case '2':
+    case '3':
         return 1;
 
     case '7':
@@ -57,17 +58,6 @@ void loadQuery(char *sp)
         query->args[i] = strdup(strsep(&sp, " "));
     }
     addAL(list, query);
-}
-
-double query4(char *city)
-{
-    return avgPayInCity(city);
-}
-
-double query6(char *city, char *dataA, char *dataB)
-{
-
-    return avgDistanceInCityByDate(city, dataA, dataB);
 }
 
 char *query1_drivers(char *id)
@@ -130,9 +120,9 @@ char *query1(char *id)
     return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
 }
 
-LinkedList *query7(int n, char *city)
+LinkedList *query2(int n)
 {
-    char **r = driversByScoreInCity(city, n);
+    char **r = topNdrivers(n);
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
@@ -141,9 +131,31 @@ LinkedList *query7(int n, char *city)
     return l;
 }
 
-LinkedList *query2(int n)
+LinkedList *query3(int n)
 {
-    char **r = topNdrivers(n);
+    char **r = mostDistUsers(n);
+    LinkedList *l = createLL();
+    addLL(l, r);
+    int *s = (int *)malloc(sizeof(int));
+    *s = n;
+    addLL(l, s);
+    return l;
+}
+
+double query4(char *city)
+{
+    return avgPayInCity(city);
+}
+
+double query6(char *city, char *dataA, char *dataB)
+{
+
+    return avgDistanceInCityByDate(city, dataA, dataB);
+}
+
+LinkedList *query7(int n, char *city)
+{
+    char **r = driversByScoreInCity(city, n);
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
@@ -167,6 +179,10 @@ void executeQueries()
             break;
         case '2':
             outputMult(query2(atoi(query->args[0])), i);
+            free(query->args[0]);
+            break;
+        case '3':
+            outputMult(query3(atoi(query->args[0])), i);
             free(query->args[0]);
             break;
         case '4':
@@ -221,6 +237,9 @@ void executeQuery(char id, char **args)
         break;
     case '2':
         printQueries(query2(atoi(args[0])));
+        break;
+    case '3':
+        printQueries(query3(atoi(args[0])));
         break;
     case '4':
         printf("%.3lf\n", query4(args[0]));

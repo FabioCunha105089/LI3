@@ -232,7 +232,7 @@ int compareDriversByScore(const void *A, const void *B)
 
 char **topNdrivers(int n)
 {
-    ArrayList* temp = copyAL(list, sizeof(Driver));
+    ArrayList* temp = copyAL(list, sizeof(Driver *));
     quickSortArrayList(temp, sizeof(Driver *), compareDriversByScore);
     char **r = malloc(sizeof(char *) * n);
     char aux[10];
