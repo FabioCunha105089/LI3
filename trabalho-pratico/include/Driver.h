@@ -18,5 +18,6 @@ void freeDriver();
 int getDriverAccAge(char *);
 char *getDriverName(char *);
 char **topNdrivers(int);
+bool doesDriverExist(char *);
 
 #endif

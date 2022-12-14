@@ -50,7 +50,8 @@ int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int lines
 }
 
 void output(char *r, int i) {
-    
+    if(strcmp(r, "0") == 0)
+        return;
     char filename[100] = "./Resultados/command";
     char aux[100];
     sprintf(aux, "%d", i + 1);
@@ -68,6 +69,8 @@ void output(char *r, int i) {
 
 void outputMult(LinkedList *r, int i)
 {
+    if(!r)
+        return;
     char **arr = (char **) iterateLL(r);
     int *size = (int *) iterateLL(r);
 

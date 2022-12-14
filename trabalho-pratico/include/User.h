@@ -17,4 +17,5 @@ double *getUserAvgScoreAndPay(char *);
 void freeUser();
 int getUserAccAge(char *);
 char **mostDistUsers(int);
+gboolean doesUserExist(char *);
 #endif

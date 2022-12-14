@@ -251,3 +251,8 @@ char **topNdrivers(int n)
     freeArrayListSimple(temp);
     return r;
 }
+
+bool doesDriverExist(char *id)
+{
+    return atoi(id) != 0;
+}

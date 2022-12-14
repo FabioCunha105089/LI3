@@ -117,11 +117,17 @@ char *query1_users(char *id)
 
 char *query1(char *id)
 {
-    return atoi(id) != 0 ? query1_drivers(id) : query1_users(id);
+    if(atoi(id) != 0 && doesDriverExist(id) == true)
+        return query1_drivers(id);
+    if(doesUserExist(id) == TRUE)
+        query1_users(id);
+    return "";
 }
 
 LinkedList *query2(int n)
 {
+    if(n == 0)
+        return NULL;
     char **r = topNdrivers(n);
     LinkedList *l = createLL();
     addLL(l, r);
@@ -133,6 +139,8 @@ LinkedList *query2(int n)
 
 LinkedList *query3(int n)
 {
+    if(n == 0)
+        return NULL;
     char **r = mostDistUsers(n);
     LinkedList *l = createLL();
     addLL(l, r);
@@ -156,6 +164,8 @@ double query6(char *city, char *dataA, char *dataB)
 LinkedList *query7(int n, char *city)
 {
     char **r = driversByScoreInCity(city, n);
+    if(!r)
+        return NULL;
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));

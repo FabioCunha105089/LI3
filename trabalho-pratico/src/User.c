@@ -122,7 +122,6 @@ gboolean isUserActive(char *username)
 
 char *getUserBasicInfo(char *id)
 {
-
     User *user = findUserByUsername(id);
     char aux[10];
     char *r = (char *) malloc (256);
@@ -234,4 +233,9 @@ char **mostDistUsers(int n)
     }
     freeArrayListSimple(temp);
     return r;
+}
+
+gboolean doesUserExist(char *username)
+{
+    return g_hash_table_contains(positions, username);
 }

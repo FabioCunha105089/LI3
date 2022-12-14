@@ -424,6 +424,10 @@ int compareRidesByDriverScore(const void *A, const void *B)
 
 char **driversByScoreInCity(char *city, int n)
 {
+    if (g_hash_table_contains(hashCity, city) == FALSE) {
+        printf("Nao contem %s", city);
+        return NULL;
+    }
     ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
     quickSortArrayList(rideList, sizeof(Ride *), compareRidesByDriverScore);
     char **r = malloc(sizeof(char *) * n);
