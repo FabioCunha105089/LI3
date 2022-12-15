@@ -32,11 +32,11 @@ int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int lines
     initFunc(size);
     char *line = (char *)malloc(256);
     char *sp;
-    for(int i = 0; i < linesToSkip; i++)
+    for (int i = 0; i < linesToSkip; i++)
     {
         fgets(line, 256, file);
     }
-        
+
     for (int i = 0; i < size; i++)
     {
         fgets(line, 256, file);
@@ -49,31 +49,10 @@ int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int lines
     return 0;
 }
 
-void output(char *r, int i) {
-    if(strcmp(r, "0") == 0)
-        return;
-    char filename[100] = "./Resultados/command";
-    char aux[100];
-    sprintf(aux, "%d", i + 1);
-    strcat(filename, aux);
-    strcat(filename, "_output.txt");
-
-    FILE *file = fopen(filename, "w+");   
-    
-    fputs(r, file);
-    if(strcmp(r, "") != 0)
-        fputs("\n", file);
-    fclose(file);
-
-}
-
-void outputMult(LinkedList *r, int i)
+void output(char *r, int i)
 {
-    if(!r)
+    if (strcmp(r, "0") == 0)
         return;
-    char **arr = (char **) iterateLL(r);
-    int *size = (int *) iterateLL(r);
-
     char filename[100] = "./Resultados/command";
     char aux[100];
     sprintf(aux, "%d", i + 1);
@@ -82,20 +61,46 @@ void outputMult(LinkedList *r, int i)
 
     FILE *file = fopen(filename, "w+");
 
-    if(*size == 0)
+    fputs(r, file);
+    if (strcmp(r, "") != 0)
+        fputs("\n", file);
+    fclose(file);
+}
+
+void outputMult(LinkedList *r, int i)
+{
+    char filename[100] = "./Resultados/command";
+    char aux[100];
+    sprintf(aux, "%d", i + 1);
+    strcat(filename, aux);
+    strcat(filename, "_output.txt");
+
+    FILE *file = fopen(filename, "w+");
+    if (!r)
     {
         fputs("", file);
-    } else {
-        for(int i = 0; i < *size; i++)
-        {
-            if(!arr[i])
-                break;
-            fputs(arr[i], file);
-            fputs("\n", file);
-            free(arr[i]);
-        }
     }
-    free(size);
-    free(arr);
-    freeLinkedList(r);
+    else
+    {
+        char **arr = (char **)iterateLL(r);
+        int *size = (int *)iterateLL(r);
+        if (*size == 0)
+        {
+            fputs("", file);
+        }
+        else
+        {
+            for (int i = 0; i < *size; i++)
+            {
+                if (!arr[i])
+                    break;
+                fputs(arr[i], file);
+                fputs("\n", file);
+                free(arr[i]);
+            }
+        }
+        free(size);
+        free(arr);
+        freeLinkedList(r);
+    }
 }

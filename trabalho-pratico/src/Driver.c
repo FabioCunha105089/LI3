@@ -154,7 +154,6 @@ char *getDriverBasicInfo(char *id)
     sprintf(aux, "%d", driver->age);
     strcat(r, aux);
     strcat(r, ";");
-    printf("%s\n", r);
     return r;
 }
 
@@ -254,5 +253,6 @@ char **topNdrivers(int n)
 
 bool doesDriverExist(char *id)
 {
-    return atoi(id) != 0;
+    long long i = atoi(id);
+    return i > 0 && i < getALSize(list);
 }

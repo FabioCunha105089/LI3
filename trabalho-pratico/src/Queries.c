@@ -259,6 +259,7 @@ void executeQuery(char id, char **args)
         break;
     case '7':
         printQueries(query7(atoi(args[0]), args[1]));
+        break;
     default:
         break;
     }
