@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 typedef struct driver Driver;
-void loadDriver(char *);
+int loadDriver(char *);
 Driver* findDriverByID(char *);
 char *getCarClass(char *);
 bool isDriverActive(char *);

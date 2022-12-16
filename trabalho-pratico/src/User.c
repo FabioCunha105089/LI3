@@ -34,7 +34,7 @@ void initListUser(int size)
         positions = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
-void loadUser(char *sp)
+int loadUser(char *sp)
 {
     User *user = (User *)malloc(sizeof(User));
     char *aux;
@@ -43,7 +43,7 @@ void loadUser(char *sp)
     {
         free(user->username);
         free(user);
-        return;
+        return 0;
     }
     user->name = strdup(strsep(&sp, ";"));
     if(strlen(user->name) == 0)
@@ -51,7 +51,7 @@ void loadUser(char *sp)
         free(user->username);
         free(user->name);
         free(user);
-        return;
+        return 0;
     }
     user->gender = strsep(&sp, ";")[0];
     if(user->gender == '\0')
@@ -59,7 +59,7 @@ void loadUser(char *sp)
         free(user->username);
         free(user->name);
         free(user);
-        return;
+        return 0;
     }
     aux = strdup(strsep(&sp, ";"));
     user->birthdate = sToDate(aux, strlen(aux));
@@ -69,7 +69,7 @@ void loadUser(char *sp)
         free(user->name);
         free(user);
         free(aux);
-        return;
+        return 0;
     }
     free(aux);
     aux = strdup(strsep(&sp, ";"));
@@ -81,7 +81,7 @@ void loadUser(char *sp)
         free(user->birthdate);
         free(user);
         free(aux);
-        return;   
+        return 0;   
     }
     free(aux);
     user->pay_method = strdup(strsep(&sp, ";"));
@@ -93,7 +93,7 @@ void loadUser(char *sp)
         free(user->account_creation);
         free(user->pay_method);
         free(user);
-        return;   
+        return 0;   
     }
     aux = strdup(strsep(&sp, "\n"));
     for(int i = 0; i < strlen(aux); i++)
@@ -106,8 +106,9 @@ void loadUser(char *sp)
     user->avgScore = -1;
     user->totalDist = 0;
     g_hash_table_insert(positions, user->username, user);
-    addAL(list, user);
     free(aux);
+    addAL(list, user);
+    return 1;
 }
 
 User *findUserByUsername(char *username)
@@ -238,4 +239,9 @@ char **mostDistUsers(int n)
 gboolean doesUserExist(char *username)
 {
     return g_hash_table_contains(positions, username);
+}
+
+void updateUser(int newSize)
+{
+    updateArrayList(list, sizeof(User *), newSize);
 }

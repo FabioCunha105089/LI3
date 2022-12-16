@@ -20,7 +20,7 @@ int getLines(FILE *file)
     return size;
 }
 
-int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int linesToSkip)
+int load(char *path, void *(*loadFunc)(char *), int (*initFunc)(int), int skipStart)
 {
     FILE *file = fopen(path, "r");
     if (!file)
@@ -28,11 +28,11 @@ int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int lines
         printf("Ficheiro %s nao encontrado.\n", path);
         return -1;
     }
-    int size = getLines(file);
+    int size = getLines(file), elementsAdded = 0;
     initFunc(size);
     char *line = (char *)malloc(256);
     char *sp;
-    for (int i = 0; i < linesToSkip; i++)
+    for (int i = 0; i < skipStart; i++)
     {
         fgets(line, 256, file);
     }
@@ -41,12 +41,12 @@ int load(char *path, void *(*loadFunc)(char *), void (*initFunc)(int), int lines
     {
         fgets(line, 256, file);
         sp = strdup(line);
-        loadFunc(sp);
+        elementsAdded += loadFunc(sp);
         free(sp);
     }
     free(line);
     fclose(file);
-    return 0;
+    return elementsAdded;
 }
 
 void output(char *r, int i)

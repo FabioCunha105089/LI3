@@ -41,7 +41,7 @@ int getNArgs(char id)
     return 0;
 }
 
-void loadQuery(char *sp)
+int loadQuery(char *sp)
 {
     Query *query = (Query *)malloc(sizeof(Query));
     query->id = strsep(&sp, " ")[0];
@@ -58,6 +58,7 @@ void loadQuery(char *sp)
         query->args[i] = strdup(strsep(&sp, " "));
     }
     addAL(list, query);
+    return 1;
 }
 
 char *query1_drivers(char *id)

@@ -6,7 +6,7 @@
 typedef struct query Query;
 
 void executeQueries();
-void loadQuery(char *);
+int loadQuery(char *);
 void initListQuery(int);
 void freeQuery();
 int getNArgs(char);

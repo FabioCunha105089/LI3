@@ -7,7 +7,7 @@
 #include "LinkedList.h"
 
 typedef struct ride Ride;
-void loadRide(char *);
+int loadRide(char *);
 double avgPayInCity(char *);
 gboolean doesDriverHaveRides(char *);
 int getNumberOfRidesDriver(char *);
@@ -29,5 +29,6 @@ char *getDriverNameFromRide(Ride *);
 double getDriverAvgScoreInCityFromRide(Ride *);
 int mostRecentRide(char *, char *);
 int calculateUserTotalDist(char *);
+void updateRide(int);
 
 #endif

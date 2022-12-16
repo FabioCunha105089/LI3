@@ -58,6 +58,8 @@ void* iterateLL(LinkedList* list){
 }
 
 int getLLSize(LinkedList* list){
+    if(!list)
+        return 0;
     return list->size;
 }
 

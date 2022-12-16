@@ -39,7 +39,8 @@ void freeArrayList(ArrayList * list, void (*freeFunc)(void *))
 {
     for(int i = 0; i < list->size; i++)
     {
-        freeFunc(list->array[i]);
+        if(list->array[i])
+            freeFunc(list->array[i]);
     }
     free(list->array);
     free(list);
@@ -59,9 +60,20 @@ void quickSortArrayList(ArrayList *list, int elementSize, int (*cmpFunc)(const v
 ArrayList *copyAL(ArrayList *a, int elementSize)
 {
     ArrayList *b = createAL(a->size, elementSize);
+    int k = 0;
     for(int i = 0; i < a->size; i++)
     {
-        memcpy(&b->array[i], &a->array[i], elementSize);
+        if(a->array[i])
+        {
+            memcpy(&b->array[k], &a->array[i], elementSize);
+            k++;
+        }
     }
     return b;
+}
+
+void updateArrayList(ArrayList *list, int elementSize, int newSize)
+{
+    realloc(list->array, elementSize * newSize);
+    list->size = newSize;
 }

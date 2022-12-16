@@ -8,24 +8,55 @@
 #include <stdlib.h>
 
 int batchMode(char const *argv[])
-{   
+{
     char *csvPath = strdup(argv[1]);
-    load(strcat(csvPath, "/drivers.csv"), loadDriver, initListDriver, 1);
+    int check = 0;
+    check = load(strcat(csvPath, "/drivers.csv"), loadDriver, initListDriver, 1);
+    if (check == -1)
+    {
+        free(csvPath);
+        return;
+    }
+    printf("check d = %d\n", check);
     free(csvPath);
     csvPath = strdup(argv[1]);
-    load(strcat(csvPath, "/users.csv"), loadUser, initListUser, 1);
+    check = load(strcat(csvPath, "/users.csv"), loadUser, initListUser, 1);
+    printf("check u = %d\n", check);
+    if (check == -1)
+    {
+        freeDriver();
+        free(csvPath);
+        return;
+    };
+    updateUser(check);
     free(csvPath);
     csvPath = strdup(argv[1]);
-    load(strcat(csvPath, "/rides.csv"), loadRide, initListRide, 1);
+    check = load(strcat(csvPath, "/rides.csv"), loadRide, initListRide, 1);
+    if (check == -1)
+    {
+        freeDriver();
+        freeUser();
+        free(csvPath);
+        return;
+    }
+    printf("check r = %d\n", check);
+    updateRide(check);
     initHashTables();
-    load(argv[2], loadQuery, initListQuery, 0);
+    check = load(argv[2], loadQuery, initListQuery, 0);
+    if (check == -1)
+    {
+        freeDriver();
+        freeUser();
+        freeRide();
+        free(csvPath);
+        return;
+    }
     executeQueries();
+    free(csvPath);
+    freeQuery();
     freeDriver();
     freeUser();
-    freeQuery();
     freeRide();
-    free(csvPath);
-    return 0;
 }
 
 int interactiveMode()
@@ -67,23 +98,20 @@ int interactiveMode()
     {
         printf("Qual query quer realizar? (0 para sair)\n");
         choice = getchar();
-        fgets(csvPath, 256, stdin); //BUFFER
+        fgets(csvPath, 256, stdin); // BUFFER
         nArgs = getNArgs(choice);
-        args = (char **) malloc(sizeof(char *) * nArgs);
+        args = (char **)malloc(sizeof(char *) * nArgs);
         for (int i = 0; i < nArgs; i++)
         {
-            args[i] = (char *) malloc(50);
+            args[i] = (char *)malloc(50);
             printf("Insira o %dº argumento:\n", i + 1);
             fgets(args[i], 50, stdin);
             size_t ln = strlen(args[i]) - 1;
             if (args[i][ln] == '\n')
-            args[i][ln] = '\0';
+                args[i][ln] = '\0';
         }
         executeQuery(choice, args);
     }
-    freeDriver();
-    freeUser();
-    freeRide();
     free(aux);
     return 0;
 }
@@ -91,4 +119,5 @@ int interactiveMode()
 int main(int argc, char const *argv[])
 {
     argc == 3 ? batchMode(argv) : interactiveMode();
+    return 0;
 }

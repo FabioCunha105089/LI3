@@ -6,7 +6,7 @@
 #include "LinkedList.h"
 
 typedef struct user User;
-void loadUser(char *);
+int loadUser(char *);
 int getElementSizeUser();
 User *findUserByUsername(char *);
 gboolean isUserActive(char *);
@@ -18,4 +18,5 @@ void freeUser();
 int getUserAccAge(char *);
 char **mostDistUsers(int);
 gboolean doesUserExist(char *);
+void updateUser(int);
 #endif

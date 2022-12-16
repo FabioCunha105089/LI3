@@ -39,7 +39,7 @@ bool validateScore(char * s, int l)
     return true;
 }
 
-void loadRide(char *sp)
+int loadRide(char *sp)
 {
     Ride *ride = (Ride *)malloc(sizeof(Ride));
     ride->id = strdup(strsep(&sp, ";"));
@@ -48,7 +48,7 @@ void loadRide(char *sp)
     {
         free(ride->id);
         free(ride);
-        return;
+        return 0;
     }
     aux1 = strdup(strsep(&sp, ";"));
     ride->date = sToDate(aux1, strlen(aux1));
@@ -57,7 +57,7 @@ void loadRide(char *sp)
         free(ride->id);
         free(ride);
         free(aux1);
-        return;
+        return 0;
     }
     free(aux1);
     ride->driver = strdup(strsep(&sp, ";"));
@@ -67,7 +67,7 @@ void loadRide(char *sp)
         free(ride->date);
         free(ride->driver);
         free(ride);
-        return;
+        return 0;
     }
     ride->user = strdup(strsep(&sp, ";"));
     if(strlen(ride->user) == 0)
@@ -77,7 +77,7 @@ void loadRide(char *sp)
         free(ride->driver);
         free(ride->user);
         free(ride);
-        return;
+        return 0;
     }
     ride->city = strdup(strsep(&sp, ";"));
     if(strlen(ride->city) == 0)
@@ -88,7 +88,7 @@ void loadRide(char *sp)
         free(ride->user);
         free(ride->city);
         free(ride);
-        return;
+        return 0;
     }
     ride->distance = atoi(strsep(&sp, ";"));
     if(ride->distance < 0)
@@ -99,7 +99,7 @@ void loadRide(char *sp)
         free(ride->user);
         free(ride->city);
         free(ride);
-        return;
+        return 0;
     }
     aux1 = strdup(strsep(&sp, ";"));
     aux2 = strdup(strsep(&sp, ";"));
@@ -113,7 +113,7 @@ void loadRide(char *sp)
         free(ride->user);
         free(ride->city);
         free(ride);
-        return;
+        return 0;
     }
     ride->score_user = atof(aux1);
     ride->score_driver = atof(aux2);
@@ -122,6 +122,7 @@ void loadRide(char *sp)
     ride->tip = atof(strsep(&sp, ";"));
     ride->comment = strdup(strsep(&sp, "\n"));
     addAL(list, ride);
+    return 1;
 }
 
 double getPrice(char *car_class, double distance)
@@ -522,8 +523,7 @@ int mostRecentRide(char *a, char *b)
         if(atoi(a) != 0)
             return atoi(a) > atoi(b) ? -1 : 1;
         return strcmp(a, b);
-    }
-        
+    }  
     return aux;
 }
 
@@ -541,4 +541,9 @@ int calculateUserTotalDist(char *username)
         tDist += ride->distance;
     }
     return tDist;
+}
+
+void updateRide(int newSize)
+{
+    updateArrayList(list, sizeof(Ride *), newSize);
 }

@@ -11,4 +11,5 @@ void freeArrayList(ArrayList * list, void (*freeFunc)(void *));
 void quickSortArrayList(ArrayList *, int, int (*cmpFunc)(const void *, const void *));
 void freeArrayListSimple(ArrayList*);
 ArrayList *copyAL(ArrayList *, int);
+void updateArrayList(ArrayList *, int, int);
 #endif
