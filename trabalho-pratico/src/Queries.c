@@ -121,7 +121,7 @@ char *query1(char *id)
     if(atoi(id) != 0 && doesDriverExist(id) == true)
         return query1_drivers(id);
     if(doesUserExist(id) == TRUE)
-        query1_users(id);
+        return query1_users(id);
     return "";
 }
 
