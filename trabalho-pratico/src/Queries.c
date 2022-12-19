@@ -202,7 +202,7 @@ void executeQueries()
             free(query->args[0]);
             break;
         case '6':
-            sprintf(aux, "%.3f", query6(query->args[0], query->args[1], query->args[2]));
+            sprintf(aux, "%.3lf", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
             free(query->args[0]);
             free(query->args[1]);

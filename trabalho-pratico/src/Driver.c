@@ -34,7 +34,7 @@ int loadDriver(char *sp)
     Driver *driver = (Driver *)malloc(sizeof(Driver));
     char *aux;
     driver->id = strdup(strsep(&sp, ";"));
-    if(strlen(driver->id) == 0)
+    if (strlen(driver->id) == 0)
     {
         free(driver->id);
         free(driver);
@@ -42,7 +42,7 @@ int loadDriver(char *sp)
         return 0;
     }
     driver->name = strdup(strsep(&sp, ";"));
-    if(strlen(driver->name) == 0)
+    if (strlen(driver->name) == 0)
     {
         free(driver->id);
         free(driver->name);
@@ -52,7 +52,7 @@ int loadDriver(char *sp)
     }
     aux = strdup(strsep(&sp, ";"));
     driver->birth_day = sToDate(aux, strlen(aux));
-    if(!driver->birth_day)
+    if (!driver->birth_day)
     {
         free(driver->id);
         free(driver->name);
@@ -63,7 +63,7 @@ int loadDriver(char *sp)
     }
     free(aux);
     driver->gender = strsep(&sp, ";")[0];
-    if(driver->gender == '\0')
+    if (driver->gender == '\0')
     {
         free(driver->id);
         free(driver->name);
@@ -73,12 +73,22 @@ int loadDriver(char *sp)
         return 0;
     }
     driver->car_class = strdup(strsep(&sp, ";"));
-    for(int i = 0; i < strlen(driver->car_class); i++)
+    for (int i = 0; i < strlen(driver->car_class); i++)
     {
-        driver->car_class[i] = tolower(driver->car_class[i]);   
+        driver->car_class[i] = tolower(driver->car_class[i]);
+    }
+    if (strcmp(driver->car_class, "premium") != 0 && strcmp(driver->car_class, "basic") != 0 && strcmp(driver->car_class, "green") != 0)
+    {
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver->car_class);
+        free(driver);
+        addAL(list, NULL);
+        return 0;
     }
     driver->license_plate = strdup(strsep(&sp, ";"));
-    if(strlen(driver->license_plate) == 0)
+    if (strlen(driver->license_plate) == 0)
     {
         free(driver->id);
         free(driver->name);
@@ -90,7 +100,7 @@ int loadDriver(char *sp)
         return 0;
     }
     driver->city = strdup(strsep(&sp, ";"));
-    if(strlen(driver->city) == 0)
+    if (strlen(driver->city) == 0)
     {
         free(driver->id);
         free(driver->name);
@@ -104,7 +114,7 @@ int loadDriver(char *sp)
     }
     aux = strdup(strsep(&sp, ";"));
     driver->account_creation = sToDate(aux, strlen(aux));
-    if(!driver->account_creation)
+    if (!driver->account_creation)
     {
         free(driver->id);
         free(driver->name);
@@ -120,11 +130,32 @@ int loadDriver(char *sp)
     }
     free(aux);
     aux = strdup(strsep(&sp, "\n"));
-    for(int i = 0; i < strlen(aux); i++)
+    for (int i = 0; i < strlen(aux); i++)
     {
-        aux[i] = tolower(aux[i]);   
+        aux[i] = tolower(aux[i]);
     }
-    driver->account_status = strcmp(aux, "active") == 0 ? true : false;
+    if(strcmp(aux, "active") == 0)
+    {
+        driver->account_status = true;
+    }
+    else if (strcmp(aux, "inactive") == 0)
+    {
+        driver->account_status = false;
+    }
+    else
+    {
+        free(aux);
+        free(driver->id);
+        free(driver->name);
+        free(driver->birth_day);
+        free(driver->car_class);
+        free(driver->license_plate);
+        free(driver->city);
+        free(driver->account_creation);
+        free(driver);
+        addAL(list, NULL);
+        return 0;
+    }
     driver->age = calculateAge(driver->birth_day);
     driver->account_age = calculateAge(driver->account_creation);
     driver->avgScore = -1;
@@ -147,7 +178,7 @@ char *getDriverBasicInfo(char *id)
 {
     Driver *driver = findDriverByID(id);
     char aux[10];
-    char *r = (char *) malloc(256);
+    char *r = (char *)malloc(256);
     strcpy(r, driver->name);
     strcat(r, ";");
     strncat(r, &driver->gender, 1);
@@ -214,15 +245,15 @@ char *getDriverName(char *id)
 }
 int aaaa = 0;
 int compareDriversByScore(const void *A, const void *B)
-{ 
+{
     Driver *a = *(Driver **)A;
     Driver *b = *(Driver **)B;
-    if(a->avgScore == -1)
+    if (a->avgScore == -1)
         a->avgScore = calculateDriverAvgScore(a->id);
     if (b->avgScore == -1)
         b->avgScore = calculateDriverAvgScore(b->id);
 
-    if (a->avgScore <= b->avgScore)
+    if (a->avgScore < b->avgScore)
         return 1;
     if (a->avgScore == b->avgScore)
         return mostRecentRide(a->id, b->id);
@@ -231,11 +262,11 @@ int compareDriversByScore(const void *A, const void *B)
 
 char **topNdrivers(int n)
 {
-    ArrayList* temp = copyAL(list, sizeof(Driver *));
-    int i;
-    for(i = 0; i < getALSize(temp); i++)
+    ArrayList *temp = copyAL(list, sizeof(Driver *));
+    int i, k = 0;
+    for (i = 0; i < getALSize(temp); i++)
     {
-        if(!getByIndex(temp, i))
+        if (!getByIndex(temp, i))
         {
             updateArrayList(temp, sizeof(Driver *), i - 1);
             break;
@@ -245,16 +276,25 @@ char **topNdrivers(int n)
     char **r = malloc(sizeof(char *) * n);
     char aux[10];
     Driver *driver;
-    for (int i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-        driver = (Driver *)getByIndex(temp, i);
-        r[i] = (char *)malloc(strlen(driver->id) + strlen(driver->name) + 15);
-        sprintf(aux, "%.3lf", driver->avgScore);
-        strcpy(r[i], driver->id);
-        strcat(r[i], ";");
-        strcat(r[i], driver->name);
-        strcat(r[i], ";");
-        strcat(r[i], aux);
+        driver = (Driver *)getByIndex(temp, k);
+        if (driver->account_status == false)
+        {
+            k++;
+            i--;
+        }
+        else
+        {
+            r[i] = (char *)malloc(strlen(driver->id) + strlen(driver->name) + 15);
+            sprintf(aux, "%.3lf", driver->avgScore);
+            strcpy(r[i], driver->id);
+            strcat(r[i], ";");
+            strcat(r[i], driver->name);
+            strcat(r[i], ";");
+            strcat(r[i], aux);
+            k++;
+        }
     }
     freeArrayListSimple(temp);
     return r;

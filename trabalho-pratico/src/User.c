@@ -100,7 +100,25 @@ int loadUser(char *sp)
     {
         aux[i] = tolower(aux[i]);
     }
-    user->account_status = strcmp(aux, "active") == 0 ? true : false;
+    if(strcmp(aux, "active") == 0)
+    {
+        user->account_status = true;
+    }
+    else if (strcmp(aux, "inactive") == 0)
+    {
+        user->account_status = false;
+    }
+    else
+    {
+        free(aux);
+        free(user->username);
+        free(user->name);
+        free(user->birthdate);
+        free(user->account_creation);
+        free(user->pay_method);
+        free(user);
+        return 0;  
+    }
     user->age = calculateAge(user->birthdate);
     user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;

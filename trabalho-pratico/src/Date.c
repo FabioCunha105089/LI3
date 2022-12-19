@@ -21,6 +21,11 @@ Date *sToDate(char* string, int size){
     Date *date = (Date *) malloc(sizeof(Date));
     date->day = atoi(strsep(&string, "/"));
     date->month = atoi(strsep(&string, "/"));
+    if(date->day > 31 || date->day < 1 || date->month < 1 || date->month > 12)
+    {
+        free(date);
+        return NULL;
+    }
     date->year = atoi(strsep(&string, "\0"));
 
     return date;

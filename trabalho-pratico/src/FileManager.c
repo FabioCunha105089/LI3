@@ -51,8 +51,6 @@ int load(char *path, void *(*loadFunc)(char *), int (*initFunc)(int), int skipSt
 
 void output(char *r, int i)
 {
-    if (strcmp(r, "0") == 0)
-        return;
     char filename[100] = "./Resultados/command";
     char aux[100];
     sprintf(aux, "%d", i + 1);
@@ -60,6 +58,15 @@ void output(char *r, int i)
     strcat(filename, "_output.txt");
 
     FILE *file = fopen(filename, "w+");
+    if(i == 39)
+        printf("");
+
+    if (strcmp(r, "0.000") == 0)
+    {
+        fputs("", file);
+        fclose(file);
+        return;
+    }
 
     fputs(r, file);
     if (strcmp(r, "") != 0)
