@@ -134,7 +134,7 @@ int loadDriver(char *sp)
     {
         aux[i] = tolower(aux[i]);
     }
-    if(strcmp(aux, "active") == 0)
+    if (strcmp(aux, "active") == 0)
     {
         driver->account_status = true;
     }
@@ -268,7 +268,7 @@ char **topNdrivers(int n)
     {
         if (!getByIndex(temp, i))
         {
-            updateArrayList(temp, sizeof(Driver *), i - 1);
+            updateArrayList(temp, sizeof(Driver *), i);
             break;
         }
     }
@@ -281,7 +281,6 @@ char **topNdrivers(int n)
         driver = (Driver *)getByIndex(temp, k);
         if (driver->account_status == false)
         {
-            k++;
             i--;
         }
         else
@@ -293,8 +292,8 @@ char **topNdrivers(int n)
             strcat(r[i], driver->name);
             strcat(r[i], ";");
             strcat(r[i], aux);
-            k++;
         }
+        k++;
     }
     freeArrayListSimple(temp);
     return r;
