@@ -105,7 +105,7 @@ int loadRide(char *sp)
         return 0;
     }
     aux1 = strdup(strsep(&sp, ";"));
-    if (validateNumberInt(aux1, strlen(aux1)) == false)
+    if (validateNumberInt(aux1, strlen(aux1)) == false || atoi(aux1) <= 0)
     {
         free(aux1);
         free(ride->id);
@@ -283,6 +283,10 @@ double calculateDriverAvgScore(char *id)
     LinkedList *rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
     double score = 0;
     int nRides = getLLSize(rides);
+    if(!rides || nRides == 0)
+    {
+        return 0;
+    }
     Ride *ride;
     for (int i = 0; i < nRides; i++)
     {
@@ -542,6 +546,10 @@ int mostRecentRide(char *a, char *b)
         aRides = (LinkedList *)g_hash_table_lookup(hashUsers, a);
         bRides = (LinkedList *)g_hash_table_lookup(hashUsers, b);
     }
+    if(!aRides)
+        return -1;
+    if(!bRides)
+        return 1;
 
     int aNrides = getLLSize(aRides), bNrides = getLLSize(bRides);
     Date *defaultDate = setDefaultDate();

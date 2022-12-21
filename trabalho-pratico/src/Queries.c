@@ -216,6 +216,7 @@ void executeQueries()
             outputMult(query7(atoi(query->args[0]), query->args[1]), i);
             free(query->args[0]);
             free(query->args[1]);
+            break;
         default:
             break;
         }

@@ -222,10 +222,10 @@ int compareUsersByDistance(const void *A, const void *B)
 
     if(a->totalDist == 0 && isUserActive(a->username) == true)
         a->totalDist = calculateUserTotalDist(a->username);
-
     if(b->totalDist == 0 && isUserActive(b->username) == true)
         b->totalDist = calculateUserTotalDist(b->username);
-    if (a->totalDist <= b->totalDist)
+
+    if (a->totalDist < b->totalDist)
         return 1;
     if (a->totalDist == b->totalDist)
         return mostRecentRide(a->username, b->username);

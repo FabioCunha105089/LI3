@@ -243,7 +243,7 @@ char *getDriverName(char *id)
 {
     return findDriverByID(id)->name;
 }
-int aaaa = 0;
+
 int compareDriversByScore(const void *A, const void *B)
 {
     Driver *a = *(Driver **)A;
@@ -272,10 +272,10 @@ char **topNdrivers(int n)
             break;
         }
     }
+    Driver *driver;
     quickSortArrayList(temp, sizeof(Driver *), compareDriversByScore);
     char **r = malloc(sizeof(char *) * n);
     char aux[10];
-    Driver *driver;
     for (i = 0; i < n; i++)
     {
         driver = (Driver *)getByIndex(temp, k);
