@@ -74,6 +74,6 @@ ArrayList *copyAL(ArrayList *a, int elementSize)
 
 void updateArrayList(ArrayList *list, int elementSize, int newSize)
 {
-    realloc(list->array, elementSize * newSize);
+    list->array = realloc(list->array, elementSize * newSize);
     list->size = newSize;
 }

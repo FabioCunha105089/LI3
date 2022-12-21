@@ -177,13 +177,9 @@ void initHashTables()
     hashAccAges = g_hash_table_new_full(g_direct_equal, g_direct_equal, NULL, freeLinkedList);
     hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
-
-    FILE *f = fopen("./teste.txt", "w");
-    fputs("id;date;driver;user;city;distance;score_user;score_driver;tip;comment", f);
     for (int i = 0; i < size; i++)
     {
         ride = (Ride *)getByIndex(list, i);
-        fprintf(f, "%s;%s;%s;%s;%d;%lf;%lf;%lf;%s\n", ride->id, ride->driver, ride->user, ride->city, ride->distance, ride->score_user, ride->score_driver, ride->tip, ride->comment);
         // Cidades
         if (g_hash_table_contains(hashCity, ride->city) == FALSE)
         {
@@ -436,6 +432,8 @@ double avgDistanceInCityByDate(char *city, char *date1, char *date2)
             nRides++;
         }
     }
+    free(dateA);
+    free(dateB);
     if (nRides == 0)
         return 0;
 

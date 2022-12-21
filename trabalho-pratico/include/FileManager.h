@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "LinkedList.h"
 
-int load(char *, void *(*loadFunc)(char *), int (*initFunc)(int), int);
+int load(char *, int (*loadFunc)(char *), void (*initFunc)(int), int);
 int getLines(FILE *);
 void output(char *, int);
 void outputMult(LinkedList*, int);

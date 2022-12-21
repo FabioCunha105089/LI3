@@ -27,9 +27,9 @@ int getNArgs(char id)
     switch (id)
     {
     case '1':
-    case '4':
     case '2':
     case '3':
+    case '4':
         return 1;
 
     case '7':
@@ -49,7 +49,6 @@ int loadQuery(char *sp)
     query->args = malloc(sizeof(char *) * nArgs);
     for (int i = 0; i < nArgs; i++)
     {
-        query->args[i] = (char *)malloc(256);
         if (i == nArgs - 1)
         {
             query->args[i] = strdup(strsep(&sp, "\n"));
@@ -179,14 +178,19 @@ void executeQueries()
 {
     int nQueries = getALSize(list);
     char aux[100];
+    char *aux2;
+    Query *query;
     for (int i = 0; i < nQueries; i++)
     {
-        Query *query = (Query *)getByIndex(list, i);
+        query = (Query *)getByIndex(list, i);
         switch (query->id)
         {
         case '1':
-            output(query1(query->args[0]), i);
+            aux2 = query1(query->args[0]);
+            output(aux2, i);
             free(query->args[0]);
+            if(strcmp(aux2, "") != 0)
+                free(aux2);
             break;
         case '2':
             outputMult(query2(atoi(query->args[0])), i);
@@ -222,7 +226,7 @@ void executeQueries()
 
 void freeQuery()
 {
-    free(list);
+    freeArrayListSimple(list);
 }
 
 void printQueries(LinkedList *l)

@@ -20,7 +20,7 @@ int getLines(FILE *file)
     return size;
 }
 
-int load(char *path, void *(*loadFunc)(char *), int (*initFunc)(int), int skipStart)
+int load(char *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipStart)
 {
     FILE *file = fopen(path, "r");
     if (!file)
@@ -58,8 +58,6 @@ void output(char *r, int i)
     strcat(filename, "_output.txt");
 
     FILE *file = fopen(filename, "w+");
-    if(i == 39)
-        printf("");
 
     if (strcmp(r, "0.000") == 0)
     {
@@ -110,4 +108,5 @@ void outputMult(LinkedList *r, int i)
         free(arr);
         freeLinkedList(r);
     }
+    fclose(file);
 }
