@@ -33,9 +33,10 @@ int getNArgs(char id)
         return 1;
 
     case '7':
+    case '8':
         return 2;
 
-    case '6':
+        case '6':
         return 3;
     }
     return 0;
@@ -117,16 +118,16 @@ char *query1_users(char *id)
 
 char *query1(char *id)
 {
-    if(atoi(id) != 0 && doesDriverExist(id) == true)
+    if (atoi(id) != 0 && doesDriverExist(id) == true)
         return query1_drivers(id);
-    if(doesUserExist(id) == TRUE)
+    if (doesUserExist(id) == TRUE)
         return query1_users(id);
     return "";
 }
 
 LinkedList *query2(int n)
 {
-    if(n == 0)
+    if (n == 0)
         return NULL;
     char **r = topNdrivers(n);
     LinkedList *l = createLL();
@@ -139,7 +140,7 @@ LinkedList *query2(int n)
 
 LinkedList *query3(int n)
 {
-    if(n == 0)
+    if (n == 0)
         return NULL;
     char **r = mostDistUsers(n);
     LinkedList *l = createLL();
@@ -164,7 +165,7 @@ double query6(char *city, char *dataA, char *dataB)
 LinkedList *query7(int n, char *city)
 {
     char **r = driversByScoreInCity(city, n);
-    if(!r)
+    if (!r)
         return NULL;
     LinkedList *l = createLL();
     addLL(l, r);
@@ -172,6 +173,11 @@ LinkedList *query7(int n, char *city)
     *s = n;
     addLL(l, s);
     return l;
+}
+
+LinkedList *query8(char gender, int years)
+{
+    return ridesWithSameGenderAndAccAge(gender, years);
 }
 
 void executeQueries()
@@ -189,7 +195,7 @@ void executeQueries()
             aux2 = query1(query->args[0]);
             output(aux2, i);
             free(query->args[0]);
-            if(strcmp(aux2, "") != 0)
+            if (strcmp(aux2, "") != 0)
                 free(aux2);
             break;
         case '2':
@@ -214,6 +220,11 @@ void executeQueries()
             break;
         case '7':
             outputMult(query7(atoi(query->args[0]), query->args[1]), i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;
+        case '8':
+            outputMult(query8(query->args[0][0], atoi(query->args[1])), i);
             free(query->args[0]);
             free(query->args[1]);
             break;
@@ -265,6 +276,9 @@ void executeQuery(char id, char **args)
         break;
     case '7':
         printQueries(query7(atoi(args[0]), args[1]));
+        break;
+    case '8':
+        printQueries(query8(args[0][0], atoi(args[1])));
         break;
     default:
         break;

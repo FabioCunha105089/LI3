@@ -62,21 +62,3 @@ int isDateBigger (Date *dateA, Date *dateB) {
     return -1;
 
 }
-
-Date *setDefaultDate()
-{
-    Date *date = (Date *) malloc(sizeof(Date));
-    date->day = BASEDAY;
-    date->month = BASEMONTH;
-    date->year = BASEYEAR;
-    return date;
-}
-
-Date *dateCopy(Date *date)
-{
-    Date *r = (Date *) malloc(sizeof(Date));
-    r->day = date->day;
-    r->month = date->month;
-    r->year = date->year;
-    return r;
-}

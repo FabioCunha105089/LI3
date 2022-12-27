@@ -30,5 +30,6 @@ double getDriverAvgScoreInCityFromRide(Ride *);
 int mostRecentRide(char *, char *);
 int calculateUserTotalDist(char *);
 void updateRide(int);
+LinkedList *ridesWithSameGenderAndAccAge(char, int);
 
 #endif

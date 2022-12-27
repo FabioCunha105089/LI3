@@ -11,6 +11,4 @@ Date *sToDate(char *, int);
 Date *sToDateSimple(char *);
 int calculateAge(Date *);
 int isDateBigger(Date*, Date *);
-Date *setDefaultDate();
-Date *dateCopy(Date *);
 #endif

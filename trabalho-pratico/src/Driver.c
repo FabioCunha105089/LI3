@@ -317,3 +317,23 @@ void setDriverRecentDate(char *id, Date *date)
     Driver *driver = findDriverByID(id);
     driver->recentRide = date;
 }
+
+char getDriverGender(char *id)
+{
+    return findDriverByID(id)->gender;
+}
+
+char *getDriverIDAndName(char *id)
+{
+    Driver *driver = findDriverByID(id);
+    char *s = (char *) malloc(256);
+    strcpy(s, driver->id);
+    strcat(s, ";");
+    strcat(s, driver->name);
+    return s;
+}
+
+Date *getDriverAccCreation(char *id)
+{
+    return findDriverByID(id)->account_creation;
+}

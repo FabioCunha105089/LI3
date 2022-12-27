@@ -21,4 +21,7 @@ gboolean doesUserExist(char *);
 void updateUser(int);
 Date *getUserRecentDate(char *);
 void setUserRecentDate(char *, Date *);
+char getUserGender(char *);
+char *getUserUsernameAndName(char *);
+Date *getUserAccCreation(char *);
 #endif

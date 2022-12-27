@@ -15,7 +15,7 @@ int batchMode(char const *argv[])
     if (check == -1)
     {
         free(csvPath);
-        return;
+        return 0;
     }
     printf("check d = %d\n", check);
     free(csvPath);
@@ -26,7 +26,7 @@ int batchMode(char const *argv[])
     {
         freeDriver();
         free(csvPath);
-        return;
+        return 0;
     };
     updateUser(check);
     free(csvPath);
@@ -37,7 +37,7 @@ int batchMode(char const *argv[])
         freeDriver();
         freeUser();
         free(csvPath);
-        return;
+        return 0;
     }
     printf("check r = %d\n", check);
     updateRide(check);
@@ -49,7 +49,7 @@ int batchMode(char const *argv[])
         freeUser();
         freeRide();
         free(csvPath);
-        return;
+        return 0;
     }
     executeQueries();
     free(csvPath);
@@ -57,6 +57,7 @@ int batchMode(char const *argv[])
     freeDriver();
     freeUser();
     freeRide();
+    return 0;
 }
 
 int interactiveMode()

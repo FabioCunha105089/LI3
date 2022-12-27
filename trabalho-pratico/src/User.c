@@ -276,3 +276,23 @@ void setUserRecentDate(char *username, Date *date)
     User *user = findUserByUsername(username);
     user->recentRide = date;
 }
+
+char getUserGender(char *username)
+{
+    return findUserByUsername(username)->gender;
+}
+
+char *getUserUsernameAndName(char *username)
+{
+    User *user = findUserByUsername(username);
+    char *r = (char *) malloc(256);
+    strcpy(r, user->username);
+    strcat(r, ";");
+    strcat(r, user->name);
+    return r;
+}
+
+Date *getUserAccCreation(char *username)
+{
+    return findUserByUsername(username)->account_creation;
+}
