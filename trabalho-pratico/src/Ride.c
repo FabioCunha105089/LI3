@@ -532,60 +532,79 @@ double getDriverAvgScoreInCityFromRide(Ride *ride)
     return score[0] / score[1];
 }
 
-int mostRecentRide(char *a, char *b)
+Date *getMostRecentDate(char *id)
 {
-    LinkedList *aRides, *bRides;
-    int aux;
-    if (atoi(a) != 0)
+    int aux = atoi(id);
+    Date *recent = NULL;
+    if (aux != 0)
     {
-        aRides = (LinkedList *)g_hash_table_lookup(hashDriver, a);
-        bRides = (LinkedList *)g_hash_table_lookup(hashDriver, b);
+        recent = getDriverRecentDate(id);
     }
     else
     {
-        aRides = (LinkedList *)g_hash_table_lookup(hashUsers, a);
-        bRides = (LinkedList *)g_hash_table_lookup(hashUsers, b);
+        recent = getUserRecentDate(id);
     }
-    if (!aRides && bRides)
-        return -1;
-    if (!bRides && aRides)
+
+    if (recent)
+        return recent;
+
+    LinkedList *rides;
+    if (aux != 0)
+    {
+        rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
+    }
+    else
+    {
+        rides = (LinkedList *)g_hash_table_lookup(hashUsers, id);
+    }
+
+    if (!rides)
+        return NULL;
+
+    int nRides = getLLSize(rides);
+    Ride *ride = (Ride *)iterateLL(rides);
+    recent = ride->date;
+    for (int i = 1; i < nRides; i++)
+    {
+        ride = (Ride *)iterateLL(rides);
+        if (isDateBigger(recent, ride->date) == -1)
+            recent = ride->date;
+    }
+    if (aux != 0)
+    {
+        setDriverRecentDate(id, recent);
+    }
+    else
+    {
+        setUserRecentDate(id, recent);
+    }
+    return recent;
+}
+
+int mostRecentRide(char *a, char *b)
+{
+    int aux;
+    Date *aRecent = getMostRecentDate(a);
+    Date *bRecent = getMostRecentDate(b);
+    if (!aRecent && bRecent)
         return 1;
-    if (!aRides && !bRides)
+    if (!bRecent && aRecent)
+        return -1;
+    if (!aRecent && !bRecent)
     {
         aux = 0;
     }
     else
     {
-        int aNrides = getLLSize(aRides), bNrides = getLLSize(bRides);
-        Date *aRecent;
-        Date *bRecent;
-        Ride *ride = (Ride *)iterateLL(aRides);
-        aRecent = ride->date;
-        for (int i = 1; i < aNrides; i++)
-        {
-            ride = (Ride *)iterateLL(aRides);
-            if (isDateBigger(aRecent, ride->date) == -1)
-                aRecent = ride->date;
-        }
-        ride = (Ride *)iterateLL(bRides);
-        bRecent = ride->date;
-        for (int i = 1; i < bNrides; i++)
-        {
-            ride = (Ride *)iterateLL(bRides);
-            if (isDateBigger(bRecent, ride->date) == -1)
-                bRecent = ride->date;
-        }
-        aux = isDateBigger(aRecent, bRecent);
+        aux = isDateBigger(bRecent, aRecent);
     }
-    if(strcmp(a, "DanieNeto") == 0 && strcmp(b, "CarolinPereira") == 0)
-        printf("%d\n", aux);
     if (aux == 0)
     {
         if (atoi(a) != 0)
             return atoi(a) > atoi(b) ? 1 : -1;
-        return strcmp(a, b) < 0 ? 1 : -1;
+        return strcmp(a, b) < 0 ? -1 : 1;
     }
-    return aux * -1;
+    return aux;
 }
 
 int calculateUserTotalDist(char *username)

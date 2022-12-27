@@ -19,5 +19,7 @@ int getDriverAccAge(char *);
 char *getDriverName(char *);
 char **topNdrivers(int);
 bool doesDriverExist(char *);
+Date *getDriverRecentDate(char *);
+void setDriverRecentDate(char *, Date *);
 
 #endif

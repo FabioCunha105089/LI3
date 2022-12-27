@@ -21,6 +21,7 @@ typedef struct user
     int account_age;
     double avgScore;
     int totalDist;
+    Date *recentRide;
 } User;
 
 static ArrayList *list = NULL;
@@ -123,6 +124,7 @@ int loadUser(char *sp)
     user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;
     user->totalDist = 0;
+    user->recentRide = NULL;
     g_hash_table_insert(positions, user->username, user);
     free(aux);
     addAL(list, user);
@@ -262,4 +264,15 @@ gboolean doesUserExist(char *username)
 void updateUser(int newSize)
 {
     updateArrayList(list, sizeof(User *), newSize);
+}
+
+Date *getUserRecentDate(char *username)
+{
+    return findUserByUsername(username)->recentRide;
+}
+
+void setUserRecentDate(char *username, Date *date)
+{
+    User *user = findUserByUsername(username);
+    user->recentRide = date;
 }

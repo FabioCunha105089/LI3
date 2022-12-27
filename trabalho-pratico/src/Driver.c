@@ -19,6 +19,7 @@ typedef struct driver
     int age;
     int account_age;
     double avgScore;
+    Date *recentRide;
 } Driver;
 
 static ArrayList *list = NULL;
@@ -159,6 +160,7 @@ int loadDriver(char *sp)
     driver->age = calculateAge(driver->birth_day);
     driver->account_age = calculateAge(driver->account_creation);
     driver->avgScore = -1;
+    driver->recentRide = NULL;
     free(aux);
     addAL(list, driver);
     return 1;
@@ -303,4 +305,15 @@ bool doesDriverExist(char *id)
 {
     long long i = atoi(id);
     return i > 0 && i < getALSize(list) && getByIndex(list, i - 1);
+}
+
+Date *getDriverRecentDate(char *id)
+{
+    return findDriverByID(id)->recentRide;
+}
+
+void setDriverRecentDate(char *id, Date *date)
+{
+    Driver *driver = findDriverByID(id);
+    driver->recentRide = date;
 }

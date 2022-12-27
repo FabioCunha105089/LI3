@@ -19,4 +19,6 @@ int getUserAccAge(char *);
 char **mostDistUsers(int);
 gboolean doesUserExist(char *);
 void updateUser(int);
+Date *getUserRecentDate(char *);
+void setUserRecentDate(char *, Date *);
 #endif
