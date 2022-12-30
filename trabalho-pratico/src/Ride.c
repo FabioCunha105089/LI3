@@ -177,7 +177,7 @@ void initHashTables()
     hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashAccAges = g_hash_table_new_full(g_direct_equal, g_direct_equal, NULL, freeLinkedList);
-    hashDriverCityScores = g_hash_table_new_full(g_int_hash, g_int_equal, free, free);
+    hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
     for (int i = 0; i < size; i++)
     {
@@ -219,27 +219,30 @@ void initHashTables()
         }
 
         // AccAges
-        ageD = getDriverAccAge(ride->driver);
-        ageU = getUserAccAge(ride->user);
-        genderD = getDriverGender(ride->driver);
-        genderU = getUserGender(ride->user);
-        if (ageD > MAXYEARS)
-            MAXYEARS = ageD;
-        if (ageU > MAXYEARS)
-            MAXYEARS = ageU;
-        if (ageD == ageU && genderD == genderU)
+        if (isDriverActive(ride->driver) == true && isUserActive(ride->user) == TRUE)
         {
-            int *age = (int *) malloc(sizeof(int));
-            *age = ageD * genderD;
-            if (g_hash_table_contains(hashAccAges, *age) == FALSE)
+            ageD = getDriverAccAge(ride->driver);
+            ageU = getUserAccAge(ride->user);
+            genderD = getDriverGender(ride->driver);
+            genderU = getUserGender(ride->user);
+            if (ageD > MAXYEARS)
+                MAXYEARS = ageD;
+            if (ageU > MAXYEARS)
+                MAXYEARS = ageU;
+            if (ageD == ageU && genderD == genderU)
             {
-                LinkedList *rideList = createLL();
-                addLL(rideList, ride);
-                g_hash_table_insert(hashAccAges, *age, rideList);
-            }
-            else
-            {
-                addLL((LinkedList *)g_hash_table_lookup(hashAccAges, *age), ride);
+                int *age = (int *)malloc(sizeof(int));
+                *age = ageD * genderD;
+                if (g_hash_table_contains(hashAccAges, *age) == FALSE)
+                {
+                    LinkedList *rideList = createLL();
+                    addLL(rideList, ride);
+                    g_hash_table_insert(hashAccAges, *age, rideList);
+                }
+                else
+                {
+                    addLL((LinkedList *)g_hash_table_lookup(hashAccAges, *age), ride);
+                }
             }
         }
 
@@ -676,7 +679,7 @@ int compareRidesByAccAge(const void *A, const void *B)
 
 LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
 {
-    int *age = (int *) malloc(sizeof(int));
+    int *age = (int *)malloc(sizeof(int));
     *age = gender * years;
 
     LinkedList *rideList, *fullList = createLL();
