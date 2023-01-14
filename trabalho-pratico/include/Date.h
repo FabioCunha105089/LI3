@@ -11,4 +11,5 @@ Date *sToDate(char *, int);
 Date *sToDateSimple(char *);
 int calculateAge(Date *);
 int isDateBigger(Date*, Date *);
+void printDate(Date *);
 #endif

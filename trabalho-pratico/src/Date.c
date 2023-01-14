@@ -62,3 +62,9 @@ int isDateBigger (Date *dateA, Date *dateB) {
     return -1;
 
 }
+
+void printDate(Date *data)
+{
+    if(data)
+        printf("%d/%d/%d\n", data->day, data->month, data->year);
+}

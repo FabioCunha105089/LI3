@@ -51,7 +51,7 @@ void* iterateLL(LinkedList* list){
         return list->pointer->data;
     } else if(list->pointer == list->tail){
         list->pointer = list->head;
-        return list->tail->data;
+        return list->pointer->data;
     }
     list->pointer = list->pointer->next;
     return list->pointer->data;
