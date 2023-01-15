@@ -3,7 +3,7 @@
 
 typedef struct date Date;
 
-#define BASEDAY 19
+#define BASEDAY 9
 #define BASEMONTH 10
 #define BASEYEAR 2022
 
