@@ -12,6 +12,7 @@ double avgPayInCity(char *);
 gboolean doesDriverHaveRides(char *);
 int getNumberOfRidesDriver(char *);
 double calculateTotalPayDriver(char *);
+double avgPayByDate(char *, char *);
 double calculateDriverAvgScore(char *);
 double* calculateDriverAvgScoreAndPay(char *);
 gboolean doesUserHaveRides(char *);

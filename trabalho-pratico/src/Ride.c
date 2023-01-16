@@ -169,6 +169,16 @@ double getPrice(char *car_class, double distance)
     return 3.25 + distance * 0.62;
 }
 
+int compareRidesByDate(const void *A, const void *B) {
+    Ride *a = *(Ride **)A;
+    Ride *b = *(Ride **)B;
+    int compareDate = isDateBigger(a->date, b->date);
+    if (compareDate == 0){
+        return 1;
+    } else return compareDate;
+}
+
+
 void initHashTables()
 {
     int size = getALSize(list), ageD, ageU;
@@ -179,6 +189,8 @@ void initHashTables()
     hashAccAges = g_hash_table_new_full(g_direct_equal, g_direct_equal, NULL, freeLinkedList);
     hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
+    quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
+
     for (int i = 0; i < size; i++)
     {
         ride = (Ride *)getByIndex(list, i);
@@ -434,6 +446,30 @@ void freeRide()
     g_hash_table_destroy(hashUsers);
     g_hash_table_destroy(hashDriverCityScores);
     g_hash_table_destroy(hashAccAges);
+}
+
+double avgPayByDate(char *date1, char *date2)
+{
+    Date *dateA = sToDateSimple(date1);
+    Date *dateB = sToDateSimple(date2);
+    double tPay = 0;
+    Ride *ride;
+    int tRides = getALSize(list), nRides = 0;
+    bool checkDate = false;
+
+    for (int i = 0; i < tRides; i++)
+    {
+        ride = (Ride *)getByIndex(list, i);
+
+        if(isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
+        {
+            checkDate = true;
+            nRides++;
+            tPay += getPrice(getCarClass(ride->driver), ride->distance);
+
+        } else if (checkDate) break;
+    }
+    return tPay / nRides; 
 }
 
 double avgDistanceInCityByDate(char *city, char *date1, char *date2)

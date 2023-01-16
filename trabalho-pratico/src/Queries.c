@@ -31,7 +31,7 @@ int getNArgs(char id)
     case '3':
     case '4':
         return 1;
-
+    case '5':
     case '7':
     case '8':
         return 2;
@@ -156,6 +156,11 @@ double query4(char *city)
     return avgPayInCity(city);
 }
 
+double query5(char *dataA, char *dataB) 
+{
+    return avgPayByDate(dataA, dataB);
+}
+
 double query6(char *city, char *dataA, char *dataB)
 {
 
@@ -211,6 +216,11 @@ void executeQueries()
             output(aux, i);
             free(query->args[0]);
             break;
+        case '5':
+            sprintf(aux, "%.3lf", query5(query->args[0], query->args[1]));
+            output(aux, i);
+            free(query->args[0]);
+            free(query->args[1]);
         case '6':
             sprintf(aux, "%.3lf", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);
@@ -331,6 +341,9 @@ void executeQuery(char id, char **args)
         break;
     case '4':
         printf("%.3lf\n", query4(args[0]));
+        break;
+    case '5':
+        printf("%.3lf\n", query5(args[0], args[1]));
         break;
     case '6':
         printf("%.3lf\n", query6(args[0], args[1], args[2]));
