@@ -36,7 +36,7 @@ int getNArgs(char id)
     case '8':
         return 2;
 
-        case '6':
+    case '6':
         return 3;
     }
     return 0;
@@ -241,13 +241,62 @@ void freeQuery()
     freeArrayListSimple(list);
 }
 
-void printQueries(LinkedList *l)
+void printQueries(LinkedList *l, bool isPaged, char *firstLine)
 {
     char **r = (char **)iterateLL(l);
     int *s = (int *)iterateLL(l);
-    for (int i = 0; i < *s; i++)
+    printf("%s\n", firstLine);
+    if (!isPaged)
     {
-        printf("%s\n", r[i]);
+        for (int i = 0; i < *s; i++)
+        {
+            printf("%s\n", r[i]);
+        }
+    }
+    else
+    {
+        int perPage = 51, i, start = 0, page = 1;
+        char input;
+        while (page != -1)
+        {
+            printf("%s\n", firstLine);
+            for (i = start; i < perPage; i++)
+            {
+                printf("%s\n", r[i]);
+            }
+            printf("Page %d       (a <- -> d   q-quit)     ", page);
+            input = getchar();
+            getchar(); // BUFFER
+            system("clear");
+            switch (input)
+            {
+            case 'd':
+                if (i != *s)
+                {
+                    page++;
+                    start = perPage;
+                    perPage += 51;
+                    if (perPage > *s)
+                        perPage = *s;
+                }
+                break;
+            case 'a':
+                if (page != 1)
+                {
+                    perPage = start;
+                    start -= 51;
+                    if (start < 0)
+                        start = 0;
+                    page--;
+                }
+                break;
+            case 'q':
+                page = -1;
+                break;
+            default:
+                break;
+            }
+        }
     }
     free(r);
     free(s);
@@ -257,16 +306,28 @@ void printQueries(LinkedList *l)
 void executeQuery(char id, char **args)
 {
     system("clear");
+    bool page;
+    int aux;
     switch (id)
     {
     case '1':
         printf("%s\n", query1(args[0]));
         break;
     case '2':
-        printQueries(query2(atoi(args[0])));
+        aux = atoi(args[0]);
+        if (aux > 51)
+            page = true;
+        else
+            page = false;
+        printQueries(query2(atoi(args[0])), page, "id;nome;avaliacao_media");
         break;
     case '3':
-        printQueries(query3(atoi(args[0])));
+        aux = atoi(args[0]);
+        if (aux > 51)
+            page = true;
+        else
+            page = false;
+        printQueries(query3(atoi(args[0])), page, "username;nome;distancia_total");
         break;
     case '4':
         printf("%.3lf\n", query4(args[0]));
@@ -275,10 +336,15 @@ void executeQuery(char id, char **args)
         printf("%.3lf\n", query6(args[0], args[1], args[2]));
         break;
     case '7':
-        printQueries(query7(atoi(args[0]), args[1]));
+        aux = atoi(args[0]);
+        if (aux > 51)
+            page = true;
+        else
+            page = false;
+        printQueries(query7(atoi(args[0]), args[1]), page, "id;nome;avaliacao_media");
         break;
     case '8':
-        printQueries(query8(args[0][0], atoi(args[1])));
+        printQueries(query8(args[0][0], atoi(args[1])), true, "id_condutor;nome_condutor;username_utilizador;nome_utilizador");
         break;
     default:
         break;

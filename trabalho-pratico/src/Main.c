@@ -6,53 +6,60 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-int batchMode(char const *argv[])
+bool doLoads(char *csvPath)
 {
-    char *csvPath = strdup(argv[1]);
-    int check = 0;
-    check = load(strcat(csvPath, "/drivers.csv"), loadDriver, initListDriver, 1);
+    char *aux = strdup(csvPath);
+    int check = load(strcat(aux, "/drivers.csv"), loadDriver, initListDriver, 1);
     if (check == -1)
     {
-        free(csvPath);
-        return 0;
+        free(aux);
+        return false;
     }
-    printf("check d = %d\n", check);
-    free(csvPath);
-    csvPath = strdup(argv[1]);
-    check = load(strcat(csvPath, "/users.csv"), loadUser, initListUser, 1);
-    printf("check u = %d\n", check);
+    printf("Drivers loaded = %d\n", check);
+    free(aux);
+    aux = strdup(csvPath);
+    check = load(strcat(aux, "/users.csv"), loadUser, initListUser, 1);
+    printf("Users loaded = %d\n", check);
     if (check == -1)
     {
         freeDriver();
-        free(csvPath);
-        return 0;
+        free(aux);
+        return false;
     };
     updateUser(check);
-    free(csvPath);
-    csvPath = strdup(argv[1]);
-    check = load(strcat(csvPath, "/rides.csv"), loadRide, initListRide, 1);
+    free(aux);
+    aux = strdup(csvPath);
+    check = load(strcat(aux, "/rides.csv"), loadRide, initListRide, 1);
     if (check == -1)
     {
         freeDriver();
         freeUser();
-        free(csvPath);
-        return 0;
+        free(aux);
+        return false;
     }
-    printf("check r = %d\n", check);
+    printf("Rides loaded = %d\n", check);
     updateRide(check);
+    free(aux);
+    return true;
+}
+
+int batchMode(char const *argv[])
+{
+    bool check = true;
+    check = doLoads(argv[1]);
+    if (!check)
+        return 0;
     initHashTables();
-    check = load(argv[2], loadQuery, initListQuery, 0);
-    if (check == -1)
+    if (!load(argv[2], loadQuery, initListQuery, 0))
     {
         freeDriver();
         freeUser();
         freeRide();
-        free(csvPath);
         return 0;
     }
     executeQueries();
-    free(csvPath);
     freeQuery();
     freeDriver();
     freeUser();
@@ -64,9 +71,9 @@ int interactiveMode()
 {
     system("clear");
     char csvPath[256];
-    int check = 1, nArgs;
+    int check = -1, nArgs;
     char choice = 'a';
-    char *aux, **args;
+    char **args;
     do
     {
         printf("Grupo 61\nInsira o caminho para a pasta dos ficheiros de entrada:\n");
@@ -75,22 +82,8 @@ int interactiveMode()
         if (csvPath[ln] == '\n')
             csvPath[ln] = '\0';
         system("clear");
-        aux = strdup(csvPath);
-        system("clear");
         printf("Carregando...\n");
-        check = load(strcat(aux, "/drivers.csv"), loadDriver, initListDriver, 1);
-        if (check != -1)
-        {
-            free(aux);
-            aux = strdup(csvPath);
-            check = load(strcat(aux, "/users.csv"), loadUser, initListUser, 1);
-            if (check != -1)
-            {
-                free(aux);
-                aux = strdup(csvPath);
-                check = load(strcat(aux, "/rides.csv"), loadRide, initListRide, 1);
-            }
-        }
+        check = doLoads(csvPath);
     } while (check == -1);
     initHashTables();
     system("clear");
@@ -113,7 +106,6 @@ int interactiveMode()
         }
         executeQuery(choice, args);
     }
-    free(aux);
     return 0;
 }
 
