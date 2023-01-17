@@ -221,6 +221,7 @@ void executeQueries()
             output(aux, i);
             free(query->args[0]);
             free(query->args[1]);
+            break;
         case '6':
             sprintf(aux, "%.3lf", query6(query->args[0], query->args[1], query->args[2]));
             output(aux, i);

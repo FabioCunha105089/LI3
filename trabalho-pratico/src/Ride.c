@@ -169,15 +169,13 @@ double getPrice(char *car_class, double distance)
     return 3.25 + distance * 0.62;
 }
 
-int compareRidesByDate(const void *A, const void *B) {
+int compareRidesByDate(const void *A, const void *B) 
+{
     Ride *a = *(Ride **)A;
     Ride *b = *(Ride **)B;
-    int compareDate = isDateBigger(a->date, b->date);
-    if (compareDate == 0){
-        return 1;
-    } else return compareDate;
+ 
+    return isDateBigger(a->date, b->date);
 }
-
 
 void initHashTables()
 {
@@ -455,7 +453,7 @@ double avgPayByDate(char *date1, char *date2)
     double tPay = 0;
     Ride *ride;
     int tRides = getALSize(list), nRides = 0;
-    bool checkDate = false;
+    int checkDate = false;
 
     for (int i = 0; i < tRides; i++)
     {
@@ -467,8 +465,13 @@ double avgPayByDate(char *date1, char *date2)
             nRides++;
             tPay += getPrice(getCarClass(ride->driver), ride->distance);
 
-        } else if (checkDate) break;
+        }
     }
+    
+    free(dateA);
+    free(dateB);
+    if(nRides==0) return 0;
+
     return tPay / nRides; 
 }
 
