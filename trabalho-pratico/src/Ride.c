@@ -465,9 +465,9 @@ double avgPayByDate(char *date1, char *date2)
             nRides++;
             tPay += getPrice(getCarClass(ride->driver), ride->distance);
 
-        }
+        } else if (checkDate) break;
     }
-    
+
     free(dateA);
     free(dateB);
     if(nRides==0) return 0;
@@ -714,6 +714,81 @@ int compareRidesByAccAge(const void *A, const void *B)
             return atoi(a->id) > atoi(b->id) ? 1 : -1;
     }
     return -1;
+}
+
+int compareRidesByDistance(const void *A, const void *B) 
+{
+    Ride *a = *(Ride **)A;
+    Ride *b = *(Ride **)B;
+
+    if (a->distance > b->distance) {
+        return -1;
+    } else if (a->distance < b->distance) {
+        return 1;
+    }
+    
+    int checkDate = isDateBigger(a->date, b->date) * (-1);
+    if (checkDate != 0) return checkDate;
+    
+    return (atoi(a->id) > atoi(b->id)) ? -1 : 1;
+    
+}
+
+LinkedList *ridesWithTipByDistance(char *date1, char *date2)
+{
+    Date *dateA = sToDateSimple(date1);
+    Date *dateB = sToDateSimple(date2);
+    int tSize = getALSize(list), rSize = 0, lSize = 0;
+    Ride *ride;
+    char **r = NULL;
+    LinkedList *rideList = createLL();
+    bool checkDate = false;
+
+    //if (!(isDateValid(dateA)) || !(isDateValid(dateB))) return NULL; 
+    
+    for (int i = 0; i < tSize; i++)
+    {
+        ride = (Ride *)getByIndex(list, i);
+
+        if(isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
+        {
+            checkDate = true;
+            addLL(rideList, ride);
+        } else if (checkDate) break;
+    }
+    
+    lSize = getLLSize(rideList);
+    free(dateA);
+    free(dateB);
+    if (lSize == 0) return NULL;
+    ArrayList *allRides = LLtoAL(rideList, lSize);
+    quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
+    r = (char **)malloc(sizeof(char *) * lSize);
+    char aux[10];
+
+    for (int i = 0; i < lSize; i++)
+    {
+        ride = (Ride *)getByIndex(allRides, i);
+        r[i] = (char *)malloc(256);
+        strcpy(r[i], ride->id);
+        strcat(r[i], ";");
+        strcat(r[i], dateToS(ride->date));
+        strcat(r[i], ";");
+        sprintf(aux, "%d", ride->distance);
+        strcat(r[i], aux);
+        strcat(r[i], ";");
+        strcat(r[i], ride->city);
+        strcat(r[i], ";");
+        sprintf(aux, "%.3lf", ride->tip);
+        strcat(r[i], aux);
+    }
+    
+    LinkedList *l = createLL();
+    addLL(l, r);
+    int *s = (int *)malloc(sizeof(int));
+    *s = tSize;
+    addLL(l, s);
+    return l;
 }
 
 LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)

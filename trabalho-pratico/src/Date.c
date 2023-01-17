@@ -31,6 +31,16 @@ Date *sToDate(char* string, int size){
     return date;
 }
 
+bool isDateValid(Date *data){
+
+    int dataA = data->day + data->month * 100 + data->year * 2000;
+    int dataB = 9 + 10 * 100 + 2022 * 2000;
+
+    if (dataA <= dataB) return true;
+
+    return false;
+}
+
 Date *sToDateSimple(char* string){
     Date *date = (Date *) malloc(sizeof(Date));
     date->day = atoi(strsep(&string, "/"));
@@ -38,6 +48,22 @@ Date *sToDateSimple(char* string){
     date->year = atoi(strsep(&string, "\0"));
 
     return date;
+}
+
+char *dateToS(Date *data){
+    char *r = (char *)malloc(11);
+    char aux[10];
+    sprintf(aux, "%i", data->day);
+    strcpy(r, aux);
+    strcat(r, "/");
+    sprintf(aux, "%i", data->month);
+    strcat(r, aux);
+    strcat(r, "/");
+    sprintf(aux, "%i", data->year);
+    strcat(r, aux);
+    strcat(r, "\0");
+
+    return r;
 }
 
 int calculateAge(Date *date){

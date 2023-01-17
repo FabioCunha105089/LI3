@@ -34,6 +34,7 @@ int getNArgs(char id)
     case '5':
     case '7':
     case '8':
+    case '9':
         return 2;
 
     case '6':
@@ -185,6 +186,11 @@ LinkedList *query8(char gender, int years)
     return ridesWithSameGenderAndAccAge(gender, years);
 }
 
+LinkedList *query9(char *dataA, char *dataB)
+{
+    return ridesWithTipByDistance(dataA, dataB);
+}
+
 void executeQueries()
 {
     int nQueries = getALSize(list);
@@ -239,6 +245,11 @@ void executeQueries()
             free(query->args[0]);
             free(query->args[1]);
             break;
+        case '9':
+            outputMult(query9(query->args[0], query->args[1]), i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;            
         default:
             break;
         }
@@ -254,6 +265,7 @@ void freeQuery()
 
 void printQueries(LinkedList *l, bool isPaged, char *firstLine)
 {
+    if (!l) return;
     char **r = (char **)iterateLL(l);
     int *s = (int *)iterateLL(l);
     printf("%s\n", firstLine);
@@ -360,6 +372,9 @@ void executeQuery(char id, char **args)
     case '8':
         printQueries(query8(args[0][0], atoi(args[1])), true, "id_condutor;nome_condutor;username_utilizador;nome_utilizador");
         break;
+    case '9':
+        printQueries(query9(args[0], args[1]), true, "id_viagem;data_viagem;distancia;cidade;valor_gorjeta");
+        break;    
     default:
         break;
     }

@@ -32,5 +32,6 @@ int mostRecentRide(char *, char *);
 int calculateUserTotalDist(char *);
 void updateRide(int);
 LinkedList *ridesWithSameGenderAndAccAge(char, int);
+LinkedList *ridesWithTipByDistance(char *, char *);
 
 #endif

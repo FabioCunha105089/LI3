@@ -1,5 +1,6 @@
 #ifndef DATE_H_
 #define DATE_H_
+#include <stdbool.h>
 
 typedef struct date Date;
 
@@ -12,4 +13,7 @@ Date *sToDateSimple(char *);
 int calculateAge(Date *);
 int isDateBigger(Date*, Date *);
 void printDate(Date *);
+char *dateToS(Date *);
+bool isDateValid(Date *);
+
 #endif
