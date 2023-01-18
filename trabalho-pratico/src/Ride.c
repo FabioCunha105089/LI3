@@ -744,7 +744,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     LinkedList *rideList = createLL();
     bool checkDate = false;
 
-    //if (!(isDateValid(dateA)) || !(isDateValid(dateB))) return NULL; 
+    if (!(isDateValid(dateA)) || !(isDateValid(dateB))) return NULL; 
     
     for (int i = 0; i < tSize; i++)
     {
@@ -786,7 +786,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
-    *s = tSize;
+    *s = lSize;
     addLL(l, s);
     return l;
 }
