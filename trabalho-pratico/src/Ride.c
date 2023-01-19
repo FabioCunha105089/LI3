@@ -184,7 +184,7 @@ void initHashTables()
     hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
-    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, free, freeLinkedList);
+    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);
     hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
@@ -241,8 +241,7 @@ void initHashTables()
                 MAXYEARS = ageU;
             if (ageD == ageU && genderD == genderU)
             {
-                int *age = (int *)malloc(sizeof(int));
-                *age = ageD * genderD;
+                int age = ageD * genderD;
                 if (g_hash_table_contains(hashAccAges, age) == FALSE)
                 {
                     LinkedList *rideList = createLL();
@@ -443,7 +442,6 @@ void freeRide()
     g_hash_table_destroy(hashDriver);
     g_hash_table_destroy(hashUsers);
     g_hash_table_destroy(hashDriverCityScores);
-    g_hash_table_destroy(hashAccAges);
 }
 
 double avgPayByDate(char *date1, char *date2)
@@ -797,8 +795,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
 
 LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
 {
-    int *age = (int *)malloc(sizeof(int));
-    *age = gender * years;
+    int age = gender * years;
 
     LinkedList *rideList, *fullList = createLL();
     char **r = NULL;
@@ -814,9 +811,7 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
             nLists++;
         }
         years++;
-        free(age);
-        age = (int *)malloc(sizeof(int));
-        *age = gender * years;
+        age = gender * years;
     }
     if (nLists == 0)
         return NULL;
@@ -838,8 +833,8 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
     {
         ride = (Ride *)getByIndex(allRides, i);
         r[i] = (char *)malloc(256);
-        user = getUserUsernameAndName(ride->user);
         driver = getDriverIDAndName(ride->driver);
+        user = getUserUsernameAndName(ride->user);
         strcpy(r[i], driver);
         strcat(r[i], ";");
         strcat(r[i], user);
@@ -847,7 +842,6 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
         free(user);
     }
     freeArrayListSimple(allRides);
-    free(age);
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
