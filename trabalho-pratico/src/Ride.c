@@ -184,7 +184,7 @@ void initHashTables()
     hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
-    hashAccAges = g_hash_table_new_full(g_direct_equal, g_direct_equal, NULL, freeLinkedList);
+    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, free, freeLinkedList);
     hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
     Ride *ride = NULL;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
@@ -243,15 +243,15 @@ void initHashTables()
             {
                 int *age = (int *)malloc(sizeof(int));
                 *age = ageD * genderD;
-                if (g_hash_table_contains(hashAccAges, *age) == FALSE)
+                if (g_hash_table_contains(hashAccAges, age) == FALSE)
                 {
                     LinkedList *rideList = createLL();
                     addLL(rideList, ride);
-                    g_hash_table_insert(hashAccAges, *age, rideList);
+                    g_hash_table_insert(hashAccAges, age, rideList);
                 }
                 else
                 {
-                    addLL((LinkedList *)g_hash_table_lookup(hashAccAges, *age), ride);
+                    addLL((LinkedList *)g_hash_table_lookup(hashAccAges, age), ride);
                 }
             }
         }
@@ -292,7 +292,7 @@ double avgPayInCity(char *city)
 {
     if (g_hash_table_contains(hashCity, city) == FALSE)
     {
-        printf("Nao contem %s", city);
+        printf("Nao contem %s\n", city);
         return 0;
     }
 
@@ -481,7 +481,7 @@ double avgDistanceInCityByDate(char *city, char *date1, char *date2)
     if (g_hash_table_contains(hashCity, city) == FALSE)
     {
 
-        printf("Nao contem %s", city);
+        printf("Nao contem %s\n", city);
         return 0;
     }
 
@@ -535,7 +535,7 @@ char **driversByScoreInCity(char *city, int n)
 {
     if (g_hash_table_contains(hashCity, city) == FALSE)
     {
-        printf("Nao contem %s", city);
+        printf("Nao contem %s\n", city);
         return NULL;
     }
     ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
@@ -738,7 +738,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
 {
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
-    int tSize = getALSize(list), rSize = 0, lSize = 0;
+    int tSize = getALSize(list), lSize = 0;
     Ride *ride;
     char **r = NULL;
     LinkedList *rideList = createLL();
@@ -762,17 +762,20 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     free(dateB);
     if (lSize == 0) return NULL;
     ArrayList *allRides = LLtoAL(rideList, lSize);
+    freeLinkedList(rideList);
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
     r = (char **)malloc(sizeof(char *) * lSize);
     char aux[10];
+    char *date;
 
     for (int i = 0; i < lSize; i++)
     {
         ride = (Ride *)getByIndex(allRides, i);
         r[i] = (char *)malloc(256);
+        date = dateToS(ride->date);
         strcpy(r[i], ride->id);
         strcat(r[i], ";");
-        strcat(r[i], dateToS(ride->date));
+        strcat(r[i], date);
         strcat(r[i], ";");
         sprintf(aux, "%d", ride->distance);
         strcat(r[i], aux);
@@ -781,8 +784,9 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
         strcat(r[i], ";");
         sprintf(aux, "%.3lf", ride->tip);
         strcat(r[i], aux);
+        free(date);
     }
-    
+    freeArrayListSimple(allRides);
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
@@ -802,9 +806,9 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
     Ride *ride;
     while (years <= MAXYEARS)
     {
-        if (g_hash_table_contains(hashAccAges, *age) == TRUE)
+        if (g_hash_table_contains(hashAccAges, age) == TRUE)
         {
-            rideList = (LinkedList *)g_hash_table_lookup(hashAccAges, *age);
+            rideList = (LinkedList *)g_hash_table_lookup(hashAccAges, age);
             tSize += getLLSize(rideList);
             addLL(fullList, rideList);
             nLists++;
@@ -826,16 +830,23 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
             addAL(allRides, iterateLL(rideList));
         }
     }
+    freeLinkedList(fullList);
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByAccAge);
     r = (char **)malloc(sizeof(char *) * tSize);
+    char *user, *driver;
     for (int i = 0; i < tSize; i++)
     {
         ride = (Ride *)getByIndex(allRides, i);
         r[i] = (char *)malloc(256);
-        strcpy(r[i], getDriverIDAndName(ride->driver));
+        user = getUserUsernameAndName(ride->user);
+        driver = getDriverIDAndName(ride->driver);
+        strcpy(r[i], driver);
         strcat(r[i], ";");
-        strcat(r[i], getUserUsernameAndName(ride->user));
+        strcat(r[i], user);
+        free(driver);
+        free(user);
     }
+    freeArrayListSimple(allRides);
     free(age);
     LinkedList *l = createLL();
     addLL(l, r);
