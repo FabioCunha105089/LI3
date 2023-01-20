@@ -442,6 +442,7 @@ void freeRide()
     g_hash_table_destroy(hashDriver);
     g_hash_table_destroy(hashUsers);
     g_hash_table_destroy(hashDriverCityScores);
+    g_hash_table_destroy(hashAccAges);
 }
 
 double avgPayByDate(char *date1, char *date2)
