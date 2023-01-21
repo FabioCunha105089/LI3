@@ -110,3 +110,48 @@ void outputMult(LinkedList *r, int i)
     }
     fclose(file);
 }
+
+bool compareFiles(char const *argv, int i)
+{
+    char filename1[100] = "./Resultados/command";
+    char aux[100];
+    sprintf(aux, "%d", i + 1);
+    strcat(filename1, aux);
+    strcat(filename1, "_output.txt");
+
+    FILE *file1 = fopen(filename1, "r");
+    if (!file1)
+    {
+        printf("Ficheiro %s nao encontrado.\n", filename1);
+        return false;
+    }
+
+    char filename2[100], aux2[100];
+    sprintf(aux2, "%d", i + 1);
+    strcpy(filename2, argv);
+    strcat(filename2, "/command");
+    strcat(filename2, aux2);
+    strcat(filename2, "_output.txt");
+
+    FILE *file2 = fopen(filename2, "r");
+    if (!file2)
+    {
+        printf("Ficheiro %s nao encontrado.\n", filename2);
+        return false;
+    }
+
+    char ch1 = fgetc(file1);
+    char ch2 = fgetc(file2);
+
+    while (ch1 != EOF && ch2 != EOF){
+
+        if (ch1 != ch2) return false;
+
+        ch1 = fgetc(file1);
+        ch2 = fgetc(file2);
+    }
+
+    fclose(file1);
+    fclose(file2);
+    return true;
+}

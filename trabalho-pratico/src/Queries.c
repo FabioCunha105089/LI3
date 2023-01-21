@@ -379,3 +379,86 @@ void executeQuery(char id, char **args)
         break;
     }
 }
+
+void executeTests(char const *argv)
+{
+    int nQueries = getALSize(list);
+    char aux[100];
+    char *aux2, *verificacao;
+    Query *query;
+    clock_t start = 0, end = 0;
+    double cpu_time_used = 0, segundos = 0;
+    
+    for (int i = 0; i < nQueries; i++)
+    {
+        query = (Query *)getByIndex(list, i);
+        start = clock();
+        switch (query->id)
+        {
+        case '1':
+            aux2 = query1(query->args[0]);
+            output(aux2, i);
+            free(query->args[0]);
+            if (strcmp(aux2, "") != 0)
+                free(aux2);
+            break;
+        case '2':
+            outputMult(query2(atoi(query->args[0])), i);
+            free(query->args[0]);
+            break;
+        case '3':
+            outputMult(query3(atoi(query->args[0])), i);
+            free(query->args[0]);
+            break;
+        case '4':
+            sprintf(aux, "%.3lf", query4(query->args[0]));
+            output(aux, i);
+            free(query->args[0]);
+            break;
+        case '5':
+            sprintf(aux, "%.3lf", query5(query->args[0], query->args[1]));
+            output(aux, i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;
+        case '6':
+            sprintf(aux, "%.3lf", query6(query->args[0], query->args[1], query->args[2]));
+            output(aux, i);
+            free(query->args[0]);
+            free(query->args[1]);
+            free(query->args[2]);
+            break;
+        case '7':
+            outputMult(query7(atoi(query->args[0]), query->args[1]), i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;
+        case '8':
+            outputMult(query8(query->args[0][0], atoi(query->args[1])), i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;
+        case '9':
+            outputMult(query9(query->args[0], query->args[1]), i);
+            free(query->args[0]);
+            free(query->args[1]);
+            break;            
+        default:
+            break;
+        }
+
+        end = clock();
+        cpu_time_used = ((double) (end - start));
+        segundos = cpu_time_used / CLOCKS_PER_SEC;
+        verificacao = (char *)malloc(256);
+        if (compareFiles(argv, i)) {
+            strcpy(verificacao, "Correto");
+        } else strcpy(verificacao, "Incorreto");
+
+        printf("Comando %d (Q%c):\nDuracao (s):%lf\nResultado:%s\n\n", (i+1), query->id, segundos, verificacao);
+
+        free(query->args);
+        free(query);
+        free(verificacao);
+    }
+}

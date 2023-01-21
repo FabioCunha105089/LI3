@@ -11,4 +11,6 @@ void initListQuery(int);
 void freeQuery();
 int getNArgs(char);
 void executeQuery(char, char **);
+void executeTests(char const *);
+
 #endif
