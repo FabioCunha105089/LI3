@@ -27,9 +27,10 @@ static GHashTable *hashCity = NULL;
 static ArrayList *driverRides = NULL;
 static GHashTable *hashUsers = NULL;
 static GHashTable *hashAccAges = NULL;
-static GHashTable *hashDriverCityScores = NULL;
+double **driverCityScores;
 int MAXYEARS = 0;
 bool activeHashs[5] = {true, true, true, true, true};
+LinkedList *cities;
 
 bool validateNumber(char *s, int l)
 {
@@ -96,6 +97,7 @@ int loadRide(char *sp)
         return 0;
     }
     ride->city = strdup(strsep(&sp, ";"));
+    addStringIfNotIn(cities, ride->city);
     if (strlen(ride->city) == 0)
     {
         free(ride->id);
@@ -157,6 +159,11 @@ int loadRide(char *sp)
     return 1;
 }
 
+int getNCities()
+{
+    return getLLSize(cities);
+}
+
 double getPrice(char *car_class, double distance)
 {
     if (strcmp(car_class, "green") == 0)
@@ -186,7 +193,7 @@ void initHashTables()
     driverRides = createAL(getNDrivers(), sizeof(LinkedList *)); //NR 2 -> 1, 2
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 3 -> 1, 3
     hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);//NR 4 ->8
-    hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);//NR 5 -> 7
+    driverCityScores = (double **) malloc (sizeof(double *) * getNDrivers());//NR 5 -> 7
     Ride *ride = NULL;
     int driverI;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
@@ -259,23 +266,16 @@ void initHashTables()
         }
 
         // Driver score by city
-        char *driverScore = (char *)malloc(256);
-        strcpy(driverScore, ride->driver);
-        strcat(driverScore, ride->city);
-        double *score_Nrides = (double *)malloc(sizeof(double) * 2);
-        score_Nrides[0] = ride->score_driver;
-        if (g_hash_table_contains(hashDriverCityScores, driverScore) == FALSE)
+        if(!driverCityScores[driverI])
         {
-            score_Nrides[1] = 1;
-            g_hash_table_insert(hashDriverCityScores, driverScore, score_Nrides);
+            driverCityScores[driverI] = (double *) calloc(getLLSize(cities), sizeof(double));
+            driverCityScores[driverI][getIndexFromLL(cities, ride->city)] = ride->score_driver; 
         }
         else
         {
-            double *temp = (double *)g_hash_table_lookup(hashDriverCityScores, driverScore);
-            score_Nrides[0] += temp[0];
-            score_Nrides[1] = temp[1] + 1;
-            g_hash_table_replace(hashDriverCityScores, driverScore, score_Nrides);
+            driverCityScores[driverI][getIndexFromLL(cities, ride->city)] += ride->score_driver;
         }
+        addDriverRideInCity(ride->driver, getIndexFromLL(cities, ride->city));
     }
 }
 
@@ -283,7 +283,8 @@ void initListRide(int size)
 {
     if (!list)
         list = createAL(size - 1, sizeof(Ride *));
-    
+    if(!cities)
+        cities = createLL();
 }
 
 gboolean doesCityHaveRides(char *city)
@@ -442,6 +443,7 @@ void _freeRide(void *r)
 void freeRide()
 {
     freeArrayList(list, _freeRide);
+    freeLinkedList(cities);
     freeCityHash();
     freeDriverRideList();
     freeUserHash();
@@ -476,7 +478,13 @@ void freeScoreHash()
 {
     if(activeHashs[3])
     {
-        g_hash_table_destroy(hashDriverCityScores);
+        int nDrivers = getNDrivers();
+        for(int i = 0; i < nDrivers; i++)
+        {
+            if(driverCityScores[i])
+                free(driverCityScores[i]);
+        }
+        free(driverCityScores);
         activeHashs[3] = false;
     }
 }
@@ -559,16 +567,26 @@ int compareRidesByDriverScore(const void *A, const void *B)
 {
     Ride *a = *(Ride **)A;
     Ride *b = *(Ride **)B;
-    char drivA[20];
-    char drivB[20];
-    strcpy(drivA, a->driver);
-    strcat(drivA, a->city);
-    strcpy(drivB, b->driver);
-    strcat(drivB, b->city);
-    double *score_nRidesA = (double *)g_hash_table_lookup(hashDriverCityScores, drivA);
-    double *score_nRidesB = (double *)g_hash_table_lookup(hashDriverCityScores, drivB);
-    double scoreA = score_nRidesA[0] / score_nRidesA[1];
-    double scoreB = score_nRidesB[0] / score_nRidesB[1];
+    double scoreA, scoreB;
+    int cityI = getIndexFromLL(cities, a->city), aI = atoi(a->driver) - 1, bI = atoi(b->driver) - 1;
+    int aN = getDriverNRidesInCity(a->driver, cityI);
+    int bN = getDriverNRidesInCity(b->driver, cityI);
+    if(aN == 0)
+    {
+        scoreA = 0;
+    }
+    else
+    {
+        scoreA = driverCityScores[aI][cityI] / aN;
+    }
+    if(bN == 0)
+    {
+        scoreB = 0;
+    }
+    else
+    {
+        scoreB = driverCityScores[bI][cityI] / bN;
+    }
     if (scoreA < scoreB || (scoreA == scoreB && atoi(a->driver) < atoi(b->driver)))
         return -1;
     return 1;
@@ -637,11 +655,8 @@ char *getDriverNameFromRide(Ride *ride)
 
 double getDriverAvgScoreInCityFromRide(Ride *ride)
 {
-    char driver[20];
-    strcpy(driver, ride->driver);
-    strcat(driver, ride->city);
-    double *score = (double *)g_hash_table_lookup(hashDriverCityScores, driver);
-    return score[0] / score[1];
+    int driverI = atoi(ride->driver) - 1, cityI = getIndexFromLL(cities, ride->city);
+    return driverCityScores[driverI][cityI] / getDriverNRidesInCity(ride->driver, cityI);
 }
 
 Date *getMostRecentDate(char *id)

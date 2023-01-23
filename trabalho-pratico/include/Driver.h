@@ -25,5 +25,7 @@ char getDriverGender(char *);
 char *getDriverIDAndName(char *);
 Date *getDriverAccCreation(char *);
 int getNDrivers();
+void addDriverRideInCity(char *, int);
+double getDriverNRidesInCity(char *, int);
 
 #endif

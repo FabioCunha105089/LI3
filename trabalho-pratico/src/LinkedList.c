@@ -1,5 +1,6 @@
 #include "LinkedList.h"
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct node{
     void* data;
@@ -29,8 +30,8 @@ Node* createNode(void* data){
     return node;
 }
 
-gboolean isEmpty(LinkedList* list){
-    return list->size == 0 ? TRUE : FALSE;
+bool isEmpty(LinkedList* list){
+    return list->size == 0;
 }
 
 void addLL(LinkedList* list, void* data){
@@ -86,4 +87,28 @@ ArrayList *LLtoAL(LinkedList *ll, int elementSize)
         addAL(al, iterateLL(ll));
     }
     return al;
+}
+
+void addStringIfNotIn(LinkedList *list, char *input)
+{
+    Node *node = list->head;
+    for(int i = 0; i < list->size; i++)
+    {
+        if(strcmp((char *) node->data, input) == 0)
+            return;
+        node = node->next;
+    }
+    addLL(list, input);
+}
+
+int getIndexFromLL(LinkedList *list, char *input)
+{
+    Node *node = list->head;
+    for(int i = 0; i < list->size; i++)
+    {
+        if(strcmp((char *) node->data, input) == 0)
+            return i;
+        node = node->next;
+    }
+    return 0;
 }

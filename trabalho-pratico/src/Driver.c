@@ -20,6 +20,7 @@ typedef struct driver
     int account_age;
     double avgScore;
     Date *recentRide;
+    double *scorePerCity;
 } Driver;
 
 static ArrayList *list = NULL;
@@ -161,6 +162,7 @@ int loadDriver(char *sp)
     driver->account_age = calculateAge(driver->account_creation);
     driver->avgScore = -1;
     driver->recentRide = NULL;
+    driver->scorePerCity = NULL;
     free(aux);
     addAL(list, driver);
     return 1;
@@ -228,6 +230,8 @@ void _freeDriver(void *d)
     free(driver->city);
     free(driver->license_plate);
     free(driver->name);
+    if(driver->scorePerCity)
+        free(driver->scorePerCity);
     free(driver);
 }
 
@@ -341,4 +345,20 @@ Date *getDriverAccCreation(char *id)
 int getNDrivers()
 {
     return getALSize(list);
+}
+
+void addDriverRideInCity(char *id, int city)
+{
+    Driver *driver = findDriverByID(id);
+    if(!driver->scorePerCity)
+        driver->scorePerCity = (double *) calloc(getNCities(), sizeof(double));
+    driver->scorePerCity[city]++;
+}
+
+double getDriverNRidesInCity(char *id, int city)
+{
+    Driver *driver = findDriverByID(id);
+    if(!driver->scorePerCity)
+        return 0;
+    return driver->scorePerCity[city];
 }

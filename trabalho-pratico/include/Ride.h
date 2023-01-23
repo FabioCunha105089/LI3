@@ -38,5 +38,6 @@ void freeUserHash();
 void freeDriverRideList();
 void freeScoreHash();
 void freeAccAgeHash();
+int getNCities();
 
 #endif
