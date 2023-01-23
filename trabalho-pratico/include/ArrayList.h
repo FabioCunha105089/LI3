@@ -5,6 +5,7 @@ typedef struct arraylist ArrayList;
 
 ArrayList *createAL(int, int);
 void addAL(ArrayList *, void *);
+void addAtIndex(ArrayList *, void *, int);
 int getALSize(ArrayList*);
 void *getByIndex(ArrayList*, int);
 void freeArrayList(ArrayList * list, void (*freeFunc)(void *));

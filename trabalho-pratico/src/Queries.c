@@ -201,7 +201,7 @@ LinkedList *query9(char *dataA, char *dataB)
 void checkUselessHashs()
 {
     if(remainingQueries[0] == 0 && remainingQueries[1] == 0)
-        freeDriverHash();
+        freeDriverRideList();
     if(remainingQueries[0] == 0 && remainingQueries[2] == 0)
         freeUserHash();
     if(remainingQueries[3] == 0 && remainingQueries[5] == 0 && remainingQueries[6] == 0)

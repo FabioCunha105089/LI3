@@ -24,7 +24,7 @@ typedef struct ride
 
 static ArrayList *list = NULL;
 static GHashTable *hashCity = NULL;
-static GHashTable *hashDriver = NULL;
+static ArrayList *driverRides = NULL;
 static GHashTable *hashUsers = NULL;
 static GHashTable *hashAccAges = NULL;
 static GHashTable *hashDriverCityScores = NULL;
@@ -183,11 +183,12 @@ void initHashTables()
     int size = getALSize(list), ageD, ageU;
     char genderD, genderU;                                                            //What index of 'activeHashs' it represents | the queries it is used in
     hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 1 -> 4, 6, 7
-    hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 2 -> 1, 2
+    driverRides = createAL(getNDrivers(), sizeof(LinkedList *)); //NR 2 -> 1, 2
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 3 -> 1, 3
     hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);//NR 4 ->8
     hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);//NR 5 -> 7
     Ride *ride = NULL;
+    int driverI;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
 
     for (int i = 0; i < size; i++)
@@ -206,15 +207,16 @@ void initHashTables()
         }
 
         // Drivers
-        if (g_hash_table_contains(hashDriver, ride->driver) == FALSE)
+        driverI = atoi(ride->driver) - 1;
+        if(!getByIndex(driverRides, driverI))
         {
             LinkedList *rideList = createLL();
             addLL(rideList, ride);
-            g_hash_table_insert(hashDriver, ride->driver, rideList);
+            addAtIndex(driverRides, rideList, driverI);
         }
         else
         {
-            addLL((LinkedList *)g_hash_table_lookup(hashDriver, ride->driver), ride);
+            addLL((LinkedList *) getByIndex(driverRides, driverI), ride);
         }
 
         // Users
@@ -281,6 +283,7 @@ void initListRide(int size)
 {
     if (!list)
         list = createAL(size - 1, sizeof(Ride *));
+    
 }
 
 gboolean doesCityHaveRides(char *city)
@@ -308,9 +311,9 @@ double avgPayInCity(char *city)
     return tPrice / nRides;
 }
 
-gboolean doesDriverHaveRides(char *id)
+bool doesDriverHaveRides(char *id)
 {
-    return g_hash_table_contains(hashDriver, id);
+    return getByIndex(driverRides, atoi(id) - 1);
 }
 
 gboolean doesUserHaveRides(char *username)
@@ -320,7 +323,7 @@ gboolean doesUserHaveRides(char *username)
 
 double calculateDriverAvgScore(char *id)
 {
-    LinkedList *rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
+    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
     double score = 0;
     int nRides = getLLSize(rides);
     if (!rides || nRides == 0)
@@ -338,7 +341,7 @@ double calculateDriverAvgScore(char *id)
 
 double *calculateDriverAvgScoreAndPay(char *id)
 {
-    LinkedList *rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
+    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
     double score = 0, pay = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
@@ -356,7 +359,7 @@ double *calculateDriverAvgScoreAndPay(char *id)
 
 double calculateTotalPayDriver(char *id)
 {
-    LinkedList *rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
+    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
     double pay = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
@@ -416,7 +419,7 @@ double calculateTotalPayUser(char *username)
 
 int getNumberOfRidesDriver(char *id)
 {
-    return getLLSize((LinkedList *)g_hash_table_lookup(hashDriver, id));
+    return getLLSize((LinkedList *) getByIndex(driverRides, atoi(id) - 1));
 }
 
 int getNumberOfRidesUser(char *username)
@@ -440,7 +443,7 @@ void freeRide()
 {
     freeArrayList(list, _freeRide);
     freeCityHash();
-    freeDriverHash();
+    freeDriverRideList();
     freeUserHash();
     freeScoreHash();
     freeAccAgeHash();
@@ -453,11 +456,11 @@ void freeCityHash()
         activeHashs[0] = false;
     }
 }
-void freeDriverHash()
+void freeDriverRideList()
 {
     if(activeHashs[1])
     {
-        g_hash_table_destroy(hashDriver);
+        freeArrayList(driverRides, freeLinkedList);
         activeHashs[1] = false;
     }
 }
@@ -660,7 +663,7 @@ Date *getMostRecentDate(char *id)
     LinkedList *rides;
     if (aux != 0)
     {
-        rides = (LinkedList *)g_hash_table_lookup(hashDriver, id);
+        rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
     }
     else
     {

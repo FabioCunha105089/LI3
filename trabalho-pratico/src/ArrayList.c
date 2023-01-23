@@ -77,3 +77,8 @@ void updateArrayList(ArrayList *list, int elementSize, int newSize)
     list->array = realloc(list->array, elementSize * newSize);
     list->size = newSize;
 }
+
+void addAtIndex(ArrayList *list, void *input, int index)
+{
+    list->array[index] = input;
+}

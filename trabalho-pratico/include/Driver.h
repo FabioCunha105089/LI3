@@ -24,5 +24,6 @@ void setDriverRecentDate(char *, Date *);
 char getDriverGender(char *);
 char *getDriverIDAndName(char *);
 Date *getDriverAccCreation(char *);
+int getNDrivers();
 
 #endif

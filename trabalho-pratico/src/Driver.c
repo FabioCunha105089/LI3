@@ -337,3 +337,8 @@ Date *getDriverAccCreation(char *id)
 {
     return findDriverByID(id)->account_creation;
 }
+
+int getNDrivers()
+{
+    return getALSize(list);
+}

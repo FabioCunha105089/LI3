@@ -9,7 +9,7 @@
 typedef struct ride Ride;
 int loadRide(char *);
 double avgPayInCity(char *);
-gboolean doesDriverHaveRides(char *);
+bool doesDriverHaveRides(char *);
 int getNumberOfRidesDriver(char *);
 double calculateTotalPayDriver(char *);
 double avgPayByDate(char *, char *);
@@ -35,7 +35,7 @@ LinkedList *ridesWithSameGenderAndAccAge(char, int);
 LinkedList *ridesWithTipByDistance(char *, char *);
 void freeCityHash();
 void freeUserHash();
-void freeDriverHash();
+void freeDriverRideList();
 void freeScoreHash();
 void freeAccAgeHash();
 
