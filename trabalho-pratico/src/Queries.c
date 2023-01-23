@@ -15,6 +15,7 @@ typedef struct query
 } Query;
 
 static ArrayList *list = NULL;
+int remainingQueries[9] = {0,0,0,0,0,0,0,0,0};
 
 void initListQuery(int size)
 {
@@ -45,8 +46,14 @@ int getNArgs(char id)
 
 int loadQuery(char *sp)
 {
+    if(strcmp(sp, "\n") == 0)
+    {
+        return 0;
+    }
     Query *query = (Query *)malloc(sizeof(Query));
     query->id = strsep(&sp, " ")[0];
+    int aux = query->id - '0';
+    remainingQueries[aux - 1]++;
     int nArgs = getNArgs(query->id);
     query->args = malloc(sizeof(char *) * nArgs);
     for (int i = 0; i < nArgs; i++)
@@ -191,6 +198,20 @@ LinkedList *query9(char *dataA, char *dataB)
     return ridesWithTipByDistance(dataA, dataB);
 }
 
+void checkUselessHashs()
+{
+    if(remainingQueries[0] == 0 && remainingQueries[1] == 0)
+        freeDriverHash();
+    if(remainingQueries[0] == 0 && remainingQueries[2] == 0)
+        freeUserHash();
+    if(remainingQueries[3] == 0 && remainingQueries[5] == 0 && remainingQueries[6] == 0)
+        freeCityHash();
+    if(remainingQueries[6] == 0)
+        freeScoreHash();
+    if(remainingQueries[7] == 0)
+        freeAccAgeHash();
+}
+
 void executeQueries()
 {
     int nQueries = getALSize(list);
@@ -200,6 +221,8 @@ void executeQueries()
     for (int i = 0; i < nQueries; i++)
     {
         query = (Query *)getByIndex(list, i);
+        if(!query)
+            return;
         switch (query->id)
         {
         case '1':
@@ -253,6 +276,9 @@ void executeQueries()
         default:
             break;
         }
+        int aux = query->id - '0';
+        remainingQueries[aux - 1]--;
+        checkUselessHashs();
         free(query->args);
         free(query);
     }

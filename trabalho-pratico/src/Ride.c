@@ -29,6 +29,7 @@ static GHashTable *hashUsers = NULL;
 static GHashTable *hashAccAges = NULL;
 static GHashTable *hashDriverCityScores = NULL;
 int MAXYEARS = 0;
+bool activeHashs[5] = {true, true, true, true, true};
 
 bool validateNumber(char *s, int l)
 {
@@ -180,12 +181,12 @@ int compareRidesByDate(const void *A, const void *B)
 void initHashTables()
 {
     int size = getALSize(list), ageD, ageU;
-    char genderD, genderU;
-    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
-    hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
-    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList);
-    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);
-    hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
+    char genderD, genderU;                                                            //What index of 'activeHashs' it represents | the queries it is used in
+    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 1 -> 4, 6, 7
+    hashDriver = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 2 -> 1, 2
+    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 3 -> 1, 3
+    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);//NR 4 ->8
+    hashDriverCityScores = g_hash_table_new_full(g_str_hash, g_str_equal, free, free);//NR 5 -> 7
     Ride *ride = NULL;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
 
@@ -438,11 +439,51 @@ void _freeRide(void *r)
 void freeRide()
 {
     freeArrayList(list, _freeRide);
-    g_hash_table_destroy(hashCity);
-    g_hash_table_destroy(hashDriver);
-    g_hash_table_destroy(hashUsers);
-    g_hash_table_destroy(hashDriverCityScores);
-    g_hash_table_destroy(hashAccAges);
+    freeCityHash();
+    freeDriverHash();
+    freeUserHash();
+    freeScoreHash();
+    freeAccAgeHash();
+}
+void freeCityHash()
+{
+    if(activeHashs[0])
+    {
+        g_hash_table_destroy(hashCity);
+        activeHashs[0] = false;
+    }
+}
+void freeDriverHash()
+{
+    if(activeHashs[1])
+    {
+        g_hash_table_destroy(hashDriver);
+        activeHashs[1] = false;
+    }
+}
+void freeUserHash()
+{
+    if(activeHashs[2])
+    {
+        g_hash_table_destroy(hashUsers);
+        activeHashs[2] = false;
+    }
+}
+void freeScoreHash()
+{
+    if(activeHashs[3])
+    {
+        g_hash_table_destroy(hashDriverCityScores);
+        activeHashs[3] = false;
+    }
+}
+void freeAccAgeHash()
+{
+    if(activeHashs[4])
+    {
+        g_hash_table_destroy(hashAccAges);
+        activeHashs[4] = false;
+    }
 }
 
 double avgPayByDate(char *date1, char *date2)

@@ -33,5 +33,10 @@ int calculateUserTotalDist(char *);
 void updateRide(int);
 LinkedList *ridesWithSameGenderAndAccAge(char, int);
 LinkedList *ridesWithTipByDistance(char *, char *);
+void freeCityHash();
+void freeUserHash();
+void freeDriverHash();
+void freeScoreHash();
+void freeAccAgeHash();
 
 #endif
