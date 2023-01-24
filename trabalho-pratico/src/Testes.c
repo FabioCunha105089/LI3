@@ -28,7 +28,6 @@ bool loadData(char *csvPath)
         free(aux);
         return false;
     };
-    updateUser(check);
     free(aux);
     aux = strdup(csvPath);
     check = load(strcat(aux, "/rides.csv"), loadRide, initListRide, 1);

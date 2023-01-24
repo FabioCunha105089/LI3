@@ -8,7 +8,7 @@ FLAGS	 = -g -c -Wall -Iinclude `pkg-config glib-2.0 --cflags` `pkg-config glib-2
 LFLAGS	 = `pkg-config glib-2.0 --cflags` `pkg-config glib-2.0 --libs` -lm
 
 all: $(OBJS) $(OBJS_T)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) -g3 -O13 -O13 -O1 -z nodelete  $(OBJS) -o $(OUT) $(LFLAGS)
 	$(CC) -g $(OBJS_T) -o $(OUT_T) $(LFLAGS)
 
 ArrayList.o: $(SRC)ArrayList.c

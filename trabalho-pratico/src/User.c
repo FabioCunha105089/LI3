@@ -2,7 +2,6 @@
 #include "Date.h"
 #include "Ride.h"
 #include <string.h>
-#include "ArrayList.h"
 #include <glib.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -15,7 +14,6 @@ typedef struct user
     char gender;
     Date *birthdate;
     Date *account_creation;
-    char *pay_method;
     bool account_status;
     int age;
     int account_age;
@@ -24,15 +22,22 @@ typedef struct user
     Date *recentRide;
 } User;
 
-static ArrayList *list = NULL;
-static GHashTable *positions = NULL;
+static GHashTable *hash = NULL;
+
+void _freeUser(gpointer u)
+{
+    User *user = (User *)u;
+    free(user->account_creation);
+    free(user->birthdate);
+    free(user->name);
+    free(user->username);
+    free(user);
+}
 
 void initListUser(int size)
 {
-    if (!list)
-        list = createAL(size - 1, sizeof(User *));
-    if (!positions)
-        positions = g_hash_table_new(g_str_hash, g_str_equal);
+    if (!hash)
+        hash = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, _freeUser);
 }
 
 int loadUser(char *sp)
@@ -40,14 +45,14 @@ int loadUser(char *sp)
     User *user = (User *)malloc(sizeof(User));
     char *aux;
     user->username = strdup(strsep(&sp, ";"));
-    if(strlen(user->username) == 0)
+    if (strlen(user->username) == 0)
     {
         free(user->username);
         free(user);
         return 0;
     }
     user->name = strdup(strsep(&sp, ";"));
-    if(strlen(user->name) == 0)
+    if (strlen(user->name) == 0)
     {
         free(user->username);
         free(user->name);
@@ -55,7 +60,7 @@ int loadUser(char *sp)
         return 0;
     }
     user->gender = strsep(&sp, ";")[0];
-    if(user->gender == '\0')
+    if (user->gender == '\0')
     {
         free(user->username);
         free(user->name);
@@ -64,7 +69,7 @@ int loadUser(char *sp)
     }
     aux = strdup(strsep(&sp, ";"));
     user->birthdate = sToDate(aux, strlen(aux));
-    if(!user->birthdate)
+    if (!user->birthdate)
     {
         free(user->username);
         free(user->name);
@@ -75,33 +80,34 @@ int loadUser(char *sp)
     free(aux);
     aux = strdup(strsep(&sp, ";"));
     user->account_creation = sToDate(aux, strlen(aux));
-    if(!user->account_creation)
+    if (!user->account_creation)
     {
         free(user->username);
         free(user->name);
         free(user->birthdate);
         free(user);
         free(aux);
-        return 0;   
+        return 0;
     }
     free(aux);
-    user->pay_method = strdup(strsep(&sp, ";"));
-    if(strlen(user->pay_method) == 0)
+    aux = strdup(strsep(&sp, ";"));
+    if (strlen(aux) == 0)
     {
         free(user->username);
         free(user->name);
         free(user->birthdate);
         free(user->account_creation);
-        free(user->pay_method);
+        free(aux);
         free(user);
-        return 0;   
+        return 0;
     }
+    free(aux);
     aux = strdup(strsep(&sp, "\n"));
-    for(int i = 0; i < strlen(aux); i++)
+    for (int i = 0; i < strlen(aux); i++)
     {
         aux[i] = tolower(aux[i]);
     }
-    if(strcmp(aux, "active") == 0)
+    if (strcmp(aux, "active") == 0)
     {
         user->account_status = true;
     }
@@ -116,28 +122,27 @@ int loadUser(char *sp)
         free(user->name);
         free(user->birthdate);
         free(user->account_creation);
-        free(user->pay_method);
         free(user);
-        return 0;  
+        return 0;
     }
     user->age = calculateAge(user->birthdate);
     user->account_age = calculateAge(user->account_creation);
     user->avgScore = -1;
     user->totalDist = 0;
     user->recentRide = NULL;
-    g_hash_table_insert(positions, user->username, user);
+    g_hash_table_insert(hash, user->username, user);
     free(aux);
-    addAL(list, user);
     return 1;
 }
 
 User *findUserByUsername(char *username)
 {
-    return (User *)g_hash_table_lookup(positions, username);
+    return (User *)g_hash_table_lookup(hash, username);
 }
 
-gboolean isUserActive(char *username)
+bool isUserActive(char *username)
 {
+    //printf("%s\n", username);
     return findUserByUsername(username)->account_status;
 }
 
@@ -145,8 +150,8 @@ char *getUserBasicInfo(char *id)
 {
     User *user = findUserByUsername(id);
     char aux[10];
-    char *r = (char *) malloc (256);
-    strcpy(r,user->name);
+    char *r = (char *)malloc(256);
+    strcpy(r, user->name);
     strcat(r, ";");
     strncat(r, &user->gender, 1);
     strcat(r, ";");
@@ -185,21 +190,9 @@ double *getUserAvgScoreAndPay(char *id)
     return values;
 }
 
-void _freeUser(void *u)
-{
-    User *user = (User *) u;
-    free(user->account_creation);
-    free(user->birthdate);
-    free(user->name);
-    free(user->username);
-    free(user->pay_method);
-    free(user);
-}
-
 void freeUser()
 {
-    freeArrayList(list, _freeUser);
-    g_hash_table_destroy(positions);
+    g_hash_table_destroy(hash);
 }
 
 LinkedList *getUserGenderAccAgeName(char *username)
@@ -219,12 +212,29 @@ int getUserAccAge(char *username)
 
 int compareUsersByDistance(const void *A, const void *B)
 {
-    User *a = *(User **) A;
-    User *b = *(User **) B;
+    User *a = *(User **)A;
+    User *b = *(User **)B;
 
-    if(a->totalDist == 0 && isUserActive(a->username) == true)
+    if (a->totalDist == 0 && isUserActive(a->username) == true)
         a->totalDist = calculateUserTotalDist(a->username);
-    if(b->totalDist == 0 && isUserActive(b->username) == true)
+    if (b->totalDist == 0 && isUserActive(b->username) == true)
+        b->totalDist = calculateUserTotalDist(b->username);
+
+    if (a->totalDist < b->totalDist)
+        return -1;
+    if (a->totalDist == b->totalDist)
+        return mostRecentRide(a->username, b->username) * -1;
+    return 1;
+}
+
+gint gCompareUsersByDistance(gconstpointer A, gconstpointer B)
+{
+    User *a = (User *)A;
+    User *b = (User *)B;
+
+    if (a->totalDist == 0 && isUserActive(a->username) == true)
+        a->totalDist = calculateUserTotalDist(a->username);
+    if (b->totalDist == 0 && isUserActive(b->username) == true)
         b->totalDist = calculateUserTotalDist(b->username);
 
     if (a->totalDist < b->totalDist)
@@ -236,14 +246,16 @@ int compareUsersByDistance(const void *A, const void *B)
 
 char **mostDistUsers(int n)
 {
-    ArrayList* temp = copyAL(list, sizeof(User *));
-    quickSortArrayList(temp, sizeof(User *), compareUsersByDistance);
+    GList *glist = g_hash_table_get_values(hash);
+    glist = g_list_sort(glist, gCompareUsersByDistance);
     char **r = malloc(sizeof(char *) * n);
     char aux[10];
     User *user;
-    for (int i = 0; i < n; i++)
+    GList *l;
+    int i = 0;
+    for (l = glist; l && i < n; l = l->next)
     {
-        user = (User *)getByIndex(temp, i);
+        user = (User *)l->data;
         r[i] = (char *)malloc(strlen(user->username) + strlen(user->name) + 15);
         sprintf(aux, "%d", user->totalDist);
         strcpy(r[i], user->username);
@@ -251,19 +263,15 @@ char **mostDistUsers(int n)
         strcat(r[i], user->name);
         strcat(r[i], ";");
         strcat(r[i], aux);
+        i++;
     }
-    freeArrayListSimple(temp);
+    g_list_free(glist);
     return r;
 }
 
 gboolean doesUserExist(char *username)
 {
-    return g_hash_table_contains(positions, username);
-}
-
-void updateUser(int newSize)
-{
-    updateArrayList(list, sizeof(User *), newSize);
+    return g_hash_table_contains(hash, username);
 }
 
 Date *getUserRecentDate(char *username)
@@ -285,7 +293,7 @@ char getUserGender(char *username)
 char *getUserUsernameAndName(char *username)
 {
     User *user = findUserByUsername(username);
-    char *r = (char *) malloc(256);
+    char *r = (char *)malloc(256);
     strcpy(r, user->username);
     strcat(r, ";");
     strcat(r, user->name);

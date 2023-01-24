@@ -19,7 +19,6 @@ typedef struct ride
     double score_user;
     double score_driver;
     double tip;
-    char *comment;
 } Ride;
 
 static ArrayList *list = NULL;
@@ -154,7 +153,7 @@ int loadRide(char *sp)
     }
     ride->tip = atof(aux1);
     free(aux1);
-    ride->comment = strdup(strsep(&sp, "\n"));
+    strsep(&sp, "\n"); //ignorar comentario
     addAL(list, ride);
     return 1;
 }
@@ -238,6 +237,7 @@ void initHashTables()
             addLL((LinkedList *)g_hash_table_lookup(hashUsers, ride->user), ride);
         }
 
+        // printf("i = %d %s\n", i, ride->user);
         // AccAges
         if (isDriverActive(ride->driver) == true && isUserActive(ride->user) == TRUE)
         {
@@ -436,7 +436,6 @@ void _freeRide(void *r)
     free(ride->user);
     free(ride->driver);
     free(ride->city);
-    free(ride->comment);
     free(ride);
 }
 

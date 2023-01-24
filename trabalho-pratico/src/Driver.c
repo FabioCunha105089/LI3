@@ -12,7 +12,6 @@ typedef struct driver
     Date *birth_day;
     char gender;
     char *car_class;
-    char *license_plate;
     char *city;
     Date *account_creation;
     bool account_status;
@@ -89,18 +88,19 @@ int loadDriver(char *sp)
         addAL(list, NULL);
         return 0;
     }
-    driver->license_plate = strdup(strsep(&sp, ";"));
-    if (strlen(driver->license_plate) == 0)
+    aux = strdup(strsep(&sp, ";"));
+    if (strlen(aux) == 0)
     {
         free(driver->id);
         free(driver->name);
         free(driver->birth_day);
         free(driver->car_class);
-        free(driver->license_plate);
+        free(aux);
         free(driver);
         addAL(list, NULL);
         return 0;
     }
+    free(aux);
     driver->city = strdup(strsep(&sp, ";"));
     if (strlen(driver->city) == 0)
     {
@@ -108,7 +108,6 @@ int loadDriver(char *sp)
         free(driver->name);
         free(driver->birth_day);
         free(driver->car_class);
-        free(driver->license_plate);
         free(driver->city);
         free(driver);
         addAL(list, NULL);
@@ -122,7 +121,6 @@ int loadDriver(char *sp)
         free(driver->name);
         free(driver->birth_day);
         free(driver->car_class);
-        free(driver->license_plate);
         free(driver->city);
         free(driver->account_creation);
         free(driver);
@@ -151,7 +149,6 @@ int loadDriver(char *sp)
         free(driver->name);
         free(driver->birth_day);
         free(driver->car_class);
-        free(driver->license_plate);
         free(driver->city);
         free(driver->account_creation);
         free(driver);
@@ -228,7 +225,6 @@ void _freeDriver(void *d)
     free(driver->id);
     free(driver->car_class);
     free(driver->city);
-    free(driver->license_plate);
     free(driver->name);
     if(driver->scorePerCity)
         free(driver->scorePerCity);

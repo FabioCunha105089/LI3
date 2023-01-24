@@ -39,10 +39,13 @@ int load(char *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipSta
 
     for (int i = 0; i < size; i++)
     {
-        fgets(line, 256, file);
-        sp = strdup(line);
-        elementsAdded += loadFunc(sp);
-        free(sp);
+        if (i != size - 1) // o C estava a ser estupido e decide crashar o programa se eu faço i < size - 1. Oh well
+        {
+            fgets(line, 256, file);
+            sp = strdup(line);
+            elementsAdded += loadFunc(sp);
+            free(sp);
+        }
     }
     free(line);
     fclose(file);
@@ -143,9 +146,11 @@ bool compareFiles(char const *argv, int i)
     char ch1 = fgetc(file1);
     char ch2 = fgetc(file2);
 
-    while (ch1 != EOF && ch2 != EOF){
+    while (ch1 != EOF && ch2 != EOF)
+    {
 
-        if (ch1 != ch2) return false;
+        if (ch1 != ch2)
+            return false;
 
         ch1 = fgetc(file1);
         ch2 = fgetc(file2);
