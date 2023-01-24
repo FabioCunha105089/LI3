@@ -52,13 +52,23 @@ Date *sToDateSimple(char* string){
 }
 
 char *dateToS(Date *data){
-    char *r = (char *)malloc(11);
+    char r = (char)malloc(11);
     char aux[10];
     sprintf(aux, "%i", data->day);
-    strcpy(r, aux);
+    if(data->day < 10)
+    {
+        strcpy(r, "0");
+        strcat(r, aux);
+    }
+    else strcpy(r, aux);
     strcat(r, "/");
     sprintf(aux, "%i", data->month);
-    strcat(r, aux);
+    if(data->month < 10)
+    {
+        strcat(r, "0");
+        strcat(r, aux);
+    }
+    else strcat(r, aux);
     strcat(r, "/");
     sprintf(aux, "%i", data->year);
     strcat(r, aux);
