@@ -218,7 +218,7 @@ void executeQueries()
     char aux[100];
     char *aux2;
     Query *query;
-    for (int i = 0; i < nQueries; i++)
+    for (int i = 0; i < nQueries - 1; i++)
     {
         query = (Query *)getByIndex(list, i);
         if(!query)
@@ -417,11 +417,11 @@ void executeTests(char const *argv)
     double cpu_time_used = 0, segundos = 0;
     double totalQueryTime[9] = {0,0,0,0,0,0,0,0,0};
     
-    for (int i = 0; i < nQueries; i++)
+    for (int i = 0; i < nQueries - 1; i++)
     {
+        query = (Query *)getByIndex(list, i);
         int idQ = query->id - '0';
         countQueries[idQ - 1]++;
-        query = (Query *)getByIndex(list, i);
         start = clock();
         switch (query->id)
         {
@@ -492,7 +492,7 @@ void executeTests(char const *argv)
         free(query);
         free(verificacao);
     }
-
+    
     double media;
     printf("Média de tempo de execução de cada query:\n");
     

@@ -49,7 +49,7 @@ int testMode(char const *argv[])
     bool check = true;
     check = loadData(argv[1]);
     if (!check)
-        return 0;
+        return 0;    
     initHashTables();
     if (!load(argv[2], loadQuery, initListQuery, 0))
     {

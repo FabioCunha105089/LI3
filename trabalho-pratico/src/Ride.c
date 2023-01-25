@@ -795,13 +795,19 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
 {
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
+
+    if (!(isDateValid(dateA)) || !(isDateValid(dateB))) 
+    {
+        free(dateA);
+        free(dateB);
+        return NULL;
+    } 
+
     int tSize = getALSize(list), lSize = 0;
     Ride *ride;
     char **r = NULL;
     LinkedList *rideList = createLL();
     bool checkDate = false;
-
-    if (!(isDateValid(dateA)) || !(isDateValid(dateB))) return NULL; 
     
     for (int i = 0; i < tSize; i++)
     {
