@@ -824,7 +824,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     free(dateA);
     free(dateB);
     if (lSize == 0) return NULL;
-    ArrayList *allRides = LLtoAL(rideList, lSize);
+    ArrayList *allRides = LLtoAL(rideList, sizeof(Ride *));
     freeLinkedList(rideList);
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
     r = (char **)malloc(sizeof(char *) * lSize);
