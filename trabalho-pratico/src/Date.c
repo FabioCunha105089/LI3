@@ -52,7 +52,7 @@ Date *sToDateSimple(char* string){
 }
 
 char *dateToS(Date *data){
-    char r = (char)malloc(11);
+    char * r = (char *)malloc(11);
     char aux[10];
     sprintf(aux, "%i", data->day);
     if(data->day < 10)
