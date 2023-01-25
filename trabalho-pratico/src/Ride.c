@@ -294,11 +294,7 @@ gboolean doesCityHaveRides(char *city)
 
 double avgPayInCity(char *city)
 {
-    if (g_hash_table_contains(hashCity, city) == FALSE)
-    {
-        printf("Nao contem %s\n", city);
-        return 0;
-    }
+    if (g_hash_table_contains(hashCity, city) == FALSE) return 0;
 
     double tPrice = 0;
     Ride *ride;
@@ -528,12 +524,7 @@ double avgPayByDate(char *date1, char *date2)
 double avgDistanceInCityByDate(char *city, char *date1, char *date2)
 {
 
-    if (g_hash_table_contains(hashCity, city) == FALSE)
-    {
-
-        printf("Nao contem %s\n", city);
-        return 0;
-    }
+    if (g_hash_table_contains(hashCity, city) == FALSE) return 0;
 
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
@@ -593,11 +584,8 @@ int compareRidesByDriverScore(const void *A, const void *B)
 
 char **driversByScoreInCity(char *city, int n)
 {
-    if (g_hash_table_contains(hashCity, city) == FALSE)
-    {
-        printf("Nao contem %s\n", city);
-        return NULL;
-    }
+    if (g_hash_table_contains(hashCity, city) == FALSE) return NULL;
+    
     ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
     quickSortArrayList(rideList, sizeof(Ride *), compareRidesByDriverScore);
     char **r = malloc(sizeof(char *) * n);

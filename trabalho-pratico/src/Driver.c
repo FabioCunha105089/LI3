@@ -248,8 +248,17 @@ char *getDriverName(char *id)
 
 int compareDriversByScore(const void *A, const void *B)
 {
+    if(!A && !B) return 0;
+    if(!A) return 1;
+    if(!B) return -1;
+
     Driver *a = *(Driver **)A;
     Driver *b = *(Driver **)B;
+    bool aExists = doesDriverExist(a->id), bExists = doesDriverExist(b->id);
+    if(!aExists && !bExists) return 0;
+    if(!aExists) return 1;
+    if(!bExists) return -1;
+
     if (a->avgScore == -1)
         a->avgScore = calculateDriverAvgScore(a->id);
     if (b->avgScore == -1)

@@ -219,7 +219,7 @@ void executeQueries()
     char *aux2;
     Query *query;
     for (int i = 0; i < nQueries - 1; i++)
-    {
+    {     
         query = (Query *)getByIndex(list, i);
         if(!query)
             return;
@@ -233,7 +233,8 @@ void executeQueries()
                 free(aux2);
             break;
         case '2':
-            outputMult(query2(atoi(query->args[0])), i);
+            int x = atoi(query->args[0]);
+            outputMult(query2(x), i);
             free(query->args[0]);
             break;
         case '3':
@@ -410,15 +411,17 @@ void executeTests(char const *argv)
 {
     int nQueries = getALSize(list);
     int countQueries[9] = {0,0,0,0,0,0,0,0,0};
+    int countCorrectQueries[9] = {0,0,0,0,0,0,0,0,0};
     char aux[100];
     char *aux2, *verificacao;
     Query *query;
     clock_t start = 0, end = 0;
     double cpu_time_used = 0, segundos = 0;
     double totalQueryTime[9] = {0,0,0,0,0,0,0,0,0};
+    clock_t totalTimeEnd = 0, totalTimeStart = clock();
     
     for (int i = 0; i < nQueries - 1; i++)
-    {
+    {   
         query = (Query *)getByIndex(list, i);
         int idQ = query->id - '0';
         countQueries[idQ - 1]++;
@@ -484,6 +487,7 @@ void executeTests(char const *argv)
         verificacao = (char *)malloc(256);
         if (compareFiles(argv, i)) {
             strcpy(verificacao, "Correto");
+            countCorrectQueries[idQ - 1]++;
         } else strcpy(verificacao, "Incorreto");
 
         printf("Comando %d (Q%c):\nDuracao (s):%lf\nResultado:%s\n\n", (i+1), query->id, segundos, verificacao);
@@ -492,8 +496,10 @@ void executeTests(char const *argv)
         free(query);
         free(verificacao);
     }
-    
+    totalTimeEnd = clock();
+    double totalTime = ((double) (totalTimeEnd - totalTimeStart)) / CLOCKS_PER_SEC;
     double media;
+    printf("Tempo de execução total: %.0lf s\n", totalTime);
     printf("Média de tempo de execução de cada query:\n");
     
     for (int i = 0 ; i < 9; i++)
@@ -501,7 +507,7 @@ void executeTests(char const *argv)
         if (countQueries[i] != 0) 
         {
             media = totalQueryTime[i] / countQueries[i];
-            printf("Query %d (%d execuções): %.3lf s\n", i + 1, countQueries[i], media);
+            printf("Query %d (%dx) (%d corretas): %.3lf s\n", i + 1, countQueries[i], countCorrectQueries[i], media);
         }
     }
 }
