@@ -795,14 +795,14 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
 {
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
-
+    
     if (!(isDateValid(dateA)) || !(isDateValid(dateB))) 
     {
         free(dateA);
         free(dateB);
         return NULL;
     } 
-
+    
     int tSize = getALSize(list), lSize = 0;
     Ride *ride;
     char **r = NULL;
@@ -828,14 +828,14 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     freeLinkedList(rideList);
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
     r = (char **)malloc(sizeof(char *) * lSize);
-    char aux[10];
-    char *date;
+    char aux[20];
+    char *date = (char *)malloc(11);
 
     for (int i = 0; i < lSize; i++)
     {
         ride = (Ride *)getByIndex(allRides, i);
         r[i] = (char *)malloc(256);
-        date = dateToS(ride->date);
+        strcpy(date, dateToS(ride->date));
         strcpy(r[i], ride->id);
         strcat(r[i], ";");
         strcat(r[i], date);
