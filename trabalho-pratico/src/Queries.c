@@ -491,7 +491,9 @@ void executeTests(const char *argv)
         } else strcpy(verificacao, "Incorreto");
 
         printf("Comando %d (Q%c):\nDuracao (s):%lf\nResultado:%s\n\n", (i+1), query->id, segundos, verificacao);
-
+        
+        remainingQueries[idQ - 1]--;
+        checkUselessHashs();
         free(query->args);
         free(query);
         free(verificacao);
