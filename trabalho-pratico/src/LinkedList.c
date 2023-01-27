@@ -4,7 +4,7 @@
 
 typedef struct node{
     void* data;
-    struct Node* next;
+    struct node* next;
 }Node;
 
 typedef struct ll{
@@ -64,7 +64,7 @@ int getLLSize(LinkedList* list){
     return list->size;
 }
 
-GDestroyNotify freeLinkedList(void *data)
+void freeLinkedList(gpointer data)
 {
     LinkedList* list = (LinkedList *) data;
     Node* node;
@@ -76,6 +76,7 @@ GDestroyNotify freeLinkedList(void *data)
         free(node);
     }
     free(list);
+    return;
 }
 
 ArrayList *LLtoAL(LinkedList *ll, int elementSize)

@@ -407,7 +407,7 @@ void executeQuery(char id, char **args)
     }
 }
 
-void executeTests(char const *argv)
+void executeTests(const char *argv)
 {
     int nQueries = getALSize(list);
     int countQueries[9] = {0,0,0,0,0,0,0,0,0};
@@ -499,7 +499,7 @@ void executeTests(char const *argv)
     totalTimeEnd = clock();
     double totalTime = ((double) (totalTimeEnd - totalTimeStart)) / CLOCKS_PER_SEC;
     double media;
-    printf("Tempo de execução total: %.0lf s\n", totalTime);
+    printf("Tempo de execução total: %.3lf s\n", totalTime);
     printf("Média de tempo de execução de cada query:\n");
     
     for (int i = 0 ; i < 9; i++)

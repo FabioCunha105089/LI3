@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-bool loadData(char *csvPath)
+bool loadData(char const *csvPath)
 {
     char *aux = strdup(csvPath);
     int check = load(strcat(aux, "/drivers.csv"), loadDriver, initListDriver, 1);

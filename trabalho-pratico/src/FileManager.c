@@ -20,7 +20,7 @@ int getLines(FILE *file)
     return size;
 }
 
-int load(char *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipStart)
+int load(char const *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipStart)
 {
     FILE *file = fopen(path, "r");
     if (!file)
@@ -30,7 +30,7 @@ int load(char *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipSta
     }
     int size = getLines(file), elementsAdded = 0;
     initFunc(size);
-    char *line = (char *)malloc(256);
+    char line[256];
     char *sp;
     for (int i = 0; i < skipStart; i++)
     {
@@ -47,7 +47,6 @@ int load(char *path, int (*loadFunc)(char *), void (*initFunc)(int), int skipSta
             free(sp);
         }
     }
-    free(line);
     fclose(file);
     return elementsAdded;
 }

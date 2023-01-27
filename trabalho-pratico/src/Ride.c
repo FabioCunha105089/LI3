@@ -188,10 +188,10 @@ void initHashTables()
 {
     int size = getALSize(list), ageD, ageU;
     char genderD, genderU;                                                            //What index of 'activeHashs' it represents | the queries it is used in
-    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 1 -> 4, 6, 7
+    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); //NR 1 -> 4, 6, 7
     driverRides = createAL(getNDrivers(), sizeof(LinkedList *)); //NR 2 -> 1, 2
-    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, freeLinkedList); //NR 3 -> 1, 3
-    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeLinkedList);//NR 4 ->8
+    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); //NR 3 -> 1, 3
+    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify)freeLinkedList);//NR 4 ->8
     driverCityScores = (double **) malloc (sizeof(double *) * getNDrivers());//NR 5 -> 7
     Ride *ride = NULL;
     int driverI;
@@ -252,15 +252,15 @@ void initHashTables()
             if (ageD == ageU && genderD == genderU)
             {
                 int age = ageD * genderD;
-                if (g_hash_table_contains(hashAccAges, age) == FALSE)
+                if (g_hash_table_contains(hashAccAges, GINT_TO_POINTER(age)) == FALSE)
                 {
                     LinkedList *rideList = createLL();
                     addLL(rideList, ride);
-                    g_hash_table_insert(hashAccAges, age, rideList);
+                    g_hash_table_insert(hashAccAges, GINT_TO_POINTER(age), rideList);
                 }
                 else
                 {
-                    addLL((LinkedList *)g_hash_table_lookup(hashAccAges, age), ride);
+                    addLL((LinkedList *)g_hash_table_lookup(hashAccAges, GINT_TO_POINTER(age)), ride);
                 }
             }
         }
@@ -457,7 +457,7 @@ void freeDriverRideList()
 {
     if(activeHashs[1])
     {
-        freeArrayList(driverRides, freeLinkedList);
+        freeArrayList(driverRides, (GDestroyNotify)freeLinkedList);
         activeHashs[1] = false;
     }
 }
@@ -817,13 +817,12 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
     r = (char **)malloc(sizeof(char *) * lSize);
     char aux[20];
-    char *date = (char *)malloc(11);
 
     for (int i = 0; i < lSize; i++)
     {
         ride = (Ride *)getByIndex(allRides, i);
         r[i] = (char *)malloc(256);
-        strcpy(date, dateToS(ride->date));
+        char *date = dateToS(ride->date);
         strcpy(r[i], ride->id);
         strcat(r[i], ";");
         strcat(r[i], date);
@@ -837,6 +836,7 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
         strcat(r[i], aux);
         free(date);
     }
+
     freeArrayListSimple(allRides);
     LinkedList *l = createLL();
     addLL(l, r);
@@ -856,9 +856,9 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
     Ride *ride;
     while (years <= MAXYEARS)
     {
-        if (g_hash_table_contains(hashAccAges, age) == TRUE)
+        if (g_hash_table_contains(hashAccAges, GINT_TO_POINTER(age)) == TRUE)
         {
-            rideList = (LinkedList *)g_hash_table_lookup(hashAccAges, age);
+            rideList = (LinkedList *)g_hash_table_lookup(hashAccAges, GINT_TO_POINTER(age));
             tSize += getLLSize(rideList);
             addLL(fullList, rideList);
             nLists++;

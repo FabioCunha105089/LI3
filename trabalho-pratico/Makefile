@@ -44,4 +44,4 @@ Testes.o: $(SRC)Testes.c
 Resultados: 
 	mkdir Resultados
 clean:
-	rm -f -r $(OBJS) $(OUT) Resultados
+	rm -f -r $(OBJS) $(OUT) $(OBJS_T) $(OUT_T) Resultados

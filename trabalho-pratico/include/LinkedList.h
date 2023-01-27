@@ -11,7 +11,7 @@
     void addLL(LinkedList*, void*);
     void* iterateLL(LinkedList*);
     int getLLSize(LinkedList*);
-    GDestroyNotify freeLinkedList(gpointer);
+    void freeLinkedList(gpointer);
     ArrayList *LLtoAL(LinkedList *, int);
     void addStringIfNotIn(LinkedList *, char *);
     int getIndexFromLL(LinkedList *, char *);
