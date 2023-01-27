@@ -96,7 +96,6 @@ int loadRide(char *sp)
         return 0;
     }
     ride->city = strdup(strsep(&sp, ";"));
-    addStringIfNotIn(cities, ride->city);
     if (strlen(ride->city) == 0)
     {
         free(ride->id);
@@ -106,7 +105,7 @@ int loadRide(char *sp)
         free(ride->city);
         free(ride);
         return 0;
-    }
+    } else addStringIfNotIn(cities, ride->city);
     aux1 = strdup(strsep(&sp, ";"));
     if (validateNumberInt(aux1, strlen(aux1)) == false || atoi(aux1) <= 0)
     {

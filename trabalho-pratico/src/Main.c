@@ -13,35 +13,27 @@ bool doLoads(char const *csvPath)
     char aux[50];
     strcpy(aux, csvPath);
     int check = load(strcat(aux, "/drivers.csv"), loadDriver, initListDriver, 1);
-    if (check == -1)
-    {
-        //free(aux);
-        return false;
-    }
+    if (check == -1) return false;
+    
     printf("Drivers loaded = %d\n", check);
-    //free(aux);
     strcpy(aux, csvPath);
     check = load(strcat(aux, "/users.csv"), loadUser, initListUser, 1);
     if (check == -1)
     {
         freeDriver();
-        //free(aux);
         return false;
     };
     printf("Users loaded = %d\n", check);
-    //free(aux);
     strcpy(aux, csvPath);
     check = load(strcat(aux, "/rides.csv"), loadRide, initListRide, 1);
     if (check == -1)
     {
         freeDriver();
         freeUser();
-        //free(aux);
         return false;
     }
     printf("Rides loaded = %d\n", check);
     updateRide(check);
-    //free(aux);
     return true;
 }
 
