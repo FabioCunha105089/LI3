@@ -191,7 +191,7 @@ void initHashTables()
     driverRides = createAL(getNDrivers(), sizeof(LinkedList *)); //NR 2 -> 1, 2
     hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); //NR 3 -> 1, 3
     hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify)freeLinkedList);//NR 4 ->8
-    driverCityScores = (double **) malloc (sizeof(double *) * getNDrivers());//NR 5 -> 7
+    driverCityScores = (double **) calloc (getNDrivers(), sizeof(double *));//NR 5 -> 7
     Ride *ride = NULL;
     int driverI;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);

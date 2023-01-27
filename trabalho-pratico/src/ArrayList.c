@@ -14,7 +14,7 @@ ArrayList *createAL(int size, int elementSize)
     if (size > 0)
     {
         ArrayList *list = (ArrayList *)malloc(sizeof(ArrayList));
-        list->array = (void *)malloc(elementSize * size);
+        list->array = (void *)calloc(size, elementSize);
         list->size = size;
         list->pointer = 0;
         return list;
