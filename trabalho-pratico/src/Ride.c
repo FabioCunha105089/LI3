@@ -105,7 +105,9 @@ int loadRide(char *sp)
         free(ride->city);
         free(ride);
         return 0;
-    } else addStringIfNotIn(cities, ride->city);
+    }
+    else
+        addStringIfNotIn(cities, ride->city);
     aux1 = strdup(strsep(&sp, ";"));
     if (validateNumberInt(aux1, strlen(aux1)) == false || atoi(aux1) <= 0)
     {
@@ -152,7 +154,7 @@ int loadRide(char *sp)
     }
     ride->tip = atof(aux1);
     free(aux1);
-    strsep(&sp, "\n"); //ignorar comentario
+    strsep(&sp, "\n"); // ignorar comentario
     addAL(list, ride);
     return 1;
 }
@@ -175,23 +177,23 @@ double getPrice(char *car_class, double distance)
     return 3.25 + distance * 0.62;
 }
 
-int compareRidesByDate(const void *A, const void *B) 
+int compareRidesByDate(const void *A, const void *B)
 {
     Ride *a = *(Ride **)A;
     Ride *b = *(Ride **)B;
- 
+
     return isDateBigger(a->date, b->date);
 }
 
 void initHashTables()
 {
     int size = getALSize(list), ageD, ageU;
-    char genderD, genderU;                                                            //What index of 'activeHashs' it represents | the queries it is used in
-    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); //NR 1 -> 4, 6, 7
-    driverRides = createAL(getNDrivers(), sizeof(LinkedList *)); //NR 2 -> 1, 2
-    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); //NR 3 -> 1, 3
-    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify)freeLinkedList);//NR 4 ->8
-    driverCityScores = (double **) calloc (getNDrivers(), sizeof(double *));//NR 5 -> 7
+    char genderD, genderU;                                                                                    // What index of 'activeHashs' it represents | the queries it is used in
+    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList);          // NR 1 -> 4, 6, 7
+    driverRides = createAL(getNDrivers(), sizeof(LinkedList *));                                              // NR 2 -> 1, 2
+    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList);         // NR 3 -> 1, 3
+    hashAccAges = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify)freeLinkedList); // NR 4 ->8
+    driverCityScores = (double **)calloc(getNDrivers(), sizeof(double *));                                    // NR 5 -> 7
     Ride *ride = NULL;
     int driverI;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
@@ -213,7 +215,7 @@ void initHashTables()
 
         // Drivers
         driverI = atoi(ride->driver) - 1;
-        if(!getByIndex(driverRides, driverI))
+        if (!getByIndex(driverRides, driverI))
         {
             LinkedList *rideList = createLL();
             addLL(rideList, ride);
@@ -221,7 +223,7 @@ void initHashTables()
         }
         else
         {
-            addLL((LinkedList *) getByIndex(driverRides, driverI), ride);
+            addLL((LinkedList *)getByIndex(driverRides, driverI), ride);
         }
 
         // Users
@@ -265,10 +267,10 @@ void initHashTables()
         }
 
         // Driver score by city
-        if(!driverCityScores[driverI])
+        if (!driverCityScores[driverI])
         {
-            driverCityScores[driverI] = (double *) calloc(getLLSize(cities), sizeof(double));
-            driverCityScores[driverI][getIndexFromLL(cities, ride->city)] = ride->score_driver; 
+            driverCityScores[driverI] = (double *)calloc(getLLSize(cities), sizeof(double));
+            driverCityScores[driverI][getIndexFromLL(cities, ride->city)] = ride->score_driver;
         }
         else
         {
@@ -282,7 +284,7 @@ void initListRide(int size)
 {
     if (!list)
         list = createAL(size - 1, sizeof(Ride *));
-    if(!cities)
+    if (!cities)
         cities = createLL();
 }
 
@@ -293,7 +295,8 @@ gboolean doesCityHaveRides(char *city)
 
 double avgPayInCity(char *city)
 {
-    if (g_hash_table_contains(hashCity, city) == FALSE) return 0;
+    if (g_hash_table_contains(hashCity, city) == FALSE)
+        return 0;
 
     double tPrice = 0;
     Ride *ride;
@@ -319,7 +322,7 @@ gboolean doesUserHaveRides(char *username)
 
 double calculateDriverAvgScore(char *id)
 {
-    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
+    LinkedList *rides = (LinkedList *)getByIndex(driverRides, atoi(id) - 1);
     double score = 0;
     int nRides = getLLSize(rides);
     if (!rides || nRides == 0)
@@ -337,7 +340,7 @@ double calculateDriverAvgScore(char *id)
 
 double *calculateDriverAvgScoreAndPay(char *id)
 {
-    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
+    LinkedList *rides = (LinkedList *)getByIndex(driverRides, atoi(id) - 1);
     double score = 0, pay = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
@@ -355,7 +358,7 @@ double *calculateDriverAvgScoreAndPay(char *id)
 
 double calculateTotalPayDriver(char *id)
 {
-    LinkedList *rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
+    LinkedList *rides = (LinkedList *)getByIndex(driverRides, atoi(id) - 1);
     double pay = 0;
     int nRides = getLLSize(rides);
     Ride *ride;
@@ -415,7 +418,7 @@ double calculateTotalPayUser(char *username)
 
 int getNumberOfRidesDriver(char *id)
 {
-    return getLLSize((LinkedList *) getByIndex(driverRides, atoi(id) - 1));
+    return getLLSize((LinkedList *)getByIndex(driverRides, atoi(id) - 1));
 }
 
 int getNumberOfRidesUser(char *username)
@@ -446,7 +449,7 @@ void freeRide()
 }
 void freeCityHash()
 {
-    if(activeHashs[0])
+    if (activeHashs[0])
     {
         g_hash_table_destroy(hashCity);
         activeHashs[0] = false;
@@ -454,7 +457,7 @@ void freeCityHash()
 }
 void freeDriverRideList()
 {
-    if(activeHashs[1])
+    if (activeHashs[1])
     {
         freeArrayList(driverRides, (GDestroyNotify)freeLinkedList);
         activeHashs[1] = false;
@@ -462,7 +465,7 @@ void freeDriverRideList()
 }
 void freeUserHash()
 {
-    if(activeHashs[2])
+    if (activeHashs[2])
     {
         g_hash_table_destroy(hashUsers);
         activeHashs[2] = false;
@@ -470,12 +473,12 @@ void freeUserHash()
 }
 void freeScoreHash()
 {
-    if(activeHashs[3])
+    if (activeHashs[3])
     {
         int nDrivers = getNDrivers();
-        for(int i = 0; i < nDrivers; i++)
+        for (int i = 0; i < nDrivers; i++)
         {
-            if(driverCityScores[i])
+            if (driverCityScores[i])
                 free(driverCityScores[i]);
         }
         free(driverCityScores);
@@ -484,7 +487,7 @@ void freeScoreHash()
 }
 void freeAccAgeHash()
 {
-    if(activeHashs[4])
+    if (activeHashs[4])
     {
         g_hash_table_destroy(hashAccAges);
         activeHashs[4] = false;
@@ -504,26 +507,29 @@ double avgPayByDate(char *date1, char *date2)
     {
         ride = (Ride *)getByIndex(list, i);
 
-        if(isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
+        if (isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
         {
             checkDate = true;
             nRides++;
             tPay += getPrice(getCarClass(ride->driver), ride->distance);
-
-        } else if (checkDate) break;
+        }
+        else if (checkDate)
+            break;
     }
 
     free(dateA);
     free(dateB);
-    if(nRides==0) return 0;
+    if (nRides == 0)
+        return 0;
 
-    return tPay / nRides; 
+    return tPay / nRides;
 }
 
 double avgDistanceInCityByDate(char *city, char *date1, char *date2)
 {
 
-    if (g_hash_table_contains(hashCity, city) == FALSE) return 0;
+    if (g_hash_table_contains(hashCity, city) == FALSE)
+        return 0;
 
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
@@ -560,7 +566,7 @@ int compareRidesByDriverScore(const void *A, const void *B)
     int cityI = getIndexFromLL(cities, a->city), aI = atoi(a->driver) - 1, bI = atoi(b->driver) - 1;
     int aN = getDriverNRidesInCity(a->driver, cityI);
     int bN = getDriverNRidesInCity(b->driver, cityI);
-    if(aN == 0)
+    if (aN == 0)
     {
         scoreA = 0;
     }
@@ -568,7 +574,7 @@ int compareRidesByDriverScore(const void *A, const void *B)
     {
         scoreA = driverCityScores[aI][cityI] / aN;
     }
-    if(bN == 0)
+    if (bN == 0)
     {
         scoreB = 0;
     }
@@ -583,12 +589,13 @@ int compareRidesByDriverScore(const void *A, const void *B)
 
 char **driversByScoreInCity(char *city, int n)
 {
-    if (g_hash_table_contains(hashCity, city) == FALSE) return NULL;
-    
+    if (g_hash_table_contains(hashCity, city) == FALSE)
+        return NULL;
+
     ArrayList *rideList = LLtoAL((LinkedList *)g_hash_table_lookup(hashCity, city), sizeof(Ride *));
     quickSortArrayList(rideList, sizeof(Ride *), compareRidesByDriverScore);
     char **r = malloc(sizeof(char *) * n);
-    char *id, *name;
+    char *id, *name, *idPrev = "";
     char aux[10];
     double score;
     int size = getALSize(rideList) - 1, pos, counter = n;
@@ -598,7 +605,7 @@ char **driversByScoreInCity(char *city, int n)
         ride = (Ride *)getByIndex(rideList, i);
         pos = (counter - n) * -1;
         id = getDriverIDFromRide(ride);
-        if (isDriverActive(id) == true)
+        if (strcmp(idPrev, id) != 0 && isDriverActive(id) == true)
         {
             name = getDriverNameFromRide(ride);
             score = getDriverAvgScoreInCityFromRide(ride);
@@ -609,21 +616,13 @@ char **driversByScoreInCity(char *city, int n)
             strcat(r[pos], name);
             strcat(r[pos], ";");
             strcat(r[pos], aux);
-            for (int j = 0; j < pos; j++)
-            {
-                if (strcmp(r[j], r[pos]) == 0)
-                {
-                    free(r[pos]);
-                    counter++;
-                    break;
-                }
-            }
         }
         else
         {
             counter++;
         }
         i--;
+        idPrev = id;
     }
     freeArrayListSimple(rideList);
     return r;
@@ -664,7 +663,7 @@ Date *getMostRecentDate(char *id)
     LinkedList *rides;
     if (aux != 0)
     {
-        rides = (LinkedList *) getByIndex(driverRides, atoi(id) - 1);
+        rides = (LinkedList *)getByIndex(driverRides, atoi(id) - 1);
     }
     else
     {
@@ -760,57 +759,63 @@ int compareRidesByAccAge(const void *A, const void *B)
     return -1;
 }
 
-int compareRidesByDistance(const void *A, const void *B) 
+int compareRidesByDistance(const void *A, const void *B)
 {
     Ride *a = *(Ride **)A;
     Ride *b = *(Ride **)B;
 
-    if (a->distance > b->distance) {
+    if (a->distance > b->distance)
+    {
         return -1;
-    } else if (a->distance < b->distance) {
+    }
+    else if (a->distance < b->distance)
+    {
         return 1;
     }
-    
+
     int checkDate = isDateBigger(a->date, b->date) * (-1);
-    if (checkDate != 0) return checkDate;
-    
+    if (checkDate != 0)
+        return checkDate;
+
     return (atoi(a->id) > atoi(b->id)) ? -1 : 1;
-    
 }
 
 LinkedList *ridesWithTipByDistance(char *date1, char *date2)
 {
     Date *dateA = sToDateSimple(date1);
     Date *dateB = sToDateSimple(date2);
-    
-    if (!(isDateValid(dateA)) || !(isDateValid(dateB))) 
+
+    if (!(isDateValid(dateA)) || !(isDateValid(dateB)))
     {
         free(dateA);
         free(dateB);
         return NULL;
-    } 
-    
+    }
+
     int tSize = getALSize(list), lSize = 0;
     Ride *ride;
     char **r = NULL;
     LinkedList *rideList = createLL();
     bool checkDate = false;
-    
+
     for (int i = 0; i < tSize; i++)
     {
         ride = (Ride *)getByIndex(list, i);
 
-        if(isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
+        if (isDateBigger(ride->date, dateA) >= 0 && isDateBigger(dateB, ride->date) >= 0)
         {
             checkDate = true;
             addLL(rideList, ride);
-        } else if (checkDate) break;
+        }
+        else if (checkDate)
+            break;
     }
-    
+
     lSize = getLLSize(rideList);
     free(dateA);
     free(dateB);
-    if (lSize == 0) return NULL;
+    if (lSize == 0)
+        return NULL;
     ArrayList *allRides = LLtoAL(rideList, sizeof(Ride *));
     freeLinkedList(rideList);
     quickSortArrayList(allRides, sizeof(Ride *), compareRidesByDistance);
