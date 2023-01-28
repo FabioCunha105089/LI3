@@ -214,15 +214,13 @@ void checkUselessHashs()
 
 void executeQueries()
 {
-    int nQueries = getALSize(list);
+    int nQueries = getALSize(list) - 1;
     char aux[100];
     char *aux2;
     Query *query;
-    for (int i = 0; i < nQueries - 1; i++)
+    for (int i = 0; i < nQueries; i++)
     {     
         query = (Query *)getByIndex(list, i);
-        if(!query)
-            return;
         switch (query->id)
         {
         case '1':
@@ -409,7 +407,7 @@ void executeQuery(char id, char **args)
 
 void executeTests(const char *argv)
 {
-    int nQueries = getALSize(list);
+    int nQueries = getALSize(list) - 1;
     int countQueries[9] = {0,0,0,0,0,0,0,0,0};
     int countCorrectQueries[9] = {0,0,0,0,0,0,0,0,0};
     char aux[100];
@@ -420,7 +418,7 @@ void executeTests(const char *argv)
     double totalQueryTime[9] = {0,0,0,0,0,0,0,0,0};
     clock_t totalTimeEnd = 0, totalTimeStart = clock();
     
-    for (int i = 0; i < nQueries - 1; i++)
+    for (int i = 0; i < nQueries; i++)
     {   
         query = (Query *)getByIndex(list, i);
         int idQ = query->id - '0';
