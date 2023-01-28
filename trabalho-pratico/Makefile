@@ -1,5 +1,5 @@
 OBJS	 = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o Main.o
-OBJS_T   = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o Testes.o
+OBJS_T   = ArrayList.o Date.o Driver.o FileManager.o LinkedList.o Queries.o Ride.o User.o Tests.o
 OUT	 	 = programa-principal
 OUT_T    = programa-testes
 SRC      = ./src/
@@ -38,8 +38,8 @@ User.o: $(SRC)User.c
 Main.o: $(SRC)Main.c Resultados
 	$(CC) $(FLAGS) $(SRC)Main.c
 
-Testes.o: $(SRC)Testes.c
-	$(CC) $(FLAGS) $(SRC)Testes.c
+Tests.o: $(SRC)Tests.c
+	$(CC) $(FLAGS) $(SRC)Tests.c
 
 Resultados: 
 	mkdir Resultados

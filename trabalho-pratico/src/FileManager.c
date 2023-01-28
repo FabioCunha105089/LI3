@@ -37,15 +37,12 @@ int load(char const *path, int (*loadFunc)(char *), void (*initFunc)(int), int s
         fgets(line, 256, file);
     }
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size - 1; i++)
     {
-        if (i != size - 1) // o C estava a ser estupido e decide crashar o programa se eu faço i < size - 1. Oh well
-        {
-            fgets(line, 256, file);
-            sp = strdup(line);
-            elementsAdded += loadFunc(sp);
-            free(sp);
-        }
+        fgets(line, 256, file);
+        sp = strdup(line);
+        elementsAdded += loadFunc(sp);
+        free(sp);
     }
     fclose(file);
     return elementsAdded;

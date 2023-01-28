@@ -214,13 +214,16 @@ void checkUselessHashs()
 
 void executeQueries()
 {
-    int nQueries = getALSize(list) - 1;
+    int nQueries = getALSize(list);
     char aux[100];
     char *aux2;
     Query *query;
     for (int i = 0; i < nQueries; i++)
-    {     
+    {    
+
         query = (Query *)getByIndex(list, i);
+        if(!query)
+            continue;
         switch (query->id)
         {
         case '1':
