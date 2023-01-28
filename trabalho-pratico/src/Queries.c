@@ -414,10 +414,9 @@ void executeTests(const char *argv)
     char *aux2, *verificacao;
     Query *query;
     clock_t start = 0, end = 0;
-    double cpu_time_used = 0, segundos = 0;
+    double cpu_time_used = 0, segundos = 0, totalTime = 0;
     double totalQueryTime[9] = {0,0,0,0,0,0,0,0,0};
-    clock_t totalTimeEnd = 0, totalTimeStart = clock();
-    
+        
     for (int i = 0; i < nQueries; i++)
     {   
         query = (Query *)getByIndex(list, i);
@@ -482,6 +481,7 @@ void executeTests(const char *argv)
         cpu_time_used = ((double) (end - start));
         segundos = cpu_time_used / CLOCKS_PER_SEC;
         totalQueryTime[idQ - 1]+=segundos;
+        totalTime+=segundos;
         verificacao = (char *)malloc(256);
         if (compareFiles(argv, i)) {
             strcpy(verificacao, "Correto");
@@ -496,8 +496,6 @@ void executeTests(const char *argv)
         free(query);
         free(verificacao);
     }
-    totalTimeEnd = clock();
-    double totalTime = ((double) (totalTimeEnd - totalTimeStart)) / CLOCKS_PER_SEC;
     double media;
     printf("Tempo de execução total: %.3lf s\n", totalTime);
     printf("Média de tempo de execução de cada query:\n");
