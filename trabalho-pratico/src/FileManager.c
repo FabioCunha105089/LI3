@@ -145,6 +145,7 @@ bool compareFiles(char const *argv, int i)
     FILE *file2 = fopen(filename2, "r");
     if (!file2)
     {
+        fclose(file1);
         printf("Ficheiro %s nao encontrado.\n", filename2);
         return false;
     }
@@ -156,8 +157,12 @@ bool compareFiles(char const *argv, int i)
     {
 
         if (ch1 != ch2)
+        {   
+            fclose(file1);
+            fclose(file2);
             return false;
-
+        }
+        
         ch1 = fgetc(file1);
         ch2 = fgetc(file2);
     }
