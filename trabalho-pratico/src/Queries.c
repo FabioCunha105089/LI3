@@ -208,8 +208,6 @@ void checkUselessHashs()
         freeCityHash();
     if(remainingQueries[6] == 0)
         freeScoreHash();
-    if(remainingQueries[7] == 0)
-        freeAccAgeHash();
 }
 
 void executeQueries()
