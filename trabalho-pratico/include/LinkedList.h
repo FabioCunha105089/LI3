@@ -15,7 +15,5 @@
     ArrayList *LLtoAL(LinkedList *, int);
     void addStringIfNotIn(LinkedList *, char *);
     int getIndexFromLL(LinkedList *, char *);
-    int sizeOfLinkedList();
-    ArrayList *LLtoALMultiple(LinkedList *, int, int, int);
 
 #endif

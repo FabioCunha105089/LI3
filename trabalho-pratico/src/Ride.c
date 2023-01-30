@@ -187,11 +187,11 @@ int compareRidesByDate(const void *A, const void *B)
 
 void initHashTables()
 {
-    int size = getALSize(list);                                                                                // What index of 'activeHashs' it represents | the queries it is used in
-    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList);          // NR 1 -> 4, 6, 7
-    driverRides = createAL(getNDrivers(), sizeof(LinkedList *));                                              // NR 2 -> 1, 2
-    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList);         // NR 3 -> 1, 3
-    driverCityScores = (double **)calloc(getNDrivers(), sizeof(double *));                                    // NR 4 -> 7
+    int size = getALSize(list);                                                                       // What index of 'activeHashs' it represents | the queries it is used in
+    hashCity = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList);  // NR 1 -> 4, 6, 7
+    driverRides = createAL(getNDrivers(), sizeof(LinkedList *));                                      // NR 2 -> 1, 2
+    hashUsers = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)freeLinkedList); // NR 3 -> 1, 3
+    driverCityScores = (double **)calloc(getNDrivers(), sizeof(double *));                            // NR 4 -> 7
     Ride *ride = NULL;
     int driverI;
     quickSortArrayList(list, sizeof(Ride *), compareRidesByDate);
@@ -701,25 +701,6 @@ void updateRide(int newSize)
     updateArrayList(list, sizeof(Ride *), newSize);
 }
 
-int compareRidesByAccAge(const void *A, const void *B)
-{
-    Ride *a = *(Ride **)A;
-    Ride *b = *(Ride **)B;
-
-    int driverComp = isDateBigger(getDriverAccCreation(a->driver), getDriverAccCreation(b->driver));
-    if (driverComp == 1)
-        return 1;
-    if (driverComp == 0)
-    {
-        int userComp = isDateBigger(getUserAccCreation(a->user), getUserAccCreation(b->user));
-        if (userComp == 1)
-            return 1;
-        if (userComp == 0)
-            return atoi(a->id) > atoi(b->id) ? 1 : -1;
-    }
-    return -1;
-}
-
 int compareRidesByDistance(const void *A, const void *B)
 {
     Ride *a = *(Ride **)A;
@@ -811,42 +792,64 @@ LinkedList *ridesWithTipByDistance(char *date1, char *date2)
     return l;
 }
 
+int compareRidesByAccAge(const void *A, const void *B)
+{
+    Ride *a = *(Ride **)A;
+    Ride *b = *(Ride **)B;
+
+    int driverComp = isDateBigger(getDriverAccCreation(a->driver), getDriverAccCreation(b->driver));
+    if (driverComp == 1)
+        return 1;
+    if (driverComp == 0)
+    {
+        int userComp = isDateBigger(getUserAccCreation(a->user), getUserAccCreation(b->user));
+        if (userComp == 1)
+            return 1;
+        if (userComp == 0)
+            return atoi(a->id) > atoi(b->id) ? 1 : -1;
+    }
+    return -1;
+}
+
 LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
 {
-    ArrayList *temp = copyAL(list, sizeof(Ride *));
-    int size = getALSize(list);
-    char ** r = (char **)malloc(sizeof(char *) * size);
-    char *user, *driver;
+    int size = getALSize(list), nRides = 0;
+    ArrayList *rideList = createAL(size, sizeof(Ride *));
     Ride *ride;
     for (int i = 0; i < size; i++)
     {
-        ride = (Ride *)getByIndex(temp, i);
-        if (getUserGender(ride->user) == gender && getDriverGender(ride->driver) == gender && getUserAccAge(ride->user) >= years && getDriverAccAge(ride->driver) >= years)
+        ride = (Ride *)getByIndex(list, i);
+        if (isUserActive(ride->user) && isDriverActive(ride->driver) && getUserGender(ride->user) == gender && getDriverGender(ride->driver) == gender 
+            && getUserAccAge(ride->user) >= years && getDriverAccAge(ride->driver) >= years)
         {
-            r[i] = (char *)malloc(256);
-            driver = getDriverIDAndName(ride->driver);
-            user = getUserUsernameAndName(ride->user);
-            strcpy(r[i], driver);
-            strcat(r[i], ";");
-            strcat(r[i], user);
-            free(driver);
-            free(user);
+            addAL(rideList, ride);
+            nRides++;
         }
     }
-    int i;
-    for (i = 0; i < getALSize(temp); i++)
+    if (nRides == 0)
+        return NULL;
+    if (nRides < size)
+        updateArrayList(rideList, sizeof(Ride *), nRides);
+    quickSortArrayList(rideList, sizeof(Ride *), compareRidesByAccAge);
+    char **r = (char **)calloc(sizeof(char *), nRides);
+    char *user, *driver;
+    for (int i = 0; i < nRides; i++)
     {
-        if (!getByIndex(temp, i))
-        {
-            r = realloc(r, i + 1);
-            break;
-        }
+        ride = (Ride *) getByIndex(rideList, i);
+        r[i] = (char *)malloc(256);
+        driver = getDriverIDAndName(ride->driver);
+        user = getUserUsernameAndName(ride->user);
+        strcpy(r[i], driver);
+        strcat(r[i], ";");
+        strcat(r[i], user);
+        free(driver);
+        free(user);
     }
-    freeArrayListSimple(temp);
+    freeArrayListSimple(rideList);
     LinkedList *l = createLL();
     addLL(l, r);
     int *s = (int *)malloc(sizeof(int));
-    *s = i + 1;
+    *s = nRides;
     addLL(l, s);
     return l;
 }

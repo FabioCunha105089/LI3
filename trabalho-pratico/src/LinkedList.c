@@ -113,23 +113,3 @@ int getIndexFromLL(LinkedList *list, char *input)
     }
     return 0;
 }
-
-int sizeOfLinkedList()
-{
-    return sizeof(LinkedList *);
-}
-
-ArrayList *LLtoALMultiple(LinkedList *lists, int elementSize, int nLists, int tSize)
-{
-    LinkedList *l;
-    ArrayList *al = createAL(tSize, elementSize);
-    int size;
-    for(int i = 0; i < nLists; i++)
-    {
-        l = (LinkedList *) iterateLL(lists);
-        size = getLLSize(l);
-        for(int j = 0; j < size; j++)
-            addAL(al, iterateLL(l));
-    }
-    return al;
-}

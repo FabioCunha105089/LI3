@@ -421,6 +421,8 @@ void executeTests(const char *argv)
     for (int i = 0; i < nQueries; i++)
     {   
         query = (Query *)getByIndex(list, i);
+        if(!query)
+            continue;
         int idQ = query->id - '0';
         countQueries[idQ - 1]++;
         start = clock();
