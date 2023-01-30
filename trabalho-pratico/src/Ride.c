@@ -832,7 +832,6 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
             nRides++;
         }
     }
-    printf("%d\n", nRides);
     if (nRides == 0)
         return NULL;
     if (nRides < size)
