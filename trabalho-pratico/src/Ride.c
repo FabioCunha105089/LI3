@@ -247,6 +247,10 @@ void initHashTables()
             driverCityScores[driverI][getIndexFromLL(cities, ride->city)] += ride->score_driver;
         }
         addDriverRideInCity(ride->driver, getIndexFromLL(cities, ride->city));
+        if(getUserAccAge(ride->user) > MAXYEARS)
+            MAXYEARS = getUserAccAge(ride->user);
+        if(getDriverAccAge(ride->driver) > MAXYEARS)
+            MAXYEARS = getDriverAccAge(ride->driver);
     }
 }
 
@@ -813,6 +817,8 @@ int compareRidesByAccAge(const void *A, const void *B)
 
 LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
 {
+    if(years > MAXYEARS)
+        return NULL;
     int size = getALSize(list), nRides = 0;
     ArrayList *rideList = createAL(size, sizeof(Ride *));
     Ride *ride;
@@ -826,6 +832,7 @@ LinkedList *ridesWithSameGenderAndAccAge(char gender, int years)
             nRides++;
         }
     }
+    printf("%d\n", nRides);
     if (nRides == 0)
         return NULL;
     if (nRides < size)
